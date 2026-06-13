@@ -11,7 +11,7 @@ export function SectionWrapper({ children, id, className, containerClassName, ..
   return (
     <section
       id={id}
-      className={cn("py-20 md:py-32 relative overflow-hidden", className)}
+      className={cn("py-12 md:py-20 relative overflow-hidden", className)}
       {...props}
     >
       <div className={cn("container mx-auto px-4 md:px-6 relative z-10", containerClassName)}>

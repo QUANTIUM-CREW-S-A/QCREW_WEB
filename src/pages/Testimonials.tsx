@@ -1,99 +1,40 @@
 import { motion } from "framer-motion";
-import { Star, Quote, Plus, Filter, ArrowRight } from "lucide-react";
+import { Star, Quote, Plus, Filter, ArrowRight, Camera, X, Loader2, AlertCircle } from "lucide-react";
 import { SectionWrapper } from "../components/ui/SectionWrapper";
 import { Card } from "../components/ui/Card";
 import { Button } from "../components/ui/Button";
-import { useTranslation } from "react-i18next";
-import { useState } from "react";
+import { useState, useRef, useCallback } from "react";
 import { Link } from "react-router-dom";
-
-// Testimonios de ejemplo - en producción vendrían de una API
-const testimonials = [
-  {
-    id: 1,
-    name: "Carlos Rodriguez",
-    role: "CEO",
-    company: "TechStart Solutions",
-    content: "Quantium Crew transformó completamente nuestra infraestructura tecnológica. Su enfoque proactivo y soluciones innovadoras nos han ahorrado tiempo y dinero. La atención de Edgar Ng como CEO es excepcional.",
-    rating: 5,
-    image: "https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=150&h=150&fit=crop&crop=face",
-    date: "2024-01-15",
-    category: "Infraestructura"
-  },
-  {
-    id: 2,
-    name: "Ana Martinez",
-    role: "Directora de Tecnología",
-    company: "Global Logistics",
-    content: "El equipo de Quantium no solo resuelve problemas, los previene. Su soporte 24/7 es excepcional y su expertise en infraestructura empresarial es incomparable. Altamente recomendados.",
-    rating: 5,
-    image: "https://images.unsplash.com/photo-1573496359142-b8d87734a5a2?w=150&h=150&fit=crop&crop=face",
-    date: "2024-01-10",
-    category: "Soporte Técnico"
-  },
-  {
-    id: 3,
-    name: "Roberto Chen",
-    role: "Fundador",
-    company: "FinTech Innovators",
-    content: "Desde el día uno, Quantium Crew ha sido nuestro partner tecnológico confiable. Nos ayudaron a escalar nuestra plataforma fintech con seguridad empresarial. Excelente trabajo del equipo liderado por Edgar.",
-    rating: 5,
-    image: "https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?w=150&h=150&fit=crop&crop=face",
-    date: "2024-01-05",
-    category: "Desarrollo"
-  },
-  {
-    id: 4,
-    name: "Laura González",
-    role: "Gerente de IT",
-    company: "E-Commerce Plus",
-    content: "La migración a la nube que realizó Quantium fue impecable. Minimizaron el downtime y maximizaron la eficiencia. Su profesionalismo y conocimiento son sobresalientes.",
-    rating: 5,
-    image: "https://images.unsplash.com/photo-1544005313-94ddf0286df2?w=150&h=150&fit=crop&crop=face",
-    date: "2023-12-28",
-    category: "Cloud"
-  },
-  {
-    id: 5,
-    name: "Miguel Torres",
-    role: "Director de Operaciones",
-    company: "Manufactura Moderna",
-    content: "Implementaron un sistema de monitoreo que ha prevenido múltiples fallas críticas. La inversión se pagó sola en los primeros 3 meses. Servicio excepcional.",
-    rating: 5,
-    image: "https://images.unsplash.com/photo-1500648767791-00dcc994a43e?w=150&h=150&fit=crop&crop=face",
-    date: "2023-12-20",
-    category: "Monitoreo"
-  },
-  {
-    id: 6,
-    name: "Patricia Mendoza",
-    role: "CEO",
-    company: "StartUp Salud",
-    content: "Quantium Crew entendió perfectamente nuestras necesidades de seguridad y cumplimiento. Nos ayudaron a obtener certificaciones importantes para nuestro sector.",
-    rating: 5,
-    image: "https://images.unsplash.com/photo-1580489944761-15a19d654956?w=150&h=150&fit=crop&crop=face",
-    date: "2023-12-15",
-    category: "Seguridad"
-  }
-];
+import { useTestimonials, submitTestimonial } from "../hooks/useTestimonials";
+import { useImageUpload } from "../hooks/useImageUpload";
+import { toast } from "../components/ui/Toast";
+import { TurnstileCaptcha, useCaptchaValidation } from "../components/ui/TurnstileCaptcha";
 
 const categories = ["Todos", "Infraestructura", "Soporte Técnico", "Desarrollo", "Cloud", "Monitoreo", "Seguridad"];
 
+function formatDate(date: Date): string {
+  return date.toLocaleDateString('es-ES', { year: 'numeric', month: 'long' });
+}
+
 export function TestimonialsPage() {
-  const { t } = useTranslation();
+  const { testimonials, loading, error } = useTestimonials();
   const [selectedCategory, setSelectedCategory] = useState("Todos");
   const [showForm, setShowForm] = useState(false);
   const [sortBy, setSortBy] = useState("date");
 
-  const filteredTestimonials = selectedCategory === "Todos" 
-    ? testimonials 
+  const filteredTestimonials = selectedCategory === "Todos"
+    ? testimonials
     : testimonials.filter(t => t.category === selectedCategory);
 
   const sortedTestimonials = [...filteredTestimonials].sort((a, b) => {
-    if (sortBy === "date") return new Date(b.date).getTime() - new Date(a.date).getTime();
+    if (sortBy === "date") return b.createdAt.getTime() - a.createdAt.getTime();
     if (sortBy === "rating") return b.rating - a.rating;
     return 0;
   });
+
+  const avgRating = testimonials.length > 0
+    ? (testimonials.reduce((sum, t) => sum + t.rating, 0) / testimonials.length).toFixed(1)
+    : "5.0";
 
   return (
     <div className="min-h-screen bg-brand-dark">
@@ -108,11 +49,11 @@ export function TestimonialsPage() {
             Lo que dicen nuestros clientes
           </h1>
           <p className="text-xl text-brand-muted max-w-3xl mx-auto mb-8">
-            Descubre cómo Quantium Crew ha transformado la tecnología de empresas como la tuya. 
+            Descubre cómo Quantium Crew ha transformado la tecnología de empresas como la tuya.
             Lee experiencias reales de clientes satisfechos con nuestros servicios.
           </p>
-          <Button 
-            size="lg" 
+          <Button
+            size="lg"
             className="group"
             onClick={() => setShowForm(true)}
           >
@@ -126,7 +67,6 @@ export function TestimonialsPage() {
       <SectionWrapper className="py-12 bg-brand-gray/30">
         <div className="max-w-6xl mx-auto px-4">
           <div className="flex flex-col md:flex-row items-center justify-between gap-6 mb-8">
-            {/* Categories */}
             <div className="flex flex-wrap gap-2">
               {categories.map((category) => (
                 <Button
@@ -140,7 +80,6 @@ export function TestimonialsPage() {
               ))}
             </div>
 
-            {/* Sort */}
             <div className="flex items-center gap-2">
               <Filter className="w-4 h-4 text-brand-muted" />
               <select
@@ -154,14 +93,13 @@ export function TestimonialsPage() {
             </div>
           </div>
 
-          {/* Stats */}
           <div className="grid grid-cols-1 md:grid-cols-4 gap-6">
             <Card className="text-center p-6 bg-white/5 border-white/10">
-              <div className="text-3xl font-bold text-brand-primary mb-2">{testimonials.length}+</div>
+              <div className="text-3xl font-bold text-brand-primary mb-2">{testimonials.length || "0"}</div>
               <div className="text-brand-muted text-sm">Testimonios</div>
             </Card>
             <Card className="text-center p-6 bg-white/5 border-white/10">
-              <div className="text-3xl font-bold text-brand-primary mb-2">5.0</div>
+              <div className="text-3xl font-bold text-brand-primary mb-2">{avgRating}</div>
               <div className="text-brand-muted text-sm">Calificación promedio</div>
             </Card>
             <Card className="text-center p-6 bg-white/5 border-white/10">
@@ -179,56 +117,91 @@ export function TestimonialsPage() {
       {/* Testimonials Grid */}
       <SectionWrapper className="py-20">
         <div className="max-w-6xl mx-auto px-4">
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
-            {sortedTestimonials.map((testimonial, index) => (
-              <motion.div
-                key={testimonial.id}
-                initial={{ opacity: 0, y: 30 }}
-                animate={{ opacity: 1, y: 0 }}
-                transition={{ duration: 0.6, delay: index * 0.1 }}
-              >
-                <Card className="h-full bg-white/5 border-white/10 hover:border-brand-primary/30 transition-all duration-300 group">
-                  <div className="p-6">
-                    {/* Quote icon */}
-                    <div className="flex items-center justify-between mb-4">
-                      <Quote className="w-8 h-8 text-brand-primary/50" />
-                      <div className="flex gap-1">
-                        {[...Array(testimonial.rating)].map((_, i) => (
-                          <Star key={i} className="w-4 h-4 fill-brand-primary text-brand-primary" />
-                        ))}
+          {loading ? (
+            <div className="flex flex-col items-center justify-center py-20">
+              <div className="w-12 h-12 border-4 border-brand-primary border-t-transparent rounded-full animate-spin" />
+              <p className="text-white/40 text-sm mt-4">Cargando testimonios...</p>
+            </div>
+          ) : error ? (
+            <div className="text-center py-20">
+              <AlertCircle className="w-16 h-16 text-red-400/50 mx-auto mb-4" />
+              <h3 className="text-red-400 text-lg mb-2">Error al cargar testimonios</h3>
+              <p className="text-white/40 text-sm mb-6">{error}</p>
+              <Button onClick={() => window.location.reload()}>
+                Intentar de nuevo
+              </Button>
+            </div>
+          ) : sortedTestimonials.length === 0 ? (
+            <div className="text-center py-20">
+              <Quote className="w-16 h-16 text-white/10 mx-auto mb-4" />
+              <h3 className="text-white/50 text-lg font-medium mb-2">
+                {selectedCategory === "Todos" ? "Aún no hay testimonios" : `No hay testimonios en ${selectedCategory}`}
+              </h3>
+              <p className="text-white/30 text-sm mb-6">Sé el primero en compartir tu experiencia</p>
+              <Button onClick={() => setShowForm(true)}>
+                <Plus className="mr-2 w-4 h-4" />
+                Compartir mi experiencia
+              </Button>
+            </div>
+          ) : (
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+              {sortedTestimonials.map((testimonial, index) => (
+                <motion.div
+                  key={testimonial.id}
+                  initial={{ opacity: 0, y: 30 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  transition={{ duration: 0.6, delay: index * 0.1 }}
+                >
+                  <Card className="h-full bg-white/5 border-white/10 hover:border-brand-primary/30 transition-all duration-300 group">
+                    <div className="p-6">
+                      <div className="flex items-center justify-between mb-4">
+                        <Quote className="w-8 h-8 text-brand-primary/50" />
+                        <div className="flex gap-1">
+                          {[...Array(testimonial.rating)].map((_, i) => (
+                            <Star key={i} className="w-4 h-4 fill-brand-primary text-brand-primary" />
+                          ))}
+                        </div>
+                      </div>
+
+                      <p className="text-white mb-6 leading-relaxed">
+                        &ldquo;{testimonial.content}&rdquo;
+                      </p>
+
+                      <div className="flex items-center gap-4 pt-4 border-t border-white/10">
+                        {testimonial.imageUrl ? (
+                          <img
+                            src={testimonial.imageUrl}
+                            alt={testimonial.name}
+                            className="w-12 h-12 rounded-full object-cover border-2 border-brand-primary/30"
+                          />
+                        ) : (
+                          <div className="w-12 h-12 rounded-full bg-gradient-to-br from-brand-primary to-brand-secondary flex items-center justify-center border-2 border-brand-primary/30">
+                            <span className="text-white font-bold text-sm">
+                              {testimonial.name.charAt(0).toUpperCase()}
+                            </span>
+                          </div>
+                        )}
+                        <div>
+                          <div className="font-semibold text-white">{testimonial.name}</div>
+                          <div className="text-sm text-brand-muted">{testimonial.role}</div>
+                          <div className="text-xs text-brand-primary">{testimonial.company}</div>
+                        </div>
+                      </div>
+
+                      <div className="mt-4 flex items-center justify-between">
+                        <span className="inline-block px-3 py-1 bg-brand-primary/20 text-brand-primary text-xs rounded-full">
+                          {testimonial.category}
+                        </span>
+                        <span className="text-white/30 text-xs">
+                          {formatDate(testimonial.createdAt)}
+                        </span>
                       </div>
                     </div>
-
-                    {/* Content */}
-                    <p className="text-white mb-6 leading-relaxed">
-                      "{testimonial.content}"
-                    </p>
-
-                    {/* Author */}
-                    <div className="flex items-center gap-4 pt-4 border-t border-white/10">
-                      <img
-                        src={testimonial.image}
-                        alt={testimonial.name}
-                        className="w-12 h-12 rounded-full object-cover border-2 border-brand-primary/30"
-                      />
-                      <div>
-                        <div className="font-semibold text-white">{testimonial.name}</div>
-                        <div className="text-sm text-brand-muted">{testimonial.role}</div>
-                        <div className="text-xs text-brand-primary">{testimonial.company}</div>
-                      </div>
-                    </div>
-
-                    {/* Category badge */}
-                    <div className="mt-4">
-                      <span className="inline-block px-3 py-1 bg-brand-primary/20 text-brand-primary text-xs rounded-full">
-                        {testimonial.category}
-                      </span>
-                    </div>
-                  </div>
-                </Card>
-              </motion.div>
-            ))}
-          </div>
+                  </Card>
+                </motion.div>
+              ))}
+            </div>
+          )}
         </div>
       </SectionWrapper>
 
@@ -246,8 +219,8 @@ export function TestimonialsPage() {
             Únete a nuestros clientes satisfechos y descubre cómo podemos transformar tu tecnología.
           </p>
           <Link to="/contact">
-            <Button 
-              size="lg" 
+            <Button
+              size="lg"
               className="group"
             >
               Comenzar ahora
@@ -263,7 +236,54 @@ export function TestimonialsPage() {
   );
 }
 
-// Formulario para nuevos testimonios
+// --- Validation helpers ---
+interface FieldError {
+  name?: string;
+  email?: string;
+  company?: string;
+  role?: string;
+  content?: string;
+}
+
+function validateField(field: keyof FieldError, value: string): string | undefined {
+  switch (field) {
+    case 'name':
+      if (!value.trim()) return 'El nombre es requerido';
+      if (value.trim().length < 2) return 'Mínimo 2 caracteres';
+      if (value.trim().length > 100) return 'Máximo 100 caracteres';
+      return undefined;
+    case 'email':
+      if (!value.trim()) return 'El email es requerido';
+      if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(value)) return 'Email inválido';
+      return undefined;
+    case 'company':
+      if (!value.trim()) return 'La empresa es requerida';
+      if (value.trim().length < 2) return 'Mínimo 2 caracteres';
+      if (value.trim().length > 100) return 'Máximo 100 caracteres';
+      return undefined;
+    case 'role':
+      if (!value.trim()) return 'El cargo es requerido';
+      if (value.trim().length < 2) return 'Mínimo 2 caracteres';
+      if (value.trim().length > 100) return 'Máximo 100 caracteres';
+      return undefined;
+    case 'content':
+      if (!value.trim()) return 'La experiencia es requerida';
+      if (value.trim().length < 20) return 'Mínimo 20 caracteres';
+      if (value.trim().length > 500) return 'Máximo 500 caracteres';
+      return undefined;
+  }
+}
+
+function validateAll(data: { name: string; email: string; company: string; role: string; content: string }): FieldError {
+  const errors: FieldError = {};
+  for (const key of ['name', 'email', 'company', 'role', 'content'] as const) {
+    const err = validateField(key, data[key]);
+    if (err) errors[key] = err;
+  }
+  return errors;
+}
+
+// --- Testimonial Form ---
 function TestimonialForm({ onClose }: { onClose: () => void }) {
   const [formData, setFormData] = useState({
     name: "",
@@ -274,12 +294,98 @@ function TestimonialForm({ onClose }: { onClose: () => void }) {
     rating: 5,
     category: "Infraestructura"
   });
+  const [errors, setErrors] = useState<FieldError>({});
+  const [touched, setTouched] = useState<Record<string, boolean>>({});
+  const [isSubmitting, setIsSubmitting] = useState(false);
+  const imageUpload = useImageUpload();
+  const fileInputRef = useRef<HTMLInputElement>(null);
+  const { isVerified, handleVerify, handleError } = useCaptchaValidation();
 
-  const handleSubmit = (e: React.FormEvent) => {
+  const handleBlur = (field: keyof FieldError) => {
+    setTouched(prev => ({ ...prev, [field]: true }));
+    const err = validateField(field, formData[field]);
+    setErrors(prev => ({ ...prev, [field]: err }));
+  };
+
+  const handleChange = (field: string, value: string | number) => {
+    setFormData(prev => ({ ...prev, [field]: value }));
+    if (touched[field]) {
+      const err = validateField(field as keyof FieldError, String(value));
+      setErrors(prev => ({ ...prev, [field]: err }));
+    }
+  };
+
+  const handleFileDrop = useCallback((e: React.DragEvent) => {
     e.preventDefault();
-    // Aquí iría la lógica para enviar el testimonio
-    alert("¡Gracias por compartir tu experiencia! La revisaremos y publicaremos pronto.");
-    onClose();
+    const file = e.dataTransfer.files[0];
+    if (file) {
+      const ok = imageUpload.selectFile(file);
+      if (!ok && imageUpload.error) {
+        toast('error', imageUpload.error);
+      }
+    }
+  }, [imageUpload]);
+
+  const handleFileSelect = useCallback((e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
+    if (file) {
+      const ok = imageUpload.selectFile(file);
+      if (!ok && imageUpload.error) {
+        toast('error', imageUpload.error);
+      }
+    }
+  }, [imageUpload]);
+
+  const handleSubmit = async (e: React.FormEvent) => {
+    e.preventDefault();
+
+    const allErrors = validateAll(formData);
+    setErrors(allErrors);
+    setTouched({ name: true, email: true, company: true, role: true, content: true });
+
+    if (Object.keys(allErrors).length > 0) {
+      toast('error', 'Por favor corrige los errores del formulario');
+      return;
+    }
+
+    if (!isVerified) {
+      toast('error', 'Por favor completa la verificación de seguridad (CAPTCHA)');
+      return;
+    }
+
+    setIsSubmitting(true);
+
+    try {
+      let imageUrl = '';
+      if (imageUpload.preview) {
+        imageUrl = await imageUpload.upload();
+      }
+
+      await submitTestimonial({
+        name: formData.name.trim(),
+        email: formData.email.trim(),
+        company: formData.company.trim(),
+        role: formData.role.trim(),
+        content: formData.content.trim(),
+        rating: formData.rating,
+        category: formData.category,
+        imageUrl,
+      });
+
+      toast('success', 'Testimonio enviado. Lo revisaremos y publicaremos pronto.');
+      onClose();
+    } catch {
+      toast('error', 'Error al enviar el testimonio. Intenta de nuevo.');
+    } finally {
+      setIsSubmitting(false);
+    }
+  };
+
+  const getInputClass = (field: keyof FieldError) => {
+    const base = "w-full bg-brand-dark border rounded-lg px-4 py-3 text-white focus:outline-none transition-colors";
+    if (touched[field] && errors[field]) return `${base} border-red-400/60 focus:border-red-400`;
+    if (touched[field] && !errors[field]) return `${base} border-green-400/40 focus:border-green-400`;
+    return `${base} border-white/20 focus:border-brand-primary`;
   };
 
   return (
@@ -295,32 +401,43 @@ function TestimonialForm({ onClose }: { onClose: () => void }) {
           <button
             onClick={onClose}
             className="text-white/60 hover:text-white transition-colors"
+            disabled={isSubmitting}
           >
-            ✕
+            <X className="w-5 h-5" />
           </button>
         </div>
 
-        <form onSubmit={handleSubmit} className="space-y-6">
+        <form onSubmit={handleSubmit} className="space-y-6" noValidate>
           <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
             <div>
               <label className="block text-white text-sm font-medium mb-2">Nombre completo *</label>
               <input
                 type="text"
-                required
-                className="w-full bg-brand-dark border border-white/20 rounded-lg px-4 py-3 text-white focus:border-brand-primary focus:outline-none"
+                placeholder="Ej: Carlos Rodriguez"
+                className={getInputClass('name')}
                 value={formData.name}
-                onChange={(e) => setFormData({...formData, name: e.target.value})}
+                onChange={(e) => handleChange('name', e.target.value)}
+                onBlur={() => handleBlur('name')}
+                disabled={isSubmitting}
               />
+              {touched.name && errors.name && (
+                <p className="text-red-400 text-xs mt-1">{errors.name}</p>
+              )}
             </div>
             <div>
               <label className="block text-white text-sm font-medium mb-2">Email *</label>
               <input
                 type="email"
-                required
-                className="w-full bg-brand-dark border border-white/20 rounded-lg px-4 py-3 text-white focus:border-brand-primary focus:outline-none"
+                placeholder="tu@empresa.com"
+                className={getInputClass('email')}
                 value={formData.email}
-                onChange={(e) => setFormData({...formData, email: e.target.value})}
+                onChange={(e) => handleChange('email', e.target.value)}
+                onBlur={() => handleBlur('email')}
+                disabled={isSubmitting}
               />
+              {touched.email && errors.email && (
+                <p className="text-red-400 text-xs mt-1">{errors.email}</p>
+              )}
             </div>
           </div>
 
@@ -329,21 +446,31 @@ function TestimonialForm({ onClose }: { onClose: () => void }) {
               <label className="block text-white text-sm font-medium mb-2">Empresa *</label>
               <input
                 type="text"
-                required
-                className="w-full bg-brand-dark border border-white/20 rounded-lg px-4 py-3 text-white focus:border-brand-primary focus:outline-none"
+                placeholder="Ej: TechStart Solutions"
+                className={getInputClass('company')}
                 value={formData.company}
-                onChange={(e) => setFormData({...formData, company: e.target.value})}
+                onChange={(e) => handleChange('company', e.target.value)}
+                onBlur={() => handleBlur('company')}
+                disabled={isSubmitting}
               />
+              {touched.company && errors.company && (
+                <p className="text-red-400 text-xs mt-1">{errors.company}</p>
+              )}
             </div>
             <div>
               <label className="block text-white text-sm font-medium mb-2">Cargo *</label>
               <input
                 type="text"
-                required
-                className="w-full bg-brand-dark border border-white/20 rounded-lg px-4 py-3 text-white focus:border-brand-primary focus:outline-none"
+                placeholder="Ej: CEO, Director de IT"
+                className={getInputClass('role')}
                 value={formData.role}
-                onChange={(e) => setFormData({...formData, role: e.target.value})}
+                onChange={(e) => handleChange('role', e.target.value)}
+                onBlur={() => handleBlur('role')}
+                disabled={isSubmitting}
               />
+              {touched.role && errors.role && (
+                <p className="text-red-400 text-xs mt-1">{errors.role}</p>
+              )}
             </div>
           </div>
 
@@ -352,7 +479,8 @@ function TestimonialForm({ onClose }: { onClose: () => void }) {
             <select
               className="w-full bg-brand-dark border border-white/20 rounded-lg px-4 py-3 text-white focus:border-brand-primary focus:outline-none"
               value={formData.category}
-              onChange={(e) => setFormData({...formData, category: e.target.value})}
+              onChange={(e) => handleChange('category', e.target.value)}
+              disabled={isSubmitting}
             >
               {categories.slice(1).map(cat => (
                 <option key={cat} value={cat}>{cat}</option>
@@ -367,7 +495,8 @@ function TestimonialForm({ onClose }: { onClose: () => void }) {
                 <button
                   key={star}
                   type="button"
-                  onClick={() => setFormData({...formData, rating: star})}
+                  onClick={() => handleChange('rating', star)}
+                  disabled={isSubmitting}
                   className={`w-8 h-8 ${star <= formData.rating ? 'text-brand-primary' : 'text-white/30'} hover:text-brand-primary transition-colors`}
                 >
                   <Star className="w-full h-full fill-current" />
@@ -377,22 +506,115 @@ function TestimonialForm({ onClose }: { onClose: () => void }) {
           </div>
 
           <div>
-            <label className="block text-white text-sm font-medium mb-2">Tu experiencia *</label>
+            <div className="flex items-center justify-between mb-2">
+              <label className="text-white text-sm font-medium">Tu experiencia *</label>
+              <span className={`text-xs ${formData.content.length > 500 ? 'text-red-400' : formData.content.length >= 20 ? 'text-green-400/70' : 'text-white/30'}`}>
+                {formData.content.length}/500
+              </span>
+            </div>
             <textarea
-              required
               rows={4}
-              className="w-full bg-brand-dark border border-white/20 rounded-lg px-4 py-3 text-white focus:border-brand-primary focus:outline-none resize-none"
-              placeholder="Cuéntanos cómo Quantium Crew ayudó a tu empresa..."
+              placeholder="Cuéntanos cómo Quantium Crew ayudó a tu empresa. ¿Qué problema tenías? ¿Cómo te ayudamos? ¿Qué resultados obtuviste?"
+              className={`${getInputClass('content')} resize-none`}
               value={formData.content}
-              onChange={(e) => setFormData({...formData, content: e.target.value})}
+              onChange={(e) => handleChange('content', e.target.value)}
+              onBlur={() => handleBlur('content')}
+              disabled={isSubmitting}
             />
+            {touched.content && errors.content && (
+              <p className="text-red-400 text-xs mt-1">{errors.content}</p>
+            )}
           </div>
 
+          {/* Photo Upload */}
+          <div>
+            <label className="block text-white text-sm font-medium mb-2">Foto (opcional)</label>
+            <input
+              ref={fileInputRef}
+              type="file"
+              accept="image/jpeg,image/png,image/webp,image/gif"
+              className="hidden"
+              onChange={handleFileSelect}
+            />
+
+            {imageUpload.preview ? (
+              <div className="flex items-center gap-4">
+                <img
+                  src={imageUpload.preview}
+                  alt="Preview"
+                  className="w-16 h-16 rounded-full object-cover border-2 border-brand-primary/30"
+                />
+                <div className="flex-1">
+                  {imageUpload.uploading && (
+                    <div className="w-full bg-white/10 rounded-full h-1.5 mb-2">
+                      <div
+                        className="bg-brand-primary h-1.5 rounded-full transition-all duration-300"
+                        style={{ width: `${imageUpload.progress}%` }}
+                      />
+                    </div>
+                  )}
+                  <div className="flex gap-2">
+                    <button
+                      type="button"
+                      onClick={() => fileInputRef.current?.click()}
+                      disabled={isSubmitting || imageUpload.uploading}
+                      className="text-brand-primary text-sm hover:underline"
+                    >
+                      Cambiar
+                    </button>
+                    <button
+                      type="button"
+                      onClick={imageUpload.clear}
+                      disabled={isSubmitting || imageUpload.uploading}
+                      className="text-red-400 text-sm hover:underline"
+                    >
+                      Eliminar
+                    </button>
+                  </div>
+                </div>
+              </div>
+            ) : (
+              <div
+                onClick={() => !isSubmitting && fileInputRef.current?.click()}
+                onDragOver={(e) => e.preventDefault()}
+                onDrop={handleFileDrop}
+                className="border-2 border-dashed border-white/20 rounded-xl p-6 text-center cursor-pointer hover:border-brand-primary/40 transition-colors"
+              >
+                <Camera className="w-8 h-8 text-white/30 mx-auto mb-2" />
+                <p className="text-white/40 text-sm">Arrastra tu foto o haz clic para seleccionar</p>
+                <p className="text-white/20 text-xs mt-1">JPG, PNG, WebP o GIF. Máximo 5MB</p>
+              </div>
+            )}
+
+            {imageUpload.error && (
+              <p className="text-red-400 text-xs mt-1">{imageUpload.error}</p>
+            )}
+          </div>
+
+          {/* CAPTCHA Verification */}
+          <TurnstileCaptcha 
+            onVerify={handleVerify} 
+            onError={handleError}
+            className="pt-4"
+          />
+
           <div className="flex gap-4">
-            <Button type="submit" className="flex-1">
-              Enviar testimonio
+            <Button 
+              type="submit" 
+              className="flex-1" 
+              isLoading={isSubmitting}
+              disabled={!isVerified}
+            >
+              {isSubmitting ? (
+                <span className="flex items-center gap-2">
+                  <Loader2 className="w-4 h-4 animate-spin" />
+                  Enviando...
+                </span>
+              ) : (
+                "Enviar testimonio"
+              )}
             </Button>
-            <Button type="button" variant="outline" onClick={onClose}>
+            <Button type="button" variant="outline" onClick={onClose} disabled={isSubmitting}>
               Cancelar
             </Button>
           </div>

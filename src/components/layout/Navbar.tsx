@@ -1,5 +1,5 @@
 import { useState, useEffect } from "react";
-import { Menu, X, Rocket, Globe } from "lucide-react";
+import { Menu, X, Globe } from "lucide-react";
 import { Button } from "../ui/Button";
 import { cn } from "../../lib/utils";
 import { motion, AnimatePresence } from "framer-motion";
@@ -22,10 +22,17 @@ export function Navbar() {
   const [isLangOpen, setIsLangOpen] = useState(false);
 
   useEffect(() => {
+    let ticking = false;
     const handleScroll = () => {
-      setScrolled(window.scrollY > 20);
+      if (!ticking) {
+        ticking = true;
+        requestAnimationFrame(() => {
+          setScrolled(window.scrollY > 20);
+          ticking = false;
+        });
+      }
     };
-    window.addEventListener("scroll", handleScroll);
+    window.addEventListener("scroll", handleScroll, { passive: true });
     return () => window.removeEventListener("scroll", handleScroll);
   }, []);
 
@@ -54,13 +61,41 @@ export function Navbar() {
       )}
     >
       <div className="container mx-auto px-4 md:px-6 flex items-center justify-between">
-        <Link to="/" className="flex items-center gap-2 group">
-          <div className="relative">
-            <div className="absolute inset-0 bg-brand-primary blur-md opacity-20 group-hover:opacity-40 transition-opacity"></div>
-            <Rocket className="w-8 h-8 text-brand-primary relative z-10" />
+        <Link to="/" className="flex items-center gap-3 group">
+          {/* Logo SVG */}
+          <div className="relative w-10 h-10">
+            <div className="absolute inset-0 bg-gradient-to-br from-brand-primary/20 to-brand-secondary/20 rounded-xl scale-110 group-hover:scale-125 transition-transform duration-300"></div>
+            <svg 
+              viewBox="0 0 40 40" 
+              className="w-10 h-10 relative z-10"
+              fill="none"
+            >
+              <defs>
+                <linearGradient id="navLogoGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+                  <stop offset="0%" stopColor="#00D4FF"/>
+                  <stop offset="100%" stopColor="#8B5CF6"/>
+                </linearGradient>
+              </defs>
+              {/* Hexágono */}
+              <path 
+                d="M20 4L34 12V28L20 36L6 28V12L20 4Z" 
+                stroke="url(#navLogoGrad)" 
+                strokeWidth="2.5"
+                fill="none"
+              />
+              {/* Centro */}
+              <circle cx="20" cy="20" r="5" fill="url(#navLogoGrad)"/>
+              {/* Líneas de conexión */}
+              <path 
+                d="M20 8V15M20 25V32M9 14L14 17M26 23L31 26M9 26L14 23M26 17L31 14" 
+                stroke="url(#navLogoGrad)" 
+                strokeWidth="2"
+                strokeLinecap="round"
+              />
+            </svg>
           </div>
           <span className="text-xl font-display font-bold tracking-tight text-white">
-            Quantium<span className="text-brand-primary">Crew</span>
+            Quantium<span className="text-transparent bg-clip-text bg-gradient-to-r from-brand-primary to-brand-secondary">Crew</span>
           </span>
         </Link>
 
@@ -150,7 +185,7 @@ export function Navbar() {
             initial={{ opacity: 0, height: 0 }}
             animate={{ opacity: 1, height: "auto" }}
             exit={{ opacity: 0, height: 0 }}
-            className="md:hidden bg-brand-dark/95 backdrop-blur-xl border-b border-white/10 overflow-hidden"
+            className="md:hidden bg-brand-dark border-b border-white/10 overflow-hidden"
           >
             <div className="p-4 flex flex-col gap-4">
               {navLinks.map((link) => (
@@ -186,7 +221,7 @@ export function Navbar() {
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
             exit={{ opacity: 0 }}
-            className="fixed inset-0 z-[60] bg-black/60 backdrop-blur-sm flex items-center justify-center p-4 md:hidden"
+            className="fixed inset-0 z-[60] bg-black/80 flex items-center justify-center p-4 md:hidden"
             onClick={() => setIsLangOpen(false)}
           >
             <motion.div

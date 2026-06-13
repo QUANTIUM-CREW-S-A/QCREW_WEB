@@ -11,7 +11,9 @@ export { HowWeWork } from './HowWeWork';
 export { UseCases } from './UseCases';
 export { CTA } from './CTA';
 export { Contact } from './Contact';
+export { Stats } from './Stats';
+export { Process } from './Process';
 
 // Exportar páginas
-export { TestimonialsPage } from '../pages/Testimonials';
-export { TeamPage } from '../pages/TeamPage';
+export { TestimonialsPage } from '../../pages/Testimonials';
+export { TeamPage } from '../../pages/TeamPage';

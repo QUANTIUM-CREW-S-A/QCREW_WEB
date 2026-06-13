@@ -7,16 +7,17 @@ export default {
       colors: {
         brand: {
           dark: "#050505", // Very dark background
-          gray: "#0F1115", // Slightly lighter for cards
+          gray: "#141820", // Slightly lighter for cards
           primary: "#00D4FF", // Electric Blue
           secondary: "#8B5CF6", // Violet
-          text: "#F3F4F6", // Light gray text
-          muted: "#9CA3AF", // Muted text
+          text: "#F5F6F7", // Light gray text
+          muted: "#E5E7EB", // Muted text
         }
       },
       fontFamily: {
-        sans: ['Inter', 'sans-serif'],
-        display: ['Space Grotesk', 'sans-serif'],
+        sans: ['"Plus Jakarta Sans"', 'sans-serif'],
+        display: ['"Outfit"', 'sans-serif'],
+        mono: ['"JetBrains Mono"', 'monospace'],
       },
       container: {
         center: true,
@@ -30,6 +31,8 @@ export default {
         "accordion-up": "accordion-up 0.2s ease-out",
         "fade-in": "fade-in 0.5s ease-out",
         "fade-up": "fade-up 0.5s ease-out",
+        "scroll": "scroll 60s linear infinite",
+        "scroll-slow": "scroll 40s linear infinite",
       },
       keyframes: {
         "accordion-down": {
@@ -47,6 +50,10 @@ export default {
         "fade-up": {
           "0%": { opacity: 0, transform: "translateY(10px)" },
           "100%": { opacity: 1, transform: "translateY(0)" },
+        },
+        "scroll": {
+          "0%": { transform: "translateX(0)" },
+          "100%": { transform: "translateX(-33.333%)" },
         },
       },
     },
