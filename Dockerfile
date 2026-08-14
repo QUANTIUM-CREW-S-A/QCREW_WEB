@@ -9,13 +9,17 @@ COPY package.json package-lock.json* yarn.lock* ./
 # Install dependencies
 RUN npm install
 
-# Copy environment variables (REQUIRED for build-time VITE_ variables)
-COPY .env .env.example* ./
+# Copy environment variables (optional - use .env.example as fallback)
+COPY .env.example .env.example
+COPY .env* ./
+
+# Create .env from .env.example if .env doesn't exist (for Docker builds)
+RUN if [ ! -f .env ]; then cp .env.example .env; fi || true
 
 # Copy source code
 COPY . .
 
-# Build the application (VITE_ variables needed here)
+# Build the application (VITE_ variables from .env)
 RUN npm run build
 
 # Production stage
