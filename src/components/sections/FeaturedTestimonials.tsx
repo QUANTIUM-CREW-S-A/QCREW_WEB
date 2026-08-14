@@ -81,10 +81,10 @@ function TestimonialCarousel() {
       <div className="text-center py-12 px-4">
         <AlertCircle className="w-12 h-12 text-red-400 mx-auto mb-4" />
         <p className="text-red-400 mb-2">Error al cargar testimonios</p>
-        <p className="text-white/40 text-sm">{error}</p>
+        <p className="text-rack-ink/40 text-sm">{error}</p>
         <button 
           onClick={() => window.location.reload()}
-          className="mt-4 text-brand-primary hover:underline text-sm"
+          className="mt-4 text-rack-brand hover:underline text-sm"
         >
           Recargar página
         </button>
@@ -95,9 +95,9 @@ function TestimonialCarousel() {
   if (testimonials.length === 0) {
     return (
       <div className="text-center py-16 px-4">
-        <Quote className="w-16 h-16 text-white/10 mx-auto mb-4" />
-        <p className="text-brand-muted text-lg mb-2">Aún no hay testimonios de clientes</p>
-        <p className="text-white/40 text-sm mb-6">Sé el primero en compartir tu experiencia con nosotros</p>
+        <Quote className="w-16 h-16 text-rack-ink/10 mx-auto mb-4" />
+        <p className="text-rack-graph text-lg mb-2">Aún no hay testimonios de clientes</p>
+        <p className="text-rack-ink/40 text-sm mb-6">Sé el primero en compartir tu experiencia con nosotros</p>
         <Button 
           variant="outline" 
           onClick={() => window.location.href = '/testimonials'}
@@ -115,7 +115,7 @@ function TestimonialCarousel() {
       {/* Debug info - visible solo en desarrollo */}
       {process.env.NODE_ENV === 'development' && (
         <div className="text-center mb-4">
-          <span className="text-white/30 text-xs">
+          <span className="text-rack-ink/30 text-xs">
             Debug: {testimonials.length} testimonios cargados
           </span>
         </div>
@@ -141,19 +141,19 @@ function TestimonialCarousel() {
             }}
             className="absolute inset-0 flex items-center justify-center px-4"
           >
-            <div className="bg-gradient-to-br from-white/[0.08] to-white/[0.02] border border-white/10 rounded-3xl p-8 md:p-12 w-full backdrop-blur-sm relative overflow-hidden">
+            <div className="bg-gradient-to-br from-white/[0.08] to-white/[0.02] border border-rack-rule rounded-3xl p-8 md:p-12 w-full backdrop-blur-sm relative overflow-hidden">
               {/* Decorative quote */}
-              <Quote className="absolute top-6 right-6 w-16 h-16 text-brand-primary/10" />
+              <Quote className="absolute top-6 right-6 w-16 h-16 text-rack-brand/10" />
               
               {/* Rating */}
               <div className="flex gap-1 mb-6">
                 {[...Array(current.rating)].map((_, i) => (
-                  <Star key={i} className="w-5 h-5 fill-brand-primary text-brand-primary" />
+                  <Star key={i} className="w-5 h-5 fill-brand-primary text-rack-brand" />
                 ))}
               </div>
 
               {/* Content */}
-              <p className="text-xl md:text-2xl text-white leading-relaxed mb-8 font-light">
+              <p className="text-xl md:text-2xl text-rack-ink leading-relaxed mb-8 font-light">
                 &ldquo;{current.content}&rdquo;
               </p>
 
@@ -167,23 +167,23 @@ function TestimonialCarousel() {
                   />
                 ) : (
                   <div className="w-14 h-14 rounded-full bg-gradient-to-br from-brand-primary to-brand-secondary flex items-center justify-center border-2 border-brand-primary/30">
-                    <span className="text-white font-bold text-lg">
+                    <span className="text-rack-ink font-bold text-lg">
                       {current.name.charAt(0).toUpperCase()}
                     </span>
                   </div>
                 )}
                 <div>
                   <div className="flex items-center gap-2">
-                    <span className="font-semibold text-white text-lg">{current.name}</span>
-                    <BadgeCheck className="w-5 h-5 text-brand-primary" />
+                    <span className="font-semibold text-rack-ink text-lg">{current.name}</span>
+                    <BadgeCheck className="w-5 h-5 text-rack-brand" />
                   </div>
-                  <div className="text-brand-muted">{current.role}</div>
-                  <div className="text-brand-primary text-sm">{current.company}</div>
+                  <div className="text-rack-graph">{current.role}</div>
+                  <div className="text-rack-brand text-sm">{current.company}</div>
                 </div>
                 
                 {/* Category Badge */}
                 <div className="ml-auto hidden md:block">
-                  <span className="px-3 py-1 bg-brand-primary/10 border border-brand-primary/20 rounded-full text-brand-primary text-xs">
+                  <span className="px-3 py-1 bg-brand-primary/10 border border-brand-primary/20 rounded-full text-rack-brand text-xs">
                     {current.category}
                   </span>
                 </div>
@@ -197,13 +197,13 @@ function TestimonialCarousel() {
           <>
             <button
               onClick={() => paginate(-1)}
-              className="absolute left-0 top-1/2 -translate-y-1/2 -translate-x-2 md:translate-x-0 w-12 h-12 bg-white/5 border border-white/10 rounded-full flex items-center justify-center text-white/60 hover:text-white hover:bg-white/10 hover:border-brand-primary/30 transition-all z-10"
+              className="absolute left-0 top-1/2 -translate-y-1/2 -translate-x-2 md:translate-x-0 w-12 h-12 bg-rack-sheet border border-rack-rule rounded-full flex items-center justify-center text-rack-ink/60 hover:text-rack-ink hover:bg-rack-sheet hover:border-brand-primary/30 transition-all z-10"
             >
               <ChevronLeft className="w-6 h-6" />
             </button>
             <button
               onClick={() => paginate(1)}
-              className="absolute right-0 top-1/2 -translate-y-1/2 translate-x-2 md:translate-x-0 w-12 h-12 bg-white/5 border border-white/10 rounded-full flex items-center justify-center text-white/60 hover:text-white hover:bg-white/10 hover:border-brand-primary/30 transition-all z-10"
+              className="absolute right-0 top-1/2 -translate-y-1/2 translate-x-2 md:translate-x-0 w-12 h-12 bg-rack-sheet border border-rack-rule rounded-full flex items-center justify-center text-rack-ink/60 hover:text-rack-ink hover:bg-rack-sheet hover:border-brand-primary/30 transition-all z-10"
             >
               <ChevronRight className="w-6 h-6" />
             </button>
@@ -226,7 +226,7 @@ function TestimonialCarousel() {
               className={`h-2 rounded-full transition-all duration-300 ${
                 index === currentIndex 
                   ? 'w-8 bg-brand-primary' 
-                  : 'w-2 bg-white/20 hover:bg-white/40'
+                  : 'w-2 bg-rack-sheet hover:bg-rack-sheet'
               }`}
             />
           ))}
@@ -235,7 +235,7 @@ function TestimonialCarousel() {
 
       {/* Counter */}
       <div className="text-center mt-4">
-        <span className="text-white/40 text-sm">
+        <span className="text-rack-ink/40 text-sm">
           {currentIndex + 1} / {testimonials.length} testimonios
         </span>
       </div>
@@ -247,7 +247,7 @@ export function FeaturedTestimonials() {
   const navigate = useNavigate();
 
   return (
-    <SectionWrapper className="py-20 md:py-32 bg-brand-dark relative overflow-hidden">
+    <SectionWrapper className="py-20 md:py-32 bg-rack-paper relative overflow-hidden">
       {/* Background Effects */}
       <div className="absolute inset-0 pointer-events-none">
         <div className="absolute top-0 left-1/4 w-96 h-96 bg-brand-primary/5 rounded-full blur-[120px]" />
@@ -269,17 +269,17 @@ export function FeaturedTestimonials() {
             viewport={{ once: true }}
             className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-brand-primary/10 border border-brand-primary/30 mb-6"
           >
-            <Quote className="w-4 h-4 text-brand-primary" />
-            <span className="text-brand-primary text-sm font-medium">Testimonios Verificados</span>
+            <Quote className="w-4 h-4 text-rack-brand" />
+            <span className="text-rack-brand text-sm font-medium">Testimonios Verificados</span>
           </motion.div>
 
-          <h2 className="text-4xl md:text-5xl font-display font-bold text-white mb-6">
+          <h2 className="text-4xl md:text-5xl font-display font-bold text-rack-ink mb-6">
             Lo que dicen nuestros{" "}
             <span className="text-transparent bg-clip-text bg-gradient-to-r from-brand-primary to-brand-secondary">
               clientes reales
             </span>
           </h2>
-          <p className="text-xl text-brand-muted max-w-2xl mx-auto">
+          <p className="text-xl text-rack-graph max-w-2xl mx-auto">
             Historias de empresas que confiaron en nosotros para transformar su tecnología
           </p>
         </motion.div>

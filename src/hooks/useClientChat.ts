@@ -1,20 +1,6 @@
 import { useState, useEffect } from 'react';
-import {
-  collection,
-  query,
-  where,
-  orderBy,
-  onSnapshot,
-  addDoc,
-  getDocs,
-  getDoc,
-  doc,
-  updateDoc,
-  Timestamp,
-  serverTimestamp,
-  limit
-} from 'firebase/firestore';
-import { db } from '../lib/firebase';
+import { supabase, ensureAnonSession } from '../lib/supabase';
+import type { MessageRow } from '../types/database';
 
 export interface ChatMessage {
   id: string;
@@ -23,6 +9,16 @@ export interface ChatMessage {
   timestamp: Date;
 }
 
+const CONV_KEY = 'qcrew_conversationId';
+const INFO_KEY = 'qcrew_clientInfo';
+
+const mapRow = (row: MessageRow): ChatMessage => ({
+  id: row.id,
+  text: row.text,
+  sender: row.sender,
+  timestamp: new Date(row.created_at),
+});
+
 export function useClientChat() {
   const [messages, setMessages] = useState<ChatMessage[]>([]);
   const [conversationId, setConversationId] = useState<string | null>(null);
@@ -30,29 +26,37 @@ export function useClientChat() {
   const [initialized, setInitialized] = useState(false);
   const [error, setError] = useState<string | null>(null);
 
-  // Restore session from localStorage and validate it still exists
+  // Restaura la sesion guardada y valida que la conversacion siga existiendo
   useEffect(() => {
     const restore = async () => {
-      const savedId = localStorage.getItem('qcrew_conversationId');
-      const savedInfo = localStorage.getItem('qcrew_clientInfo');
+      const savedId = localStorage.getItem(CONV_KEY);
+      const savedInfo = localStorage.getItem(INFO_KEY);
 
       if (savedId && savedInfo) {
         try {
-          // Verify the conversation still exists in Firestore
-          const convDoc = await getDoc(doc(db, 'conversations', savedId));
-          if (convDoc.exists()) {
-            setConversationId(savedId);
+          // Sin sesion de Supabase, RLS no dejaria leer la conversacion
+          await ensureAnonSession();
+
+          const { data, error: queryError } = await supabase
+            .from('conversations')
+            .select('id')
+            .eq('id', savedId)
+            .maybeSingle();
+
+          if (queryError) throw queryError;
+
+          if (data) {
+            setConversationId(data.id);
             setClientInfo(JSON.parse(savedInfo));
           } else {
-            // Conversation was deleted, clean up
-            localStorage.removeItem('qcrew_conversationId');
-            localStorage.removeItem('qcrew_clientInfo');
+            // La conversacion ya no existe (o no es de este visitante)
+            localStorage.removeItem(CONV_KEY);
+            localStorage.removeItem(INFO_KEY);
           }
         } catch (err) {
           console.error('Error restoring chat session:', err);
-          // Clean up corrupt session
-          localStorage.removeItem('qcrew_conversationId');
-          localStorage.removeItem('qcrew_clientInfo');
+          localStorage.removeItem(CONV_KEY);
+          localStorage.removeItem(INFO_KEY);
         }
       }
       setInitialized(true);
@@ -61,84 +65,102 @@ export function useClientChat() {
     restore();
   }, []);
 
-  // Listen to messages in real time
+  // Mensajes en tiempo real
   useEffect(() => {
     if (!conversationId) return;
 
-    const q = query(
-      collection(db, 'conversations', conversationId, 'messages'),
-      orderBy('timestamp', 'asc')
-    );
+    let active = true;
 
-    const unsubscribe = onSnapshot(q,
-      (snapshot) => {
-        const msgs = snapshot.docs.map((docSnap) => {
-          const data = docSnap.data();
-          return {
-            id: docSnap.id,
-            text: data.text,
-            sender: data.sender,
-            timestamp: data.timestamp?.toDate() || new Date()
-          } as ChatMessage;
-        });
-        setMessages(msgs);
-        setError(null);
-      },
-      (err) => {
-        console.error('Error listening to messages:', err);
+    const fetchMessages = async () => {
+      const { data, error: queryError } = await supabase
+        .from('messages')
+        .select('*')
+        .eq('conversation_id', conversationId)
+        .order('created_at', { ascending: true });
+
+      if (!active) return;
+
+      if (queryError) {
+        console.error('Error listening to messages:', queryError);
         setError('Error al cargar mensajes');
+        return;
       }
-    );
 
-    return unsubscribe;
+      setMessages((data ?? []).map(mapRow));
+      setError(null);
+    };
+
+    fetchMessages();
+
+    const channel = supabase
+      .channel(`client-messages-${conversationId}`)
+      .on(
+        'postgres_changes',
+        {
+          event: '*',
+          schema: 'public',
+          table: 'messages',
+          filter: `conversation_id=eq.${conversationId}`,
+        },
+        () => { fetchMessages(); }
+      )
+      .subscribe();
+
+    return () => {
+      active = false;
+      supabase.removeChannel(channel);
+    };
   }, [conversationId]);
 
   const initConversation = async (name: string, email: string) => {
     try {
       setError(null);
 
-      // Check if a conversation already exists for this email
-      const q = query(
-        collection(db, 'conversations'),
-        where('clientEmail', '==', email),
-        limit(1)
-      );
-      const snapshot = await getDocs(q);
+      const session = await ensureAnonSession();
+      if (!session) throw new Error('No se pudo iniciar la sesion del chat');
+
+      // RLS solo expone las conversaciones de este visitante, asi que esta
+      // busqueda ya esta acotada a el.
+      const { data: existing, error: findError } = await supabase
+        .from('conversations')
+        .select('id')
+        .eq('user_id', session.user.id)
+        .order('updated_at', { ascending: false })
+        .limit(1)
+        .maybeSingle();
+
+      if (findError) throw findError;
 
       let convId: string;
 
-      if (!snapshot.empty) {
-        convId = snapshot.docs[0].id;
-        await updateDoc(doc(db, 'conversations', convId), {
-          clientName: name,
-          status: 'unread',
-          updatedAt: Timestamp.now()
-        });
+      if (existing) {
+        convId = existing.id;
+        const { error: updateError } = await supabase
+          .from('conversations')
+          .update({ client_name: name, client_email: email, status: 'unread' })
+          .eq('id', convId);
+        if (updateError) throw updateError;
       } else {
-        const convDoc = await addDoc(collection(db, 'conversations'), {
-          clientName: name,
-          clientEmail: email,
-          status: 'unread',
-          priority: 'medium',
-          tags: [],
-          notes: '',
-          createdAt: serverTimestamp(),
-          updatedAt: serverTimestamp(),
-          lastMessage: ''
-        });
-        convId = convDoc.id;
+        // El mensaje de bienvenida lo inserta un trigger en la base de datos:
+        // el cliente no puede escribir mensajes con sender='admin'.
+        const { data: created, error: insertError } = await supabase
+          .from('conversations')
+          .insert({
+            user_id: session.user.id,
+            client_name: name,
+            client_email: email,
+            status: 'unread',
+            priority: 'medium',
+          })
+          .select('id')
+          .single();
+
+        if (insertError) throw insertError;
+        convId = created.id;
       }
 
-      // Add welcome message
-      await addDoc(collection(db, 'conversations', convId, 'messages'), {
-        text: `¡Hola ${name}! Soy el asistente de Quantium Crew. ¿En qué puedo ayudarte hoy?`,
-        sender: 'admin',
-        timestamp: serverTimestamp()
-      });
-
-      // Persist session
-      localStorage.setItem('qcrew_conversationId', convId);
-      localStorage.setItem('qcrew_clientInfo', JSON.stringify({ name, email }));
+      localStorage.setItem(CONV_KEY, convId);
+      localStorage.setItem(INFO_KEY, JSON.stringify({ name, email }));
 
       setConversationId(convId);
       setClientInfo({ name, email });
@@ -154,17 +176,14 @@ export function useClientChat() {
     try {
       setError(null);
 
-      await addDoc(collection(db, 'conversations', conversationId, 'messages'), {
+      // Un trigger actualiza last_message / updated_at / status
+      const { error: insertError } = await supabase.from('messages').insert({
+        conversation_id: conversationId,
         text,
         sender: 'client',
-        timestamp: serverTimestamp()
       });
 
-      await updateDoc(doc(db, 'conversations', conversationId), {
-        status: 'unread',
-        lastMessage: text,
-        updatedAt: Timestamp.now()
-      });
+      if (insertError) throw insertError;
     } catch (err) {
       console.error('Error sending message:', err);
       setError('Error al enviar mensaje. Intenta de nuevo.');
@@ -172,8 +191,8 @@ export function useClientChat() {
   };
 
   const resetSession = () => {
-    localStorage.removeItem('qcrew_conversationId');
-    localStorage.removeItem('qcrew_clientInfo');
+    localStorage.removeItem(CONV_KEY);
+    localStorage.removeItem(INFO_KEY);
     setConversationId(null);
     setClientInfo(null);
     setMessages([]);
@@ -189,6 +208,6 @@ export function useClientChat() {
     error,
     initConversation,
     sendMessage,
-    resetSession
+    resetSession,
   };
 }

@@ -12,12 +12,29 @@ export default {
           secondary: "#8B5CF6", // Violet
           text: "#F5F6F7", // Light gray text
           muted: "#E5E7EB", // Muted text
-        }
+        },
+        // Paleta "plano": una elevacion de rack es un dibujo tecnico, y los
+        // dibujos van sobre papel. Gris frio de plotter + tinta azul, no el
+        // crema calido que trae cualquier plantilla.
+        rack: {
+          paper: "#EDEFF2", // fondo: papel de plano
+          sheet: "#FFFFFF", // superficie de panel / tarjeta
+          rule: "#CBD2D9",  // hairlines, rieles, retícula
+          edge: "#9CA9B6",  // bordes en estado activo
+          ink: "#101E2B",   // tinta: texto principal
+          graph: "#66737F", // grafito: texto secundario
+          link: "#0E8A6F",  // LED verde: enlace activo
+          act: "#B26A08",   // LED ambar: actividad
+          brand: "#0A6E96", // cian de marca, profundizado para fondo claro
+        },
       },
       fontFamily: {
         sans: ['"Plus Jakarta Sans"', 'sans-serif'],
         display: ['"Outfit"', 'sans-serif'],
         mono: ['"JetBrains Mono"', 'monospace'],
+        // Grotesca industrial con eje de ancho: da el tono de equipo de red
+        // sin caer en la geometrica redondeada de cualquier landing SaaS.
+        rack: ['"Archivo"', '"Archivo Expanded"', 'sans-serif'],
       },
       container: {
         center: true,
@@ -33,6 +50,7 @@ export default {
         "fade-up": "fade-up 0.5s ease-out",
         "scroll": "scroll 60s linear infinite",
         "scroll-slow": "scroll 40s linear infinite",
+        "blink": "blink 4s ease-in-out infinite",
       },
       keyframes: {
         "accordion-down": {
@@ -54,6 +72,11 @@ export default {
         "scroll": {
           "0%": { transform: "translateX(0)" },
           "100%": { transform: "translateX(-33.333%)" },
+        },
+        // Parpadeo de LED de actividad: irregular a proposito, como el real
+        "blink": {
+          "0%, 45%, 55%, 100%": { opacity: 1 },
+          "48%, 52%": { opacity: 0.25 },
         },
       },
     },

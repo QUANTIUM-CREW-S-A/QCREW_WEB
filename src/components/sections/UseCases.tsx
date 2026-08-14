@@ -29,12 +29,12 @@ export function UseCases() {
   ];
 
   return (
-    <SectionWrapper id="use-cases" className="bg-brand-gray/30">
+    <SectionWrapper id="use-cases" className="bg-rack-sheet">
       <div className="text-center max-w-2xl mx-auto mb-16">
-        <h2 className="text-3xl md:text-5xl font-display font-bold text-white mb-6">
+        <h2 className="text-3xl md:text-5xl font-display font-bold text-rack-ink mb-6">
           {t("useCases.title")}
         </h2>
-        <p className="text-brand-muted text-lg">
+        <p className="text-rack-graph text-lg">
           {t("useCases.subtitle")}
         </p>
       </div>
@@ -48,7 +48,7 @@ export function UseCases() {
             viewport={{ once: true }}
             transition={{ delay: idx * 0.2 }}
           >
-            <Card className="group cursor-pointer overflow-hidden p-0 h-full flex flex-col border-0 bg-brand-dark ring-1 ring-white/10 hover:ring-brand-primary/50 transition-all duration-500">
+            <Card className="group cursor-pointer overflow-hidden p-0 h-full flex flex-col border-0 bg-rack-paper ring-1 ring-white/10 hover:ring-brand-primary/50 transition-all duration-500">
               <div className="relative h-48 overflow-hidden">
                 <div className="absolute inset-0 bg-gradient-to-t from-brand-dark to-transparent z-10"></div>
                 <img 
@@ -59,16 +59,16 @@ export function UseCases() {
               </div>
               
               <div className="p-8 flex flex-col flex-grow relative z-20 -mt-10">
-                <h3 className="text-xl font-bold text-white mb-3 group-hover:text-brand-primary transition-colors">{item.title}</h3>
-                <p className="text-brand-muted mb-6 leading-relaxed flex-grow text-sm">{item.description}</p>
+                <h3 className="text-xl font-bold text-rack-ink mb-3 group-hover:text-rack-brand transition-colors">{item.title}</h3>
+                <p className="text-rack-graph mb-6 leading-relaxed flex-grow text-sm">{item.description}</p>
                 
-                <div className="pt-6 border-t border-white/5">
-                  <p className="text-sm font-bold text-brand-primary flex items-center gap-2 mb-4">
+                <div className="pt-6 border-t border-rack-rule">
+                  <p className="text-sm font-bold text-rack-brand flex items-center gap-2 mb-4">
                     <LineChart className="w-4 h-4" />
                     {item.result}
                   </p>
                   
-                  <div className="flex items-center text-sm font-medium text-white group-hover:translate-x-2 transition-transform duration-300">
+                  <div className="flex items-center text-sm font-medium text-rack-ink group-hover:translate-x-2 transition-transform duration-300">
                     {t("useCases.readCaseStudy")} <ArrowRight className="ml-2 w-4 h-4" />
                   </div>
                 </div>

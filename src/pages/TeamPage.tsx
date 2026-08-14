@@ -267,13 +267,13 @@ function MemberProfile({
                     <div
                       className={`w-8 h-8 rounded-lg bg-gradient-to-br ${member.color} flex items-center justify-center`}
                     >
-                      <BadgeIcon className="w-4 h-4 text-white" />
+                      <BadgeIcon className="w-4 h-4 text-rack-ink" />
                     </div>
-                    <span className="text-white/50 text-xs uppercase tracking-wider font-medium">
+                    <span className="text-rack-ink/50 text-xs uppercase tracking-wider font-medium">
                       {member.badge}
                     </span>
                   </div>
-                  <h3 className="text-2xl md:text-3xl font-display font-bold text-white mb-1">
+                  <h3 className="text-2xl md:text-3xl font-display font-bold text-rack-ink mb-1">
                     {member.name}
                   </h3>
                   <p
@@ -305,7 +305,7 @@ function MemberProfile({
                     whileInView={{ opacity: 1, x: 0 }}
                     viewport={{ once: true }}
                     transition={{ delay: 0.5 + idx * 0.1 }}
-                    className="w-10 h-10 rounded-xl bg-black/60 border border-white/10 flex items-center justify-center text-white/50 hover:text-white hover:bg-white/20 hover:border-white/20 transition-all duration-300"
+                    className="w-10 h-10 rounded-xl bg-black/60 border border-rack-rule flex items-center justify-center text-rack-ink/50 hover:text-rack-ink hover:bg-rack-sheet hover:border-rack-rule transition-all duration-300"
                   >
                     <social.icon className="w-4 h-4" />
                   </motion.a>
@@ -325,7 +325,7 @@ function MemberProfile({
                 className={`w-5 h-5 mb-2 bg-gradient-to-r ${member.color} bg-clip-text`}
                 style={{ color: "transparent", fill: "currentColor" }}
               />
-              <p className="text-white/40 text-sm italic leading-relaxed">
+              <p className="text-rack-ink/40 text-sm italic leading-relaxed">
                 "{member.quote}"
               </p>
             </motion.div>
@@ -352,7 +352,7 @@ function MemberProfile({
                 >
                   {stat.value}
                 </div>
-                <div className="text-white/30 text-[10px] md:text-xs mt-1">
+                <div className="text-rack-ink/30 text-[10px] md:text-xs mt-1">
                   {stat.label}
                 </div>
               </motion.div>
@@ -377,8 +377,8 @@ function MemberProfile({
                 onClick={() => setActiveTab(tab.key)}
                 className={`flex-1 flex items-center justify-center gap-2 px-3 py-2.5 rounded-lg text-sm font-medium transition-all duration-300 ${
                   activeTab === tab.key
-                    ? "bg-white/[0.08] text-white border border-white/[0.1]"
-                    : "text-white/30 hover:text-white/50"
+                    ? "bg-white/[0.08] text-rack-ink border border-white/[0.1]"
+                    : "text-rack-ink/30 hover:text-rack-ink/50"
                 }`}
               >
                 <tab.icon className="w-3.5 h-3.5" />
@@ -397,8 +397,8 @@ function MemberProfile({
           >
             {activeTab === "about" && (
               <div className="space-y-4">
-                <p className="text-white/60 leading-relaxed">{member.bio}</p>
-                <p className="text-white/50 leading-relaxed">
+                <p className="text-rack-ink/60 leading-relaxed">{member.bio}</p>
+                <p className="text-rack-ink/50 leading-relaxed">
                   {member.longBio}
                 </p>
                 <div className="pt-4 flex flex-col sm:flex-row gap-3">
@@ -439,9 +439,9 @@ function MemberProfile({
                     <div
                       className={`w-8 h-8 rounded-lg bg-gradient-to-br ${member.color} flex items-center justify-center flex-shrink-0 opacity-70 group-hover:opacity-100 transition-opacity`}
                     >
-                      <CheckCircle2 className="w-4 h-4 text-white" />
+                      <CheckCircle2 className="w-4 h-4 text-rack-ink" />
                     </div>
-                    <span className="text-white/60 text-sm group-hover:text-white/80 transition-colors">
+                    <span className="text-rack-ink/60 text-sm group-hover:text-rack-ink/80 transition-colors">
                       {skill}
                     </span>
                   </motion.div>
@@ -462,9 +462,9 @@ function MemberProfile({
                     <div
                       className={`w-9 h-9 rounded-lg bg-gradient-to-br ${member.color} flex items-center justify-center flex-shrink-0 opacity-80`}
                     >
-                      <Award className="w-4 h-4 text-white" />
+                      <Award className="w-4 h-4 text-rack-ink" />
                     </div>
-                    <span className="text-white/60 text-sm font-medium group-hover:text-white/80 transition-colors">
+                    <span className="text-rack-ink/60 text-sm font-medium group-hover:text-rack-ink/80 transition-colors">
                       {cert}
                     </span>
                   </motion.div>
@@ -480,7 +480,7 @@ function MemberProfile({
 
 export function TeamPage() {
   return (
-    <div className="min-h-screen bg-brand-dark">
+    <div className="min-h-screen bg-rack-paper">
       {/* Hero Section */}
       <div className="relative overflow-hidden">
         {/* Background grid */}
@@ -498,8 +498,8 @@ export function TeamPage() {
               transition={{ duration: 0.5 }}
               className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-brand-primary/10 border border-brand-primary/20 mb-8"
             >
-              <Users className="w-4 h-4 text-brand-primary" />
-              <span className="text-brand-primary text-sm font-medium">
+              <Users className="w-4 h-4 text-rack-brand" />
+              <span className="text-rack-brand text-sm font-medium">
                 Nuestro Equipo
               </span>
             </motion.div>
@@ -508,7 +508,7 @@ export function TeamPage() {
               initial={{ opacity: 0, y: 30 }}
               animate={{ opacity: 1, y: 0 }}
               transition={{ duration: 0.6, delay: 0.1 }}
-              className="text-4xl md:text-6xl lg:text-7xl font-display font-bold text-white mb-6 leading-tight"
+              className="text-4xl md:text-6xl lg:text-7xl font-display font-bold text-rack-ink mb-6 leading-tight"
             >
               Los expertos detrás de{" "}
               <span className="text-transparent bg-clip-text bg-gradient-to-r from-brand-primary to-brand-secondary">
@@ -520,7 +520,7 @@ export function TeamPage() {
               initial={{ opacity: 0, y: 20 }}
               animate={{ opacity: 1, y: 0 }}
               transition={{ duration: 0.5, delay: 0.2 }}
-              className="text-lg md:text-xl text-white/40 max-w-3xl mx-auto mb-12"
+              className="text-lg md:text-xl text-rack-ink/40 max-w-3xl mx-auto mb-12"
             >
               Un equipo multidisciplinario de profesionales apasionados por la
               tecnología, comprometidos con la excelencia y dedicados a impulsar
@@ -554,10 +554,10 @@ export function TeamPage() {
                     />
                   </div>
                   <div className="text-center">
-                    <p className="text-white/60 text-xs font-medium">
+                    <p className="text-rack-ink/60 text-xs font-medium">
                       {member.name.split(" ")[0]}
                     </p>
-                    <p className="text-white/25 text-[10px]">{member.role}</p>
+                    <p className="text-rack-ink/25 text-[10px]">{member.role}</p>
                   </div>
                 </motion.div>
               ))}
@@ -596,11 +596,11 @@ export function TeamPage() {
                   key={stat.label}
                   className="bg-white/[0.03] border border-white/[0.06] rounded-xl p-4 text-center group hover:border-white/[0.12] transition-colors"
                 >
-                  <stat.icon className="w-4 h-4 text-brand-primary mx-auto mb-2 group-hover:scale-110 transition-transform" />
-                  <div className="text-xl md:text-2xl font-bold text-white mb-0.5">
+                  <stat.icon className="w-4 h-4 text-rack-brand mx-auto mb-2 group-hover:scale-110 transition-transform" />
+                  <div className="text-xl md:text-2xl font-bold text-rack-ink mb-0.5">
                     {stat.value}
                   </div>
-                  <div className="text-white/25 text-[10px] md:text-xs">
+                  <div className="text-rack-ink/25 text-[10px] md:text-xs">
                     {stat.label}
                   </div>
                 </div>
@@ -638,13 +638,13 @@ export function TeamPage() {
             <span className="inline-block px-4 py-1.5 rounded-full bg-brand-secondary/10 border border-brand-secondary/20 text-brand-secondary text-sm font-medium mb-4">
               Cultura
             </span>
-            <h2 className="text-3xl md:text-5xl font-display font-bold text-white mb-4">
+            <h2 className="text-3xl md:text-5xl font-display font-bold text-rack-ink mb-4">
               Lo que nos{" "}
               <span className="text-transparent bg-clip-text bg-gradient-to-r from-brand-primary to-brand-secondary">
                 define
               </span>
             </h2>
-            <p className="text-white/40 max-w-2xl mx-auto text-lg">
+            <p className="text-rack-ink/40 max-w-2xl mx-auto text-lg">
               Nuestros valores son la base de todo lo que hacemos y cómo lo
               hacemos
             </p>
@@ -667,12 +667,12 @@ export function TeamPage() {
                   <div
                     className={`w-12 h-12 rounded-xl bg-gradient-to-br ${value.color} flex items-center justify-center mb-4 opacity-80 group-hover:opacity-100 group-hover:scale-110 transition-all duration-300`}
                   >
-                    <value.icon className="w-6 h-6 text-white" />
+                    <value.icon className="w-6 h-6 text-rack-ink" />
                   </div>
-                  <h3 className="text-lg font-bold text-white mb-2">
+                  <h3 className="text-lg font-bold text-rack-ink mb-2">
                     {value.title}
                   </h3>
-                  <p className="text-white/40 text-sm leading-relaxed">
+                  <p className="text-rack-ink/40 text-sm leading-relaxed">
                     {value.description}
                   </p>
                 </div>
@@ -695,15 +695,15 @@ export function TeamPage() {
             <div className="absolute bottom-0 left-0 w-48 h-48 bg-[radial-gradient(circle,rgba(139,92,246,0.06)_0%,transparent_70%)] rounded-full pointer-events-none" />
 
             <div className="relative z-10">
-              <Quote className="w-10 h-10 text-brand-primary/30 mx-auto mb-6" />
-              <p className="text-xl md:text-2xl text-white/70 leading-relaxed mb-6 font-light italic">
+              <Quote className="w-10 h-10 text-rack-brand/30 mx-auto mb-6" />
+              <p className="text-xl md:text-2xl text-rack-ink/70 leading-relaxed mb-6 font-light italic">
                 "Transformar la forma en que las empresas abordan la tecnología,
                 creando soluciones que no solo resuelvan problemas actuales, sino
                 que preparen a las organizaciones para el futuro digital."
               </p>
               <div className="flex items-center justify-center gap-3">
                 <div className="h-px w-8 bg-gradient-to-r from-transparent to-brand-primary/40" />
-                <span className="text-brand-primary text-sm font-medium">
+                <span className="text-rack-brand text-sm font-medium">
                   Nuestra Misión — Quantium Crew
                 </span>
                 <div className="h-px w-8 bg-gradient-to-l from-transparent to-brand-primary/40" />
@@ -722,14 +722,14 @@ export function TeamPage() {
             whileInView={{ opacity: 1, y: 0 }}
             viewport={{ once: true }}
           >
-            <h2 className="text-3xl md:text-5xl font-display font-bold text-white mb-6">
+            <h2 className="text-3xl md:text-5xl font-display font-bold text-rack-ink mb-6">
               ¿Listo para trabajar con{" "}
               <span className="text-transparent bg-clip-text bg-gradient-to-r from-brand-primary to-brand-secondary">
                 nosotros
               </span>
               ?
             </h2>
-            <p className="text-white/40 text-lg max-w-2xl mx-auto mb-10">
+            <p className="text-rack-ink/40 text-lg max-w-2xl mx-auto mb-10">
               Con nuestro equipo de expertos, tu empresa estará en las mejores
               manos. Conversemos sobre cómo podemos impulsar tu negocio.
             </p>

@@ -27,7 +27,7 @@ export function Footer() {
   };
 
   return (
-    <footer className="relative bg-brand-gray overflow-hidden">
+    <footer className="relative bg-rack-sheet overflow-hidden">
       {/* Top gradient line */}
       <div className="absolute top-0 left-0 right-0 h-px bg-gradient-to-r from-transparent via-brand-primary/50 to-transparent" />
 
@@ -35,14 +35,14 @@ export function Footer() {
       <div className="absolute bottom-0 left-1/2 -translate-x-1/2 w-[600px] h-[400px] bg-[radial-gradient(circle,rgba(0,212,255,0.04)_0%,transparent_60%)] rounded-full pointer-events-none" />
 
       {/* CTA Banner */}
-      <div className="relative border-b border-white/5">
+      <div className="relative border-b border-rack-rule">
         <div className="container mx-auto px-4 md:px-6 py-16">
           <motion.div
             initial={{ opacity: 0, y: 20 }}
             whileInView={{ opacity: 1, y: 0 }}
             viewport={{ once: true }}
             transition={{ duration: 0.6 }}
-            className="relative rounded-2xl border border-white/10 bg-gradient-to-br from-white/[0.04] to-transparent p-8 md:p-12 overflow-hidden"
+            className="relative rounded-2xl border border-rack-rule bg-gradient-to-br from-white/[0.04] to-transparent p-8 md:p-12 overflow-hidden"
           >
             {/* Banner glow */}
             <div className="absolute top-0 right-0 w-64 h-64 bg-[radial-gradient(circle,rgba(0,212,255,0.08)_0%,transparent_70%)] rounded-full pointer-events-none" />
@@ -50,10 +50,10 @@ export function Footer() {
 
             <div className="relative flex flex-col lg:flex-row items-center justify-between gap-8">
               <div className="text-center lg:text-left">
-                <h3 className="text-2xl md:text-3xl font-display font-bold text-white mb-3">
+                <h3 className="text-2xl md:text-3xl font-display font-bold text-rack-ink mb-3">
                   {t("footer.cta.title", { defaultValue: "¿Listo para transformar tu tecnología?" })}
                 </h3>
-                <p className="text-brand-muted max-w-lg">
+                <p className="text-rack-graph max-w-lg">
                   {t("footer.cta.description", { defaultValue: "Únete a las empresas que ya confían en Quantium Crew para impulsar su infraestructura tecnológica." })}
                 </p>
               </div>
@@ -110,11 +110,11 @@ export function Footer() {
                   />
                 </svg>
               </div>
-              <span className="text-xl font-display font-bold tracking-tight text-white">
+              <span className="text-xl font-display font-bold tracking-tight text-rack-ink">
                 Quantium<span className="text-transparent bg-clip-text bg-gradient-to-r from-brand-primary to-brand-secondary">Crew</span>
               </span>
             </Link>
-            <p className="text-white/50 leading-relaxed text-sm max-w-xs">
+            <p className="text-rack-ink/50 leading-relaxed text-sm max-w-xs">
               {t("footer.tagline")}
             </p>
 
@@ -125,7 +125,7 @@ export function Footer() {
                   key={social.label}
                   href={social.href}
                   aria-label={social.label}
-                  className="w-10 h-10 rounded-xl bg-white/[0.04] border border-white/[0.06] flex items-center justify-center text-white/40 hover:text-brand-primary hover:bg-brand-primary/10 hover:border-brand-primary/20 transition-all duration-300"
+                  className="w-10 h-10 rounded-xl bg-white/[0.04] border border-white/[0.06] flex items-center justify-center text-rack-ink/40 hover:text-rack-brand hover:bg-brand-primary/10 hover:border-brand-primary/20 transition-all duration-300"
                 >
                   <social.icon className="w-4 h-4" />
                 </a>
@@ -134,7 +134,7 @@ export function Footer() {
 
             {/* Newsletter */}
             <div>
-              <p className="text-white/60 text-sm font-medium mb-3">
+              <p className="text-rack-ink/60 text-sm font-medium mb-3">
                 {t("footer.newsletter.title", { defaultValue: "Recibe novedades" })}
               </p>
               <form onSubmit={handleNewsletter} className="flex gap-2">
@@ -143,11 +143,11 @@ export function Footer() {
                   placeholder={t("footer.newsletter.placeholder", { defaultValue: "tu@email.com" })}
                   value={email}
                   onChange={(e) => setEmail(e.target.value)}
-                  className="flex-1 bg-white/[0.04] border border-white/[0.08] rounded-xl px-4 py-2.5 text-white text-sm placeholder:text-white/20 focus:outline-none focus:border-brand-primary/40 transition-colors"
+                  className="flex-1 bg-white/[0.04] border border-white/[0.08] rounded-xl px-4 py-2.5 text-rack-ink text-sm placeholder:text-rack-ink/20 focus:outline-none focus:border-brand-primary/40 transition-colors"
                 />
                 <button
                   type="submit"
-                  className="px-4 py-2.5 bg-brand-primary/15 text-brand-primary rounded-xl text-sm font-medium hover:bg-brand-primary/25 transition-colors border border-brand-primary/20"
+                  className="px-4 py-2.5 bg-brand-primary/15 text-rack-brand rounded-xl text-sm font-medium hover:bg-brand-primary/25 transition-colors border border-brand-primary/20"
                 >
                   <ArrowRight className="w-4 h-4" />
                 </button>
@@ -163,7 +163,7 @@ export function Footer() {
             viewport={{ once: true }}
             transition={{ duration: 0.5, delay: 0.1 }}
           >
-            <h4 className="font-display font-bold text-white text-sm mb-5 uppercase tracking-wider">
+            <h4 className="font-display font-bold text-rack-ink text-sm mb-5 uppercase tracking-wider">
               {t("footer.services")}
             </h4>
             <ul className="space-y-3.5">
@@ -176,7 +176,7 @@ export function Footer() {
                 <li key={link.label}>
                   <Link
                     to={link.href}
-                    className="text-white/40 hover:text-brand-primary text-sm transition-colors duration-200 inline-flex items-center gap-1 group"
+                    className="text-rack-ink/40 hover:text-rack-brand text-sm transition-colors duration-200 inline-flex items-center gap-1 group"
                   >
                     <span className="w-0 group-hover:w-2 h-px bg-brand-primary transition-all duration-200" />
                     {link.label}
@@ -194,7 +194,7 @@ export function Footer() {
             viewport={{ once: true }}
             transition={{ duration: 0.5, delay: 0.2 }}
           >
-            <h4 className="font-display font-bold text-white text-sm mb-5 uppercase tracking-wider">
+            <h4 className="font-display font-bold text-rack-ink text-sm mb-5 uppercase tracking-wider">
               {t("footer.company")}
             </h4>
             <ul className="space-y-3.5">
@@ -208,7 +208,7 @@ export function Footer() {
                 <li key={link.label}>
                   <Link
                     to={link.href}
-                    className="text-white/40 hover:text-brand-primary text-sm transition-colors duration-200 inline-flex items-center gap-1 group"
+                    className="text-rack-ink/40 hover:text-rack-brand text-sm transition-colors duration-200 inline-flex items-center gap-1 group"
                   >
                     <span className="w-0 group-hover:w-2 h-px bg-brand-primary transition-all duration-200" />
                     {link.label}
@@ -226,40 +226,40 @@ export function Footer() {
             viewport={{ once: true }}
             transition={{ duration: 0.5, delay: 0.3 }}
           >
-            <h4 className="font-display font-bold text-white text-sm mb-5 uppercase tracking-wider">
+            <h4 className="font-display font-bold text-rack-ink text-sm mb-5 uppercase tracking-wider">
               {t("footer.contact")}
             </h4>
             <ul className="space-y-4">
               <li>
                 <a href={`mailto:${t("contact.info.email")}`} className="flex items-start gap-3 group">
                   <div className="w-9 h-9 rounded-lg bg-brand-primary/10 border border-brand-primary/20 flex items-center justify-center flex-shrink-0 group-hover:bg-brand-primary/20 transition-colors">
-                    <Mail className="w-4 h-4 text-brand-primary" />
+                    <Mail className="w-4 h-4 text-rack-brand" />
                   </div>
                   <div>
-                    <p className="text-white/30 text-xs mb-0.5">Email</p>
-                    <p className="text-white/60 text-sm group-hover:text-brand-primary transition-colors">{t("contact.info.email")}</p>
+                    <p className="text-rack-ink/30 text-xs mb-0.5">Email</p>
+                    <p className="text-rack-ink/60 text-sm group-hover:text-rack-brand transition-colors">{t("contact.info.email")}</p>
                   </div>
                 </a>
               </li>
               <li>
                 <a href="tel:+15551234567" className="flex items-start gap-3 group">
                   <div className="w-9 h-9 rounded-lg bg-brand-primary/10 border border-brand-primary/20 flex items-center justify-center flex-shrink-0 group-hover:bg-brand-primary/20 transition-colors">
-                    <Phone className="w-4 h-4 text-brand-primary" />
+                    <Phone className="w-4 h-4 text-rack-brand" />
                   </div>
                   <div>
-                    <p className="text-white/30 text-xs mb-0.5">{t("footer.contactLabels.phone", { defaultValue: "Teléfono" })}</p>
-                    <p className="text-white/60 text-sm group-hover:text-brand-primary transition-colors">+1 (555) 123-4567</p>
+                    <p className="text-rack-ink/30 text-xs mb-0.5">{t("footer.contactLabels.phone", { defaultValue: "Teléfono" })}</p>
+                    <p className="text-rack-ink/60 text-sm group-hover:text-rack-brand transition-colors">+1 (555) 123-4567</p>
                   </div>
                 </a>
               </li>
               <li>
                 <div className="flex items-start gap-3">
                   <div className="w-9 h-9 rounded-lg bg-brand-primary/10 border border-brand-primary/20 flex items-center justify-center flex-shrink-0">
-                    <MapPin className="w-4 h-4 text-brand-primary" />
+                    <MapPin className="w-4 h-4 text-rack-brand" />
                   </div>
                   <div>
-                    <p className="text-white/30 text-xs mb-0.5">{t("footer.contactLabels.address", { defaultValue: "Ubicación" })}</p>
-                    <p className="text-white/60 text-sm">123 Tech Boulevard,<br />Innovation District, CA 94043</p>
+                    <p className="text-rack-ink/30 text-xs mb-0.5">{t("footer.contactLabels.address", { defaultValue: "Ubicación" })}</p>
+                    <p className="text-rack-ink/60 text-sm">123 Tech Boulevard,<br />Innovation District, CA 94043</p>
                   </div>
                 </div>
               </li>
@@ -269,7 +269,7 @@ export function Footer() {
 
         {/* Bottom bar */}
         <div className="relative border-t border-white/[0.06] pt-8 flex flex-col md:flex-row items-center justify-between gap-4">
-          <p className="text-xs text-white/30 flex items-center gap-1.5">
+          <p className="text-xs text-rack-ink/30 flex items-center gap-1.5">
             © {new Date().getFullYear()} QuantiumCrew. {t("footer.rights")}
             <span className="hidden sm:inline-flex items-center gap-1 ml-1">
               — Hecho con <Heart className="w-3 h-3 text-red-400 fill-red-400 inline" /> en Panamá
@@ -279,7 +279,7 @@ export function Footer() {
           {/* Back to top */}
           <button
             onClick={scrollToTop}
-            className="w-10 h-10 rounded-xl bg-white/[0.04] border border-white/[0.06] flex items-center justify-center text-white/30 hover:text-brand-primary hover:bg-brand-primary/10 hover:border-brand-primary/20 transition-all duration-300 group"
+            className="w-10 h-10 rounded-xl bg-white/[0.04] border border-white/[0.06] flex items-center justify-center text-rack-ink/30 hover:text-rack-brand hover:bg-brand-primary/10 hover:border-brand-primary/20 transition-all duration-300 group"
             aria-label="Volver arriba"
           >
             <ArrowUp className="w-4 h-4 group-hover:-translate-y-0.5 transition-transform" />

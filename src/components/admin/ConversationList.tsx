@@ -23,11 +23,14 @@ const PRIORITY_CONFIG: Record<Priority, { label: string; color: string; dot: str
   urgent: { label: 'Urgente', color: 'text-red-400', dot: 'bg-red-400' },
 };
 
+type SortMode = 'recent' | 'priority' | 'unread';
+
 export function ConversationList({ conversations, selectedId, onSelect }: ConversationListProps) {
   const [searchTerm, setSearchTerm] = useState('');
   const [filterStatus, setFilterStatus] = useState<'all' | ConversationStatus>('all');
   const [filterPriority, setFilterPriority] = useState<'all' | Priority>('all');
   const [showPriorityFilter, setShowPriorityFilter] = useState(false);
+  const [sortMode, setSortMode] = useState<SortMode>('recent');
 
   const filtered = conversations.filter(conv => {
     const matchesSearch = conv.clientName.toLowerCase().includes(searchTerm.toLowerCase()) ||
@@ -36,6 +39,21 @@ export function ConversationList({ conversations, selectedId, onSelect }: Conver
     const matchesStatus = filterStatus === 'all' || conv.status === filterStatus;
     const matchesPriority = filterPriority === 'all' || conv.priority === filterPriority;
     return matchesSearch && matchesStatus && matchesPriority;
+  });
+
+  const sortedConversations = [...filtered].sort((a, b) => {
+    if (sortMode === 'priority') {
+      const priorityValue: Record<Priority, number> = { low: 1, medium: 2, high: 3, urgent: 4 };
+      const diff = priorityValue[b.priority] - priorityValue[a.priority];
+      if (diff !== 0) return diff;
+    }
+
+    if (sortMode === 'unread') {
+      const unreadDiff = Number(b.status === 'unread') - Number(a.status === 'unread');
+      if (unreadDiff !== 0) return unreadDiff;
+    }
+
+    return b.updatedAt.getTime() - a.updatedAt.getTime();
   });
 
   const statusCounts = {
@@ -102,8 +120,33 @@ export function ConversationList({ conversations, selectedId, onSelect }: Conver
           ))}
         </div>
 
-        {/* Priority filter */}
-        <div className="relative">
+        <div className="flex items-center justify-between gap-2 pt-2">
+          <div className="flex items-center gap-1.5">
+            <span className="text-[10px] uppercase tracking-[0.2em] text-white/30">Orden</span>
+            <select
+              value={sortMode}
+              onChange={(e) => setSortMode(e.target.value as SortMode)}
+              className="bg-white/[0.04] border border-white/10 rounded-md px-2 py-1 text-[11px] text-white/70 focus:outline-none"
+            >
+              <option value="recent">Recientes</option>
+              <option value="priority">Prioridad</option>
+              <option value="unread">Sin leer</option>
+            </select>
+          </div>
+
+          <button
+            onClick={() => {
+              setSearchTerm('');
+              setFilterStatus('all');
+              setFilterPriority('all');
+            }}
+            className="text-[11px] text-white/40 hover:text-white/70 transition-colors"
+          >
+            Limpiar
+          </button>
+        </div>
+
+        <div className="relative mt-3">
           <button
             onClick={() => setShowPriorityFilter(!showPriorityFilter)}
             className="flex items-center gap-1.5 text-xs text-white/50 hover:text-white/70 transition-colors"
@@ -134,10 +177,9 @@ export function ConversationList({ conversations, selectedId, onSelect }: Conver
         </div>
       </div>
 
-      {/* Conversation list */}
       <div className="flex-1 space-y-1.5 overflow-y-auto pr-1">
         <AnimatePresence>
-          {filtered.map((conv) => (
+          {sortedConversations.map((conv) => (
             <motion.button
               key={conv.id}
               initial={{ opacity: 0, y: 10 }}

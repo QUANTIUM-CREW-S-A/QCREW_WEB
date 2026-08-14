@@ -11,9 +11,9 @@ const partners = [
 
 export function TrustBar() {
   return (
-    <div className="w-full py-8 border-t border-white/5 bg-brand-dark/80">
+    <div className="w-full py-8 border-t border-rack-rule bg-rack-paper/90">
       <div className="container mx-auto px-4">
-        <p className="text-center text-sm text-brand-muted mb-6 font-medium tracking-wider uppercase">
+        <p className="text-center text-sm text-rack-graph mb-6 font-medium tracking-wider uppercase">
           Tecnologías que impulsan nuestras soluciones
         </p>
         <div className="flex flex-wrap justify-center items-center gap-8 md:gap-16 grayscale opacity-60 hover:grayscale-0 hover:opacity-100 transition-all duration-500">

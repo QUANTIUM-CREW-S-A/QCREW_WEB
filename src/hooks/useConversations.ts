@@ -1,20 +1,6 @@
-import { useState, useEffect, useRef } from 'react';
-import {
-  collection,
-  query,
-  orderBy,
-  onSnapshot,
-  doc,
-  updateDoc,
-  deleteDoc,
-  addDoc,
-  getDocs,
-  Timestamp,
-  serverTimestamp,
-  arrayUnion,
-  arrayRemove
-} from 'firebase/firestore';
-import { db } from '../lib/firebase';
+import { useState, useEffect, useCallback } from 'react';
+import { supabase } from '../lib/supabase';
+import type { ConversationRow, MessageRow } from '../types/database';
 
 export type Priority = 'low' | 'medium' | 'high' | 'urgent';
 export type ConversationStatus = 'unread' | 'read' | 'responded';
@@ -47,114 +33,157 @@ export interface ConversationStats {
   avgResponseMinutes: number;
 }
 
+const mapConversation = (row: ConversationRow): Conversation => ({
+  id: row.id,
+  clientName: row.client_name || '',
+  clientEmail: row.client_email || '',
+  clientPhone: row.client_phone || '',
+  status: row.status || 'unread',
+  priority: row.priority || 'medium',
+  tags: row.tags || [],
+  notes: row.notes || '',
+  createdAt: new Date(row.created_at),
+  updatedAt: new Date(row.updated_at),
+  lastMessage: row.last_message || '',
+});
+
+const mapMessage = (row: MessageRow): Message => ({
+  id: row.id,
+  text: row.text,
+  sender: row.sender,
+  timestamp: new Date(row.created_at),
+});
+
 export function useConversations() {
   const [conversations, setConversations] = useState<Conversation[]>([]);
   const [loading, setLoading] = useState(true);
 
-  useEffect(() => {
-    const q = query(
-      collection(db, 'conversations'),
-      orderBy('updatedAt', 'desc')
-    );
+  const fetchConversations = useCallback(async () => {
+    const { data, error } = await supabase
+      .from('conversations')
+      .select('*')
+      .order('updated_at', { ascending: false });
 
-    const unsubscribe = onSnapshot(q, (snapshot) => {
-      const convos = snapshot.docs.map((d) => {
-        const data = d.data();
-        return {
-          id: d.id,
-          clientName: data.clientName || '',
-          clientEmail: data.clientEmail || '',
-          clientPhone: data.clientPhone || '',
-          status: data.status || 'unread',
-          priority: data.priority || 'medium',
-          tags: data.tags || [],
-          notes: data.notes || '',
-          createdAt: data.createdAt?.toDate() || new Date(),
-          updatedAt: data.updatedAt?.toDate() || new Date(),
-          lastMessage: data.lastMessage || ''
-        } as Conversation;
-      });
-      setConversations(convos);
+    if (error) {
+      console.error('[useConversations] Error al cargar:', error);
       setLoading(false);
-    });
+      return;
+    }
 
-    return unsubscribe;
+    setConversations((data ?? []).map(mapConversation));
+    setLoading(false);
   }, []);
+
+  useEffect(() => {
+    fetchConversations();
+
+    const channel = supabase
+      .channel('conversations-admin')
+      .on(
+        'postgres_changes',
+        { event: '*', schema: 'public', table: 'conversations' },
+        () => { fetchConversations(); }
+      )
+      .subscribe();
+
+    return () => {
+      supabase.removeChannel(channel);
+    };
+  }, [fetchConversations]);
 
   const getStats = (): ConversationStats => {
     const now = new Date();
     const todayStart = new Date(now.getFullYear(), now.getMonth(), now.getDate());
 
-    const respondedToday = conversations.filter(
-      c => c.status === 'responded' && c.updatedAt >= todayStart
-    ).length;
+    const responded = conversations.filter((c) => c.status === 'responded');
+    const respondedToday = responded.filter((c) => c.updatedAt >= todayStart).length;
 
     return {
       total: conversations.length,
-      unread: conversations.filter(c => c.status === 'unread').length,
+      unread: conversations.filter((c) => c.status === 'unread').length,
       respondedToday,
-      avgResponseMinutes: conversations.length > 0
+      avgResponseMinutes: responded.length > 0
         ? Math.round(
-            conversations
-              .filter(c => c.status === 'responded')
-              .reduce((sum, c) => {
-                const diff = c.updatedAt.getTime() - c.createdAt.getTime();
-                return sum + diff / 60000;
-              }, 0) / Math.max(conversations.filter(c => c.status === 'responded').length, 1)
+            responded.reduce(
+              (sum, c) => sum + (c.updatedAt.getTime() - c.createdAt.getTime()) / 60000,
+              0
+            ) / responded.length
           )
-        : 0
+        : 0,
     };
   };
 
   const markAsRead = async (conversationId: string) => {
-    const ref = doc(db, 'conversations', conversationId);
-    await updateDoc(ref, { status: 'read' });
+    const { error } = await supabase
+      .from('conversations')
+      .update({ status: 'read' })
+      .eq('id', conversationId);
+    if (error) throw error;
+  };
+
+  const markAllAsRead = async () => {
+    const { error } = await supabase
+      .from('conversations')
+      .update({ status: 'read' })
+      .eq('status', 'unread');
+    if (error) throw error;
   };
 
   const deleteConversation = async (conversationId: string) => {
-    const messagesRef = collection(db, 'conversations', conversationId, 'messages');
-    const messagesSnapshot = await getDocs(messagesRef);
-    const deletePromises = messagesSnapshot.docs.map((msgDoc) =>
-      deleteDoc(msgDoc.ref)
-    );
-    await Promise.all(deletePromises);
-    await deleteDoc(doc(db, 'conversations', conversationId));
+    // Los mensajes se borran en cascada (FK on delete cascade)
+    const { error } = await supabase
+      .from('conversations')
+      .delete()
+      .eq('id', conversationId);
+    if (error) throw error;
   };
 
   const sendResponse = async (conversationId: string, text: string) => {
-    const messagesRef = collection(db, 'conversations', conversationId, 'messages');
-    await addDoc(messagesRef, {
+    // Un trigger actualiza last_message / updated_at / status='responded'
+    const { error } = await supabase.from('messages').insert({
+      conversation_id: conversationId,
       text,
       sender: 'admin',
-      timestamp: serverTimestamp()
     });
-
-    const convRef = doc(db, 'conversations', conversationId);
-    await updateDoc(convRef, {
-      status: 'responded',
-      lastMessage: text,
-      updatedAt: Timestamp.now()
-    });
+    if (error) throw error;
   };
 
   const setPriority = async (conversationId: string, priority: Priority) => {
-    const ref = doc(db, 'conversations', conversationId);
-    await updateDoc(ref, { priority });
+    const { error } = await supabase
+      .from('conversations')
+      .update({ priority })
+      .eq('id', conversationId);
+    if (error) throw error;
   };
 
   const addTag = async (conversationId: string, tag: string) => {
-    const ref = doc(db, 'conversations', conversationId);
-    await updateDoc(ref, { tags: arrayUnion(tag) });
+    const current = conversations.find((c) => c.id === conversationId);
+    if (!current || current.tags.includes(tag)) return;
+
+    const { error } = await supabase
+      .from('conversations')
+      .update({ tags: [...current.tags, tag] })
+      .eq('id', conversationId);
+    if (error) throw error;
   };
 
   const removeTag = async (conversationId: string, tag: string) => {
-    const ref = doc(db, 'conversations', conversationId);
-    await updateDoc(ref, { tags: arrayRemove(tag) });
+    const current = conversations.find((c) => c.id === conversationId);
+    if (!current) return;
+
+    const { error } = await supabase
+      .from('conversations')
+      .update({ tags: current.tags.filter((t) => t !== tag) })
+      .eq('id', conversationId);
+    if (error) throw error;
   };
 
   const updateNotes = async (conversationId: string, notes: string) => {
-    const ref = doc(db, 'conversations', conversationId);
-    await updateDoc(ref, { notes });
+    const { error } = await supabase
+      .from('conversations')
+      .update({ notes })
+      .eq('id', conversationId);
+    if (error) throw error;
   };
 
   return {
@@ -162,57 +191,69 @@ export function useConversations() {
     loading,
     getStats,
     markAsRead,
+    markAllAsRead,
     deleteConversation,
     sendResponse,
     setPriority,
     addTag,
     removeTag,
-    updateNotes
+    updateNotes,
   };
 }
 
 export function useConversationMessages(conversationId: string | null) {
   const [messages, setMessages] = useState<Message[]>([]);
   const [loading, setLoading] = useState(false);
-  const activeIdRef = useRef<string | null>(null);
 
   useEffect(() => {
-    activeIdRef.current = conversationId;
-
     if (!conversationId) {
       setMessages([]);
       return;
     }
 
+    let active = true;
     setLoading(true);
-    const q = query(
-      collection(db, 'conversations', conversationId, 'messages'),
-      orderBy('timestamp', 'asc')
-    );
 
-    const unsubscribe = onSnapshot(q, (snapshot) => {
-      // Guard against stale subscription
-      if (activeIdRef.current !== conversationId) return;
+    const fetchMessages = async () => {
+      const { data, error } = await supabase
+        .from('messages')
+        .select('*')
+        .eq('conversation_id', conversationId)
+        .order('created_at', { ascending: true });
 
-      // Deduplicate by ID to prevent double-render from serverTimestamp
-      const seen = new Set<string>();
-      const msgs: Message[] = [];
-      for (const d of snapshot.docs) {
-        if (seen.has(d.id)) continue;
-        seen.add(d.id);
-        const data = d.data();
-        msgs.push({
-          id: d.id,
-          text: data.text,
-          sender: data.sender,
-          timestamp: data.timestamp?.toDate() || new Date()
-        });
+      // Evita que una respuesta vieja pise la conversacion actual
+      if (!active) return;
+
+      if (error) {
+        console.error('[useConversationMessages] Error al cargar:', error);
+        setLoading(false);
+        return;
       }
-      setMessages(msgs);
-      setLoading(false);
-    });
 
-    return unsubscribe;
+      setMessages((data ?? []).map(mapMessage));
+      setLoading(false);
+    };
+
+    fetchMessages();
+
+    const channel = supabase
+      .channel(`admin-messages-${conversationId}`)
+      .on(
+        'postgres_changes',
+        {
+          event: '*',
+          schema: 'public',
+          table: 'messages',
+          filter: `conversation_id=eq.${conversationId}`,
+        },
+        () => { fetchMessages(); }
+      )
+      .subscribe();
+
+    return () => {
+      active = false;
+      supabase.removeChannel(channel);
+    };
   }, [conversationId]);
 
   return { messages, loading };

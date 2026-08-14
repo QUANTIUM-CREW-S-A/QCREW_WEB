@@ -86,13 +86,13 @@ export function Process() {
           <span className="inline-block px-4 py-1.5 rounded-full bg-brand-secondary/10 border border-brand-secondary/30 text-brand-secondary text-sm font-medium mb-4">
             Metodología
           </span>
-          <h2 className="text-3xl md:text-5xl font-display font-bold text-white mb-4">
+          <h2 className="text-3xl md:text-5xl font-display font-bold text-rack-ink mb-4">
             Cómo{' '}
             <span className="text-transparent bg-clip-text bg-gradient-to-r from-brand-primary to-brand-secondary">
               Trabajamos
             </span>
           </h2>
-          <p className="text-brand-muted max-w-2xl mx-auto text-lg">
+          <p className="text-rack-graph max-w-2xl mx-auto text-lg">
             Un proceso de 6 fases diseñado para garantizar resultados excepcionales, comunicación transparente y cero sorpresas
           </p>
         </motion.div>
@@ -127,8 +127,8 @@ export function Process() {
                     transition={{ duration: 0.3 }}
                     className={`w-10 h-10 rounded-full border-2 flex items-center justify-center mb-3 transition-colors duration-300 ${
                       index <= activeStep
-                        ? 'bg-gradient-to-br from-brand-primary to-brand-secondary text-white shadow-[0_0_20px_rgba(0,212,255,0.3)]'
-                        : 'bg-brand-dark text-white/30'
+                        ? 'bg-gradient-to-br from-brand-primary to-brand-secondary text-rack-ink shadow-[0_0_20px_rgba(0,212,255,0.3)]'
+                        : 'bg-rack-paper text-rack-ink/30'
                     }`}
                   >
                     {index < activeStep ? (
@@ -140,7 +140,7 @@ export function Process() {
                   {/* Label */}
                   <span
                     className={`text-xs font-medium transition-colors duration-300 ${
-                      activeStep === index ? 'text-brand-primary' : 'text-white/30 group-hover:text-white/50'
+                      activeStep === index ? 'text-rack-brand' : 'text-rack-ink/30 group-hover:text-rack-ink/50'
                     }`}
                   >
                     {step.title}
@@ -165,23 +165,23 @@ export function Process() {
                   <div className={`w-14 h-14 rounded-2xl bg-gradient-to-br ${steps[activeStep].color} flex items-center justify-center shadow-lg`}>
                     {(() => {
                       const Icon = steps[activeStep].icon;
-                      return <Icon className="w-7 h-7 text-white" />;
+                      return <Icon className="w-7 h-7 text-rack-ink" />;
                     })()}
                   </div>
                   <div>
-                    <h3 className="text-2xl font-bold text-white">{steps[activeStep].title}</h3>
-                    <p className="text-white/40 text-sm">{steps[activeStep].subtitle}</p>
+                    <h3 className="text-2xl font-bold text-rack-ink">{steps[activeStep].title}</h3>
+                    <p className="text-rack-ink/40 text-sm">{steps[activeStep].subtitle}</p>
                   </div>
                 </div>
 
-                <p className="text-white/60 leading-relaxed text-base mb-8">
+                <p className="text-rack-ink/60 leading-relaxed text-base mb-8">
                   {steps[activeStep].description}
                 </p>
 
                 <div className="flex items-center gap-2 px-4 py-2.5 bg-white/[0.03] rounded-xl border border-white/[0.06] inline-flex">
                   <div className="w-2 h-2 rounded-full bg-brand-primary animate-pulse" />
-                  <span className="text-white/40 text-sm">Duración estimada:</span>
-                  <span className="text-brand-primary text-sm font-medium">{steps[activeStep].duration}</span>
+                  <span className="text-rack-ink/40 text-sm">Duración estimada:</span>
+                  <span className="text-rack-brand text-sm font-medium">{steps[activeStep].duration}</span>
                 </div>
               </div>
             </div>
@@ -189,7 +189,7 @@ export function Process() {
             {/* Right: Deliverables */}
             <div className="col-span-5">
               <div className="bg-white/[0.02] border border-white/[0.06] rounded-2xl p-8 h-full">
-                <h4 className="text-white font-semibold mb-6 text-sm uppercase tracking-wider">
+                <h4 className="text-rack-ink font-semibold mb-6 text-sm uppercase tracking-wider">
                   Entregables de esta fase
                 </h4>
                 <div className="space-y-4">
@@ -202,9 +202,9 @@ export function Process() {
                       className="flex items-center gap-3 group"
                     >
                       <div className={`w-8 h-8 rounded-lg bg-gradient-to-br ${steps[activeStep].color} flex items-center justify-center flex-shrink-0 opacity-80`}>
-                        <CheckCircle2 className="w-4 h-4 text-white" />
+                        <CheckCircle2 className="w-4 h-4 text-rack-ink" />
                       </div>
-                      <span className="text-white/70 text-sm group-hover:text-white transition-colors">
+                      <span className="text-rack-ink/70 text-sm group-hover:text-rack-ink transition-colors">
                         {item}
                       </span>
                     </motion.div>
@@ -216,14 +216,14 @@ export function Process() {
                   <button
                     onClick={() => setActiveStep(Math.max(0, activeStep - 1))}
                     disabled={activeStep === 0}
-                    className="flex-1 px-4 py-2.5 bg-white/[0.04] border border-white/[0.06] rounded-xl text-white/40 text-sm hover:bg-white/[0.08] hover:text-white/60 transition-colors disabled:opacity-30 disabled:cursor-not-allowed"
+                    className="flex-1 px-4 py-2.5 bg-white/[0.04] border border-white/[0.06] rounded-xl text-rack-ink/40 text-sm hover:bg-white/[0.08] hover:text-rack-ink/60 transition-colors disabled:opacity-30 disabled:cursor-not-allowed"
                   >
                     Anterior
                   </button>
                   <button
                     onClick={() => setActiveStep(Math.min(steps.length - 1, activeStep + 1))}
                     disabled={activeStep === steps.length - 1}
-                    className="flex-1 px-4 py-2.5 bg-brand-primary/15 border border-brand-primary/20 rounded-xl text-brand-primary text-sm hover:bg-brand-primary/25 transition-colors disabled:opacity-30 disabled:cursor-not-allowed"
+                    className="flex-1 px-4 py-2.5 bg-brand-primary/15 border border-brand-primary/20 rounded-xl text-rack-brand text-sm hover:bg-brand-primary/25 transition-colors disabled:opacity-30 disabled:cursor-not-allowed"
                   >
                     Siguiente
                   </button>
@@ -253,25 +253,25 @@ export function Process() {
                 <div className="flex items-start gap-4">
                   {/* Step icon */}
                   <div className={`w-14 h-14 rounded-2xl bg-gradient-to-br ${step.color} flex items-center justify-center flex-shrink-0 shadow-lg`}>
-                    <step.icon className="w-7 h-7 text-white" />
+                    <step.icon className="w-7 h-7 text-rack-ink" />
                   </div>
 
                   <div className="flex-1 min-w-0">
                     <div className="flex items-center gap-2 mb-1">
-                      <span className="text-white/20 text-xs font-mono">{step.number}</span>
-                      <h3 className="text-lg font-bold text-white">{step.title}</h3>
+                      <span className="text-rack-ink/20 text-xs font-mono">{step.number}</span>
+                      <h3 className="text-lg font-bold text-rack-ink">{step.title}</h3>
                     </div>
-                    <p className="text-white/40 text-xs mb-3">{step.subtitle}</p>
-                    <p className="text-white/50 text-sm leading-relaxed mb-4">{step.description}</p>
+                    <p className="text-rack-ink/40 text-xs mb-3">{step.subtitle}</p>
+                    <p className="text-rack-ink/50 text-sm leading-relaxed mb-4">{step.description}</p>
 
                     {/* Deliverables */}
                     <div className="flex flex-wrap gap-2 mb-3">
                       {step.deliverables.map((item) => (
                         <span
                           key={item}
-                          className="inline-flex items-center gap-1 px-2.5 py-1 bg-white/[0.04] border border-white/[0.06] rounded-lg text-white/50 text-xs"
+                          className="inline-flex items-center gap-1 px-2.5 py-1 bg-white/[0.04] border border-white/[0.06] rounded-lg text-rack-ink/50 text-xs"
                         >
-                          <CheckCircle2 className="w-3 h-3 text-brand-primary" />
+                          <CheckCircle2 className="w-3 h-3 text-rack-brand" />
                           {item}
                         </span>
                       ))}
@@ -280,8 +280,8 @@ export function Process() {
                     {/* Duration */}
                     <div className="flex items-center gap-1.5 text-xs">
                       <div className="w-1.5 h-1.5 rounded-full bg-brand-primary" />
-                      <span className="text-white/30">Duración:</span>
-                      <span className="text-brand-primary font-medium">{step.duration}</span>
+                      <span className="text-rack-ink/30">Duración:</span>
+                      <span className="text-rack-brand font-medium">{step.duration}</span>
                     </div>
                   </div>
                 </div>

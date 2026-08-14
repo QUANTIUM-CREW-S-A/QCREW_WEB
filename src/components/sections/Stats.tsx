@@ -1,104 +1,107 @@
 import { useEffect, useRef, useState } from 'react';
-import { motion, useInView } from 'framer-motion';
-import { Users, Briefcase, Clock, Award } from 'lucide-react';
+import { motion, useInView, useReducedMotion } from 'framer-motion';
+import { cn } from '../../lib/utils';
 
-interface StatItemProps {
-  icon: React.ElementType;
+/**
+ * Placa de caracteristicas.
+ *
+ * Los equipos de red llevan remachada una chapa con sus especificaciones.
+ * Presentar las cifras asi les da un marco y un orden, en lugar de cuatro
+ * numeros flotando cada uno con su icono.
+ */
+
+interface Spec {
   value: number;
   suffix: string;
   label: string;
-  delay: number;
+  unit: string;
 }
 
-function StatItem({ icon: Icon, value, suffix, label, delay }: StatItemProps) {
+const specs: Spec[] = [
+  { value: 150, suffix: '+', label: 'Clientes', unit: 'empresas' },
+  { value: 300, suffix: '+', label: 'Proyectos', unit: 'entregados' },
+  { value: 8, suffix: '', label: 'Trayectoria', unit: 'años' },
+  { value: 99, suffix: '%', label: 'Satisfacción', unit: 'promedio' },
+];
+
+function SpecCell({ spec, index }: { spec: Spec; index: number }) {
   const [count, setCount] = useState(0);
   const ref = useRef(null);
-  const isInView = useInView(ref, { once: true, margin: "-100px" });
+  const isInView = useInView(ref, { once: true, margin: '-100px' });
+  const reduce = useReducedMotion();
 
   useEffect(() => {
-    if (isInView) {
-      const duration = 2000;
-      const steps = 60;
-      const increment = value / steps;
-      let current = 0;
-      const timer = setInterval(() => {
-        current += increment;
-        if (current >= value) {
-          setCount(value);
-          clearInterval(timer);
-        } else {
-          setCount(Math.floor(current));
-        }
-      }, duration / steps);
-      return () => clearInterval(timer);
+    // Quien pide menos movimiento ve la cifra final directamente
+    if (reduce) {
+      setCount(spec.value);
+      return;
     }
-  }, [isInView, value]);
+    if (!isInView) return;
+
+    const steps = 45;
+    const increment = spec.value / steps;
+    let current = 0;
+
+    const timer = setInterval(() => {
+      current += increment;
+      if (current >= spec.value) {
+        setCount(spec.value);
+        clearInterval(timer);
+      } else {
+        setCount(Math.floor(current));
+      }
+    }, 1400 / steps);
+
+    return () => clearInterval(timer);
+  }, [isInView, spec.value, reduce]);
 
   return (
     <motion.div
       ref={ref}
-      initial={{ opacity: 0, y: 30 }}
-      whileInView={{ opacity: 1, y: 0 }}
+      initial={reduce ? false : { opacity: 0 }}
+      whileInView={{ opacity: 1 }}
       viewport={{ once: true }}
-      transition={{ delay, duration: 0.6 }}
-      className="relative group"
+      transition={{ duration: 0.5, delay: index * 0.08 }}
+      className={cn(
+        'border-rack-rule px-6 py-7 sm:px-8',
+        // Hairlines internos, como las divisiones grabadas en la chapa.
+        // En movil son 2 columnas; desde sm, 4 en una sola fila.
+        index % 2 === 1 && 'border-l',
+        index >= 2 && 'border-t',
+        'sm:border-t-0',
+        index > 0 && 'sm:border-l'
+      )}
     >
-      <div className="flex flex-col items-center text-center p-6">
-        <div className="w-16 h-16 rounded-2xl bg-gradient-to-br from-brand-primary/20 to-brand-secondary/20 border border-brand-primary/30 flex items-center justify-center mb-4 group-hover:scale-110 transition-transform duration-300">
-          <Icon className="w-8 h-8 text-brand-primary" />
-        </div>
-        <div className="flex items-baseline gap-1">
-          <span className="text-4xl md:text-5xl font-display font-bold text-white">
-            {count}
-          </span>
-          <span className="text-2xl md:text-3xl font-display font-bold text-brand-secondary">
-            {suffix}
-          </span>
-        </div>
-        <p className="text-brand-muted mt-2 text-sm uppercase tracking-wider">{label}</p>
+      <div className="flex items-baseline gap-0.5">
+        <span className="rack-display text-4xl tabular-nums text-rack-ink sm:text-5xl">
+          {count}
+        </span>
+        <span className="rack-display text-2xl text-rack-brand sm:text-3xl">
+          {spec.suffix}
+        </span>
       </div>
+      <p className="mt-3 font-sans text-sm font-medium text-rack-ink">{spec.label}</p>
+      <p className="rack-label mt-0.5">{spec.unit}</p>
     </motion.div>
   );
 }
 
 export function Stats() {
-  const stats = [
-    { icon: Users, value: 150, suffix: '+', label: 'Clientes Satisfechos' },
-    { icon: Briefcase, value: 300, suffix: '+', label: 'Proyectos Completados' },
-    { icon: Clock, value: 8, suffix: '', label: 'Años de Experiencia' },
-    { icon: Award, value: 99, suffix: '%', label: 'Satisfacción Cliente' },
-  ];
-
   return (
-    <section className="py-20 md:py-28 relative overflow-hidden bg-brand-dark">
-      {/* Background effects */}
-      <div className="absolute inset-0 bg-[radial-gradient(ellipse_at_center,_rgba(139,92,246,0.1)_0%,_transparent_70%)]" />
-      <div className="absolute top-0 left-0 w-full h-px bg-gradient-to-r from-transparent via-brand-primary/30 to-transparent" />
-      <div className="absolute bottom-0 left-0 w-full h-px bg-gradient-to-r from-transparent via-brand-primary/30 to-transparent" />
+    <section className="border-t border-rack-rule bg-rack-paper py-20 md:py-24">
+      <div className="container mx-auto px-4">
+        <div className="rack-panel">
+          {/* Cabecera de la placa: como el troquelado de una chapa real */}
+          <div className="flex items-center justify-between border-b border-rack-rule px-6 py-3.5 sm:px-8">
+            <p className="rack-label">Placa de características</p>
+            <p className="rack-label hidden sm:block">QCREW &middot; PA</p>
+          </div>
 
-      <div className="container mx-auto px-4 relative z-10">
-        <motion.div
-          initial={{ opacity: 0, y: 20 }}
-          whileInView={{ opacity: 1, y: 0 }}
-          viewport={{ once: true }}
-          className="text-center mb-16"
-        >
-          <span className="inline-block px-4 py-1.5 rounded-full bg-brand-primary/10 border border-brand-primary/30 text-brand-primary text-sm font-medium mb-4">
-            Resultados que Hablan
-          </span>
-          <h2 className="text-3xl md:text-4xl font-display font-bold text-white">
-            Nuestro Impacto en <span className="text-brand-primary">Números</span>
-          </h2>
-        </motion.div>
-
-        <div className="grid grid-cols-2 md:grid-cols-4 gap-8 md:gap-4">
-          {stats.map((stat, index) => (
-            <StatItem
-              key={stat.label}
-              {...stat}
-              delay={index * 0.1}
-            />
-          ))}
+          <div className="grid grid-cols-2 sm:grid-cols-4">
+            {specs.map((spec, i) => (
+              <SpecCell key={spec.label} spec={spec} index={i} />
+            ))}
+          </div>
         </div>
       </div>
     </section>

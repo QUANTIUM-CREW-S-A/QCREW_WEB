@@ -84,19 +84,19 @@ function AnimatedTextInput({
 
   return (
     <div className="space-y-2">
-      <label className="text-sm font-medium text-white/80">{label}</label>
+      <label className="text-sm font-medium text-rack-ink/80">{label}</label>
       <div className="relative">
         {Icon && (
-          <div className={`absolute left-4 top-1/2 -translate-y-1/2 transition-colors duration-300 ${isFocused ? 'text-brand-primary' : 'text-white/30'}`}>
+          <div className={`absolute left-4 top-1/2 -translate-y-1/2 transition-colors duration-300 ${isFocused ? 'text-rack-brand' : 'text-rack-ink/30'}`}>
             <Icon className="w-5 h-5" />
           </div>
         )}
         <input
           {...props}
-          className={`w-full px-4 py-4 rounded-xl bg-white/[0.03] border transition-all duration-300 text-white placeholder:text-white/30 focus:outline-none ${
+          className={`w-full px-4 py-4 rounded-xl bg-white/[0.03] border transition-all duration-300 text-rack-ink placeholder:text-rack-ink/30 focus:outline-none ${
             isFocused 
               ? 'border-brand-primary/50 shadow-[0_0_20px_rgba(0,212,255,0.1)] bg-white/[0.05]' 
-              : 'border-white/10 hover:border-white/20'
+              : 'border-rack-rule hover:border-rack-rule'
           } ${Icon ? 'pl-12' : ''}`}
           onFocus={(e) => { setIsFocused(true); props.onFocus?.(e); }}
           onBlur={(e) => { setIsFocused(false); props.onBlur?.(e); }}
@@ -116,19 +116,19 @@ function AnimatedTextarea({
 
   return (
     <div className="space-y-2">
-      <label className="text-sm font-medium text-white/80">{label}</label>
+      <label className="text-sm font-medium text-rack-ink/80">{label}</label>
       <div className="relative">
         {Icon && (
-          <div className={`absolute left-4 top-4 transition-colors duration-300 ${isFocused ? 'text-brand-primary' : 'text-white/30'}`}>
+          <div className={`absolute left-4 top-4 transition-colors duration-300 ${isFocused ? 'text-rack-brand' : 'text-rack-ink/30'}`}>
             <Icon className="w-5 h-5" />
           </div>
         )}
         <textarea
           {...props}
-          className={`w-full px-4 py-4 rounded-xl bg-white/[0.03] border transition-all duration-300 text-white placeholder:text-white/30 focus:outline-none resize-none ${
+          className={`w-full px-4 py-4 rounded-xl bg-white/[0.03] border transition-all duration-300 text-rack-ink placeholder:text-rack-ink/30 focus:outline-none resize-none ${
             isFocused 
               ? 'border-brand-primary/50 shadow-[0_0_20px_rgba(0,212,255,0.1)] bg-white/[0.05]' 
-              : 'border-white/10 hover:border-white/20'
+              : 'border-rack-rule hover:border-rack-rule'
           } ${Icon ? 'pl-12' : ''}`}
           onFocus={(e) => { setIsFocused(true); props.onFocus?.(e); }}
           onBlur={(e) => { setIsFocused(false); props.onBlur?.(e); }}
@@ -149,26 +149,26 @@ function AnimatedSelect({
 
   return (
     <div className="space-y-2">
-      <label className="text-sm font-medium text-white/80">{label}</label>
+      <label className="text-sm font-medium text-rack-ink/80">{label}</label>
       <div className="relative">
         {Icon && (
-          <div className={`absolute left-4 top-1/2 -translate-y-1/2 transition-colors duration-300 ${isFocused ? 'text-brand-primary' : 'text-white/30'}`}>
+          <div className={`absolute left-4 top-1/2 -translate-y-1/2 transition-colors duration-300 ${isFocused ? 'text-rack-brand' : 'text-rack-ink/30'}`}>
             <Icon className="w-5 h-5" />
           </div>
         )}
         <select
           {...props}
-          className={`w-full px-4 py-4 rounded-xl bg-white/[0.03] border transition-all duration-300 text-white focus:outline-none appearance-none cursor-pointer ${
+          className={`w-full px-4 py-4 rounded-xl bg-white/[0.03] border transition-all duration-300 text-rack-ink focus:outline-none appearance-none cursor-pointer ${
             isFocused 
               ? 'border-brand-primary/50 shadow-[0_0_20px_rgba(0,212,255,0.1)] bg-white/[0.05]' 
-              : 'border-white/10 hover:border-white/20'
+              : 'border-rack-rule hover:border-rack-rule'
           } ${Icon ? 'pl-12' : ''}`}
           onFocus={(e) => { setIsFocused(true); props.onFocus?.(e); }}
           onBlur={(e) => { setIsFocused(false); props.onBlur?.(e); }}
         >
           {children}
         </select>
-        <div className="absolute right-4 top-1/2 -translate-y-1/2 pointer-events-none text-white/30">
+        <div className="absolute right-4 top-1/2 -translate-y-1/2 pointer-events-none text-rack-ink/30">
           <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
             <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" />
           </svg>
@@ -208,7 +208,7 @@ export default function ContactPage() {
   };
 
   return (
-    <div className="min-h-screen bg-brand-dark">
+    <div className="min-h-screen bg-rack-paper">
       {/* Hero Section */}
       <section className="relative pt-32 pb-20 overflow-hidden">
         {/* Background effects */}
@@ -233,18 +233,18 @@ export default function ContactPage() {
               transition={{ delay: 0.2 }}
               className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-brand-primary/10 border border-brand-primary/30 mb-6"
             >
-              <Sparkles className="w-4 h-4 text-brand-primary" />
-              <span className="text-brand-primary text-sm font-medium">Estamos aquí para ayudarte</span>
+              <Sparkles className="w-4 h-4 text-rack-brand" />
+              <span className="text-rack-brand text-sm font-medium">Estamos aquí para ayudarte</span>
             </motion.div>
 
-            <h1 className="text-4xl md:text-6xl lg:text-7xl font-display font-bold text-white mb-6 leading-tight">
+            <h1 className="text-4xl md:text-6xl lg:text-7xl font-display font-bold text-rack-ink mb-6 leading-tight">
               Hablemos de tu{" "}
               <span className="text-transparent bg-clip-text bg-gradient-to-r from-brand-primary via-cyan-400 to-brand-secondary animate-gradient-x bg-[length:200%_auto]">
                 Proyecto
               </span>
             </h1>
             
-            <p className="text-lg md:text-xl text-brand-muted max-w-2xl mx-auto leading-relaxed">
+            <p className="text-lg md:text-xl text-rack-graph max-w-2xl mx-auto leading-relaxed">
               Cuéntanos qué necesitas. Te responderemos en menos de 24 horas con una propuesta personalizada.
             </p>
 
@@ -260,8 +260,8 @@ export default function ContactPage() {
                 { icon: CheckCircle2, text: "Presupuesto sin compromiso" },
                 { icon: Zap, text: "Inicio inmediato" }
               ].map((item, i) => (
-                <div key={i} className="flex items-center gap-2 text-white/60">
-                  <item.icon className="w-4 h-4 text-brand-primary" />
+                <div key={i} className="flex items-center gap-2 text-rack-ink/60">
+                  <item.icon className="w-4 h-4 text-rack-brand" />
                   <span className="text-sm">{item.text}</span>
                 </div>
               ))}
@@ -285,30 +285,30 @@ export default function ContactPage() {
                 viewport={{ once: true }}
                 transition={{ delay: index * 0.1 }}
                 whileHover={{ y: -5 }}
-                className="group relative bg-white/[0.03] border border-white/10 rounded-2xl p-6 hover:border-white/20 transition-all duration-300 overflow-hidden"
+                className="group relative bg-white/[0.03] border border-rack-rule rounded-2xl p-6 hover:border-rack-rule transition-all duration-300 overflow-hidden"
               >
                 {/* Gradient background on hover */}
                 <div className={`absolute inset-0 bg-gradient-to-br ${method.color} opacity-0 group-hover:opacity-5 transition-opacity duration-300`} />
                 
                 {/* Icon */}
                 <div className={`w-12 h-12 rounded-xl bg-gradient-to-br ${method.color} flex items-center justify-center mb-4 shadow-lg group-hover:scale-110 transition-transform duration-300`}>
-                  <method.icon className="w-6 h-6 text-white" />
+                  <method.icon className="w-6 h-6 text-rack-ink" />
                 </div>
 
                 {/* Content */}
-                <h3 className="text-lg font-semibold text-white mb-1">{method.title}</h3>
-                <p className="text-white font-medium mb-1 group-hover:text-brand-primary transition-colors">{method.value}</p>
-                <p className="text-sm text-brand-muted mb-3">{method.description}</p>
+                <h3 className="text-lg font-semibold text-rack-ink mb-1">{method.title}</h3>
+                <p className="text-rack-ink font-medium mb-1 group-hover:text-rack-brand transition-colors">{method.value}</p>
+                <p className="text-sm text-rack-graph mb-3">{method.description}</p>
                 
                 {/* Availability badge */}
-                <div className="inline-flex items-center gap-1.5 px-2.5 py-1 bg-white/5 rounded-full text-xs text-white/50">
+                <div className="inline-flex items-center gap-1.5 px-2.5 py-1 bg-rack-sheet rounded-full text-xs text-rack-ink/50">
                   <div className="w-1.5 h-1.5 rounded-full bg-green-500" />
                   {method.available}
                 </div>
 
                 {/* Arrow indicator */}
                 <div className="absolute top-6 right-6 opacity-0 group-hover:opacity-100 transition-all duration-300 transform translate-x-2 group-hover:translate-x-0">
-                  <ArrowRight className="w-5 h-5 text-white/30" />
+                  <ArrowRight className="w-5 h-5 text-rack-ink/30" />
                 </div>
               </motion.a>
             ))}
@@ -329,10 +329,10 @@ export default function ContactPage() {
               viewport={{ once: true }}
             >
               <div>
-                <h2 className="text-3xl font-display font-bold text-white mb-4">
+                <h2 className="text-3xl font-display font-bold text-rack-ink mb-4">
                   ¿Qué sigue después de contactarnos?
                 </h2>
-                <p className="text-brand-muted leading-relaxed">
+                <p className="text-rack-graph leading-relaxed">
                   Nuestro proceso está diseñado para que empieces a ver resultados rápidamente:
                 </p>
               </div>
@@ -369,18 +369,18 @@ export default function ContactPage() {
                   >
                     <div className="flex-shrink-0">
                       <div className="w-10 h-10 rounded-xl bg-gradient-to-br from-brand-primary/20 to-brand-secondary/20 border border-brand-primary/20 flex items-center justify-center">
-                        <span className="text-sm font-bold text-brand-primary">{item.step}</span>
+                        <span className="text-sm font-bold text-rack-brand">{item.step}</span>
                       </div>
                     </div>
                     <div className="flex-1">
                       <div className="flex items-center justify-between mb-1">
-                        <h4 className="font-semibold text-white group-hover:text-brand-primary transition-colors">{item.title}</h4>
-                        <span className="text-xs text-brand-muted flex items-center gap-1">
+                        <h4 className="font-semibold text-rack-ink group-hover:text-rack-brand transition-colors">{item.title}</h4>
+                        <span className="text-xs text-rack-graph flex items-center gap-1">
                           <Calendar className="w-3 h-3" />
                           {item.time}
                         </span>
                       </div>
-                      <p className="text-sm text-brand-muted">{item.desc}</p>
+                      <p className="text-sm text-rack-graph">{item.desc}</p>
                     </div>
                   </motion.div>
                 ))}
@@ -390,11 +390,11 @@ export default function ContactPage() {
               <div className="p-6 bg-gradient-to-br from-brand-primary/10 to-brand-secondary/5 border border-brand-primary/20 rounded-2xl">
                 <div className="flex items-start gap-3">
                   <div className="w-10 h-10 rounded-full bg-brand-primary/20 flex items-center justify-center flex-shrink-0">
-                    <CheckCircle2 className="w-5 h-5 text-brand-primary" />
+                    <CheckCircle2 className="w-5 h-5 text-rack-brand" />
                   </div>
                   <div>
-                    <h4 className="font-semibold text-white mb-1">Sin compromiso</h4>
-                    <p className="text-sm text-brand-muted">
+                    <h4 className="font-semibold text-rack-ink mb-1">Sin compromiso</h4>
+                    <p className="text-sm text-rack-graph">
                       La consulta inicial es completamente gratuita. Solo pagas si decides trabajar con nosotros.
                     </p>
                   </div>
@@ -409,16 +409,16 @@ export default function ContactPage() {
               whileInView={{ opacity: 1, x: 0 }}
               viewport={{ once: true }}
             >
-              <div className="bg-white/[0.02] border border-white/10 rounded-3xl p-8 md:p-10 backdrop-blur-sm relative overflow-hidden">
+              <div className="bg-white/[0.02] border border-rack-rule rounded-3xl p-8 md:p-10 backdrop-blur-sm relative overflow-hidden">
                 {/* Decorative gradient */}
                 <div className="absolute -top-20 -right-20 w-60 h-60 bg-brand-primary/10 rounded-full blur-3xl pointer-events-none" />
                 
                 <div className="relative z-10">
                   <div className="mb-8">
-                    <h3 className="text-2xl font-display font-bold text-white mb-2">
+                    <h3 className="text-2xl font-display font-bold text-rack-ink mb-2">
                       Envíanos un mensaje
                     </h3>
-                    <p className="text-brand-muted">
+                    <p className="text-rack-graph">
                       Completa el formulario y te responderemos pronto.
                     </p>
                   </div>
@@ -458,7 +458,7 @@ export default function ContactPage() {
                         required
                       >
                         {serviceOptions.map(option => (
-                          <option key={option.value} value={option.value} className="bg-brand-dark">
+                          <option key={option.value} value={option.value} className="bg-rack-paper">
                             {option.label}
                           </option>
                         ))}
@@ -492,7 +492,7 @@ export default function ContactPage() {
                             <motion.div
                               animate={{ rotate: 360 }}
                               transition={{ duration: 1, repeat: Infinity, ease: "linear" }}
-                              className="w-5 h-5 border-2 border-white/30 border-t-white rounded-full"
+                              className="w-5 h-5 border-2 border-rack-rule border-t-white rounded-full"
                             />
                             Enviando...
                           </>
@@ -504,9 +504,9 @@ export default function ContactPage() {
                         )}
                       </Button>
                       
-                      <p className="text-center text-sm text-brand-muted mt-4">
+                      <p className="text-center text-sm text-rack-graph mt-4">
                         Al enviar, aceptas nuestra{" "}
-                        <a href="/privacy" className="text-brand-primary hover:underline">política de privacidad</a>
+                        <a href="/privacy" className="text-rack-brand hover:underline">política de privacidad</a>
                       </p>
                     </div>
                   </form>

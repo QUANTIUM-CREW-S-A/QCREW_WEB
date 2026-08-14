@@ -1,16 +1,6 @@
 import { useState, useEffect } from 'react';
-import {
-  collection,
-  query,
-  where,
-  orderBy,
-  limit,
-  onSnapshot,
-  addDoc,
-  serverTimestamp,
-  getDocs
-} from 'firebase/firestore';
-import { db } from '../lib/firebase';
+import { supabase } from '../lib/supabase';
+import type { TestimonialRow } from '../types/database';
 
 export interface Testimonial {
   id: string;
@@ -37,209 +27,105 @@ export interface SubmitTestimonialData {
   imageUrl: string;
 }
 
-// Helper para mapear documentos de Firestore a Testimonial
-const mapDocToTestimonial = (doc: any): Testimonial => {
-  const data = doc.data();
-  return {
-    id: doc.id,
-    name: data.name || '',
-    company: data.company || '',
-    role: data.role || '',
-    content: data.content || '',
-    rating: data.rating || 5,
-    category: data.category || '',
-    imageUrl: data.imageUrl || '',
-    featured: data.featured || false,
-    status: data.status || 'pending',
-    createdAt: data.createdAt?.toDate() || new Date(),
-  };
-};
+const mapRow = (row: TestimonialRow): Testimonial => ({
+  id: row.id,
+  name: row.name || '',
+  company: row.company || '',
+  role: row.role || '',
+  content: row.content || '',
+  rating: row.rating || 5,
+  category: row.category || '',
+  imageUrl: row.image_url || '',
+  featured: row.featured || false,
+  status: row.status || 'pending',
+  createdAt: new Date(row.created_at),
+});
 
-export function useTestimonials() {
+/**
+ * Suscribe a los testimonios aprobados. Hace un fetch inicial y luego
+ * refresca ante cualquier cambio en la tabla via Realtime.
+ */
+function useApprovedTestimonials(onlyFeatured: boolean, max?: number) {
   const [testimonials, setTestimonials] = useState<Testimonial[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
 
   useEffect(() => {
-    console.log('[useTestimonials] Iniciando suscripción...');
-    setLoading(true);
-    setError(null);
+    let active = true;
 
-    // Intentar consulta con índice primero
-    const q = query(
-      collection(db, 'testimonials'),
-      where('status', '==', 'approved'),
-      orderBy('createdAt', 'desc')
-    );
+    const fetchTestimonials = async () => {
+      let query = supabase
+        .from('testimonials')
+        .select('*')
+        .eq('status', 'approved')
+        .order('created_at', { ascending: false });
 
-    let unsubscribe: (() => void) | undefined;
+      if (onlyFeatured) query = query.eq('featured', true);
+      if (max) query = query.limit(max);
 
-    const setupSubscription = () => {
-      unsubscribe = onSnapshot(q, 
-        (snapshot) => {
-          console.log('[useTestimonials] Datos recibidos:', snapshot.docs.length, 'documentos');
-          
-          if (snapshot.empty) {
-            console.log('[useTestimonials] No hay testimonios aprobados');
-            setTestimonials([]);
-            setLoading(false);
-            return;
-          }
+      const { data, error: queryError } = await query;
+      if (!active) return;
 
-          const items = snapshot.docs.map(mapDocToTestimonial);
-          console.log('[useTestimonials] Testimonios mapeados:', items.length);
-          setTestimonials(items);
-          setLoading(false);
-          setError(null);
-        }, 
-        (err) => {
-          console.error('[useTestimonials] Error en suscripción:', err);
-          
-          // Si es error de índice, intentar consulta alternativa
-          if (err.message?.includes('index') || err.code === 'failed-precondition') {
-            console.log('[useTestimonials] Error de índice detectado, usando fallback...');
-            fetchWithoutIndex();
-          } else {
-            setError('Error al cargar testimonios: ' + err.message);
-            setLoading(false);
-          }
-        }
-      );
-    };
-
-    // Fallback: consulta sin ordenamiento (ordena en memoria)
-    const fetchWithoutIndex = async () => {
-      try {
-        console.log('[useTestimonials] Intentando consulta sin índice...');
-        const qSimple = query(
-          collection(db, 'testimonials'),
-          where('status', '==', 'approved')
-        );
-        
-        const snapshot = await getDocs(qSimple);
-        console.log('[useTestimonials] Fallback - Documentos encontrados:', snapshot.docs.length);
-        
-        let items = snapshot.docs.map(mapDocToTestimonial);
-        
-        // Ordenar en memoria
-        items = items.sort((a, b) => b.createdAt.getTime() - a.createdAt.getTime());
-        
-        setTestimonials(items);
-        setError(null);
-      } catch (err: any) {
-        console.error('[useTestimonials] Error en fallback:', err);
-        setError('Error al cargar testimonios. Por favor recarga la página.');
-      } finally {
+      if (queryError) {
+        console.error('[useTestimonials] Error al cargar:', queryError);
+        setError('Error al cargar testimonios: ' + queryError.message);
         setLoading(false);
+        return;
       }
+
+      setTestimonials((data ?? []).map(mapRow));
+      setError(null);
+      setLoading(false);
     };
 
-    setupSubscription();
+    fetchTestimonials();
+
+    const channel = supabase
+      .channel(`testimonials-public-${onlyFeatured ? 'featured' : 'all'}`)
+      .on(
+        'postgres_changes',
+        { event: '*', schema: 'public', table: 'testimonials' },
+        () => { fetchTestimonials(); }
+      )
+      .subscribe();
 
     return () => {
-      console.log('[useTestimonials] Limpiando suscripción');
-      if (unsubscribe) unsubscribe();
+      active = false;
+      supabase.removeChannel(channel);
     };
-  }, []);
+  }, [onlyFeatured, max]);
 
   return { testimonials, loading, error };
+}
+
+export function useTestimonials() {
+  return useApprovedTestimonials(false);
 }
 
 export function useFeaturedTestimonials() {
-  const [testimonials, setTestimonials] = useState<Testimonial[]>([]);
-  const [loading, setLoading] = useState(true);
-  const [error, setError] = useState<string | null>(null);
-
-  useEffect(() => {
-    console.log('[useFeaturedTestimonials] Iniciando suscripción...');
-    setLoading(true);
-    setError(null);
-
-    // Intentar consulta con índice
-    const q = query(
-      collection(db, 'testimonials'),
-      where('status', '==', 'approved'),
-      where('featured', '==', true),
-      orderBy('createdAt', 'desc'),
-      limit(3)
-    );
-
-    let unsubscribe: (() => void) | undefined;
-
-    const setupSubscription = () => {
-      unsubscribe = onSnapshot(q, 
-        (snapshot) => {
-          console.log('[useFeaturedTestimonials] Datos recibidos:', snapshot.docs.length, 'documentos');
-          
-          const items = snapshot.docs.map(mapDocToTestimonial);
-          setTestimonials(items);
-          setLoading(false);
-          setError(null);
-        }, 
-        (err) => {
-          console.error('[useFeaturedTestimonials] Error:', err);
-          
-          if (err.message?.includes('index') || err.code === 'failed-precondition') {
-            console.log('[useFeaturedTestimonials] Error de índice, usando fallback...');
-            fetchWithoutIndex();
-          } else {
-            setError(err.message);
-            setLoading(false);
-          }
-        }
-      );
-    };
-
-    // Fallback sin índice
-    const fetchWithoutIndex = async () => {
-      try {
-        const qSimple = query(
-          collection(db, 'testimonials'),
-          where('status', '==', 'approved'),
-          where('featured', '==', true)
-        );
-        
-        const snapshot = await getDocs(qSimple);
-        let items = snapshot.docs.map(mapDocToTestimonial);
-        items = items.sort((a, b) => b.createdAt.getTime() - a.createdAt.getTime()).slice(0, 3);
-        
-        setTestimonials(items);
-        setError(null);
-      } catch (err: any) {
-        console.error('[useFeaturedTestimonials] Error en fallback:', err);
-        setError(err.message);
-      } finally {
-        setLoading(false);
-      }
-    };
-
-    setupSubscription();
-
-    return () => {
-      if (unsubscribe) unsubscribe();
-    };
-  }, []);
-
-  return { testimonials, loading, error };
+  return useApprovedTestimonials(true, 3);
 }
 
-export async function submitTestimonial(data: SubmitTestimonialData): Promise<string> {
-  const docRef = await addDoc(collection(db, 'testimonials'), {
-    name: data.name,
-    email: data.email,
-    company: data.company,
-    role: data.role,
-    content: data.content,
-    rating: data.rating,
-    category: data.category,
-    imageUrl: data.imageUrl,
-    status: 'pending',
-    featured: false,
-    adminNotes: '',
-    approvedAt: null,
-    approvedBy: '',
-    createdAt: serverTimestamp(),
-    updatedAt: serverTimestamp(),
-  });
-  return docRef.id;
+/**
+ * Envia un testimonio. Entra siempre como 'pending' (lo fuerza la policy de
+ * RLS). No devolvemos la fila insertada porque un testimonio pendiente no es
+ * legible con la clave publica.
+ */
+export async function submitTestimonial(data: SubmitTestimonialData): Promise<void> {
+  const { error } = await supabase
+    .from('testimonials')
+    .insert({
+      name: data.name,
+      email: data.email,
+      company: data.company,
+      role: data.role,
+      content: data.content,
+      rating: data.rating,
+      category: data.category,
+      image_url: data.imageUrl,
+      status: 'pending',
+      featured: false,
+    });
+
+  if (error) throw error;
 }

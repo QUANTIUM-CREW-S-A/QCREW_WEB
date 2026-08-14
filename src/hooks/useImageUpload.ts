@@ -1,9 +1,9 @@
 import { useState, useRef, useCallback } from 'react';
-import { ref, uploadBytesResumable, getDownloadURL } from 'firebase/storage';
-import { storage } from '../lib/firebase';
+import { supabase } from '../lib/supabase';
 
 const MAX_SIZE = 5 * 1024 * 1024; // 5MB
 const ACCEPTED_TYPES = ['image/jpeg', 'image/png', 'image/webp', 'image/gif'];
+const BUCKET = 'testimonials';
 
 export function useImageUpload() {
   const [preview, setPreview] = useState<string | null>(null);
@@ -45,34 +45,28 @@ export function useImageUpload() {
 
     try {
       const sanitizedName = file.name.replace(/[^a-zA-Z0-9._-]/g, '_');
-      const storagePath = `testimonials/${Date.now()}_${sanitizedName}`;
-      const storageRef = ref(storage, storagePath);
+      const path = `${Date.now()}_${sanitizedName}`;
 
-      const uploadTask = uploadBytesResumable(storageRef, file);
+      // El SDK de storage no expone progreso granular, asi que marcamos
+      // un estado intermedio para que la barra no se quede en 0.
+      setProgress(30);
 
-      return await new Promise<string>((resolve, reject) => {
-        uploadTask.on(
-          'state_changed',
-          (snapshot) => {
-            const pct = Math.round((snapshot.bytesTransferred / snapshot.totalBytes) * 100);
-            setProgress(pct);
-          },
-          (err) => {
-            setError('Error al subir la imagen. Intenta de nuevo.');
-            setUploading(false);
-            reject(err);
-          },
-          async () => {
-            const url = await getDownloadURL(uploadTask.snapshot.ref);
-            setUploading(false);
-            setProgress(100);
-            resolve(url);
-          }
-        );
-      });
-    } catch {
+      const { error: uploadError } = await supabase.storage
+        .from(BUCKET)
+        .upload(path, file, { contentType: file.type, upsert: false });
+
+      if (uploadError) throw uploadError;
+
+      const { data } = supabase.storage.from(BUCKET).getPublicUrl(path);
+
+      setUploading(false);
+      setProgress(100);
+      return data.publicUrl;
+    } catch (err) {
+      console.error('[useImageUpload] Error al subir:', err);
       setError('Error al subir la imagen. Intenta de nuevo.');
       setUploading(false);
+      setProgress(0);
       return '';
     }
   }, []);

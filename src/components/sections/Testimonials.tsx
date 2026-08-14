@@ -34,7 +34,7 @@ export function Testimonials() {
   const { t } = useTranslation();
 
   return (
-    <SectionWrapper className="bg-brand-gray/30 py-20 md:py-32">
+    <SectionWrapper className="bg-rack-sheet py-20 md:py-32">
       <div className="max-w-6xl mx-auto px-4">
         {/* Header */}
         <motion.div 
@@ -44,10 +44,10 @@ export function Testimonials() {
           transition={{ duration: 0.6 }}
           viewport={{ once: true }}
         >
-          <h2 className="text-4xl md:text-5xl font-display font-bold text-white mb-6">
+          <h2 className="text-4xl md:text-5xl font-display font-bold text-rack-ink mb-6">
             {t("testimonials.title", "What Our Clients Say")}
           </h2>
-          <p className="text-xl text-brand-muted max-w-2xl mx-auto">
+          <p className="text-xl text-rack-graph max-w-2xl mx-auto">
             {t("testimonials.subtitle", "Companies that trust Quantium Crew to transform their technology")}
           </p>
         </motion.div>
@@ -57,7 +57,7 @@ export function Testimonials() {
           {testimonials.map((testimonial, index) => (
             <motion.div
               key={index}
-              className="relative bg-brand-dark/50 backdrop-blur-sm rounded-2xl p-8 border border-white/10 hover:border-brand-primary/30 transition-all duration-300 group"
+              className="relative bg-rack-paper/90 backdrop-blur-sm rounded-2xl p-8 border border-rack-rule hover:border-brand-primary/30 transition-all duration-300 group"
               initial={{ opacity: 0, y: 30 }}
               whileInView={{ opacity: 1, y: 0 }}
               transition={{ duration: 0.6, delay: index * 0.1 }}
@@ -72,12 +72,12 @@ export function Testimonials() {
               {/* Rating */}
               <div className="flex gap-1 mb-4">
                 {[...Array(testimonial.rating)].map((_, i) => (
-                  <Star key={i} className="w-4 h-4 fill-brand-primary text-brand-primary" />
+                  <Star key={i} className="w-4 h-4 fill-brand-primary text-rack-brand" />
                 ))}
               </div>
 
               {/* Content */}
-              <p className="text-white mb-6 leading-relaxed">
+              <p className="text-rack-ink mb-6 leading-relaxed">
                 "{testimonial.content}"
               </p>
 
@@ -89,8 +89,8 @@ export function Testimonials() {
                   className="w-12 h-12 rounded-full object-cover border-2 border-brand-primary/30"
                 />
                 <div>
-                  <div className="font-semibold text-white">{testimonial.name}</div>
-                  <div className="text-sm text-brand-muted">
+                  <div className="font-semibold text-rack-ink">{testimonial.name}</div>
+                  <div className="text-sm text-rack-graph">
                     {testimonial.role} en {testimonial.company}
                   </div>
                 </div>
@@ -110,10 +110,10 @@ export function Testimonials() {
           transition={{ duration: 0.6, delay: 0.3 }}
           viewport={{ once: true }}
         >
-          <p className="text-brand-muted mb-6">
+          <p className="text-rack-graph mb-6">
             {t("testimonials.cta", "Ready to join our satisfied clients?")}
           </p>
-          <div className="inline-flex items-center gap-2 text-brand-primary font-medium">
+          <div className="inline-flex items-center gap-2 text-rack-brand font-medium">
             <span>{t("testimonials.cta_subtitle", "Start your technology transformation today")}</span>
             <span className="animate-pulse">→</span>
           </div>

@@ -55,9 +55,11 @@ export function Navbar() {
     <nav
       className={cn(
         "fixed top-0 w-full z-50 transition-all duration-300",
+        // Sin scroll la barra flota sobre el papel; al bajar se apoya con
+        // una hairline, sin cambiar de tono.
         scrolled
-          ? "bg-brand-dark/80 backdrop-blur-lg border-b border-white/5 py-4"
-          : "bg-transparent py-6"
+          ? "bg-rack-paper/90 backdrop-blur-lg border-b border-rack-rule py-4"
+          : "bg-rack-paper py-6"
       )}
     >
       <div className="container mx-auto px-4 md:px-6 flex items-center justify-between">
@@ -94,8 +96,8 @@ export function Navbar() {
               />
             </svg>
           </div>
-          <span className="text-xl font-display font-bold tracking-tight text-white">
-            Quantium<span className="text-transparent bg-clip-text bg-gradient-to-r from-brand-primary to-brand-secondary">Crew</span>
+          <span className="text-xl font-display font-bold tracking-tight text-rack-ink">
+            Quantium<span className="text-rack-brand">Crew</span>
           </span>
         </Link>
 
@@ -106,7 +108,7 @@ export function Navbar() {
               <a
                 key={link.name}
                 href={link.href}
-                className="text-sm font-medium text-brand-text hover:text-brand-primary transition-colors"
+                className="text-sm font-medium text-rack-ink transition-colors hover:text-rack-brand"
               >
                 {link.name}
               </a>
@@ -115,7 +117,7 @@ export function Navbar() {
               <Link
                 key={link.name}
                 to={link.href}
-                className="text-sm font-medium text-brand-text hover:text-brand-primary transition-colors"
+                className="text-sm font-medium text-rack-ink transition-colors hover:text-rack-brand"
               >
                 {link.name}
               </Link>
@@ -125,7 +127,7 @@ export function Navbar() {
           <div className="relative">
             <button
               onClick={() => setIsLangOpen(!isLangOpen)}
-              className="flex items-center gap-2 text-brand-text hover:text-white transition-colors px-3 py-2 rounded-lg hover:bg-white/5"
+              className="flex items-center gap-2 rounded-lg px-3 py-2 text-rack-graph transition-colors hover:bg-rack-ink/5 hover:text-rack-ink"
             >
               <Globe className="w-4 h-4" />
               <span className="text-sm font-medium">{i18n.language?.toUpperCase().substring(0, 2)}</span>
@@ -137,15 +139,15 @@ export function Navbar() {
                   initial={{ opacity: 0, y: 10 }}
                   animate={{ opacity: 1, y: 0 }}
                   exit={{ opacity: 0, y: 10 }}
-                  className="absolute top-full right-0 mt-2 w-40 bg-brand-gray border border-white/10 rounded-xl shadow-xl overflow-hidden py-1"
+                  className="absolute top-full right-0 mt-2 w-40 bg-rack-sheet border border-rack-rule rounded-xl shadow-xl overflow-hidden py-1"
                 >
                   {languages.map((lang) => (
                     <button
                       key={lang.code}
                       onClick={() => changeLanguage(lang.code)}
                       className={cn(
-                        "w-full px-4 py-2 text-left text-sm flex items-center gap-3 hover:bg-white/5 transition-colors",
-                        i18n.language === lang.code ? "text-brand-primary" : "text-brand-text"
+                        "w-full px-4 py-2 text-left text-sm flex items-center gap-3 hover:bg-rack-sheet transition-colors",
+                        i18n.language === lang.code ? "text-rack-brand" : "text-rack-ink"
                       )}
                     >
                       <span>{lang.flag}</span>
@@ -157,20 +159,31 @@ export function Navbar() {
             </AnimatePresence>
           </div>
 
-          <Button size="sm" onClick={() => navigate("/contact")}>{t("nav.getStarted")}</Button>
+          {/* El componente Button lo comparte el panel admin, que sigue en
+              oscuro, asi que aqui se sobreescribe en vez de tocarlo. */}
+          <Button
+            size="sm"
+            className="rounded-none border-none bg-rack-ink px-5 text-rack-paper shadow-none hover:bg-rack-brand"
+            onClick={() => navigate("/contact")}
+          >
+            {t("nav.getStarted")}
+          </Button>
         </div>
 
         {/* Mobile Menu Button */}
         <div className="flex items-center gap-4 md:hidden">
           <button
               onClick={() => setIsLangOpen(!isLangOpen)}
-              className="flex items-center gap-2 text-brand-text hover:text-white transition-colors p-2"
+              className="flex items-center gap-2 p-2 text-rack-graph transition-colors hover:text-rack-ink"
+              aria-label="Cambiar idioma"
             >
               <Globe className="w-5 h-5" />
           </button>
-          
+
           <button
-            className="text-white"
+            className="text-rack-ink"
+            aria-label={isOpen ? "Cerrar menú" : "Abrir menú"}
+            aria-expanded={isOpen}
             onClick={() => setIsOpen(!isOpen)}
           >
             {isOpen ? <X /> : <Menu />}
@@ -185,14 +198,14 @@ export function Navbar() {
             initial={{ opacity: 0, height: 0 }}
             animate={{ opacity: 1, height: "auto" }}
             exit={{ opacity: 0, height: 0 }}
-            className="md:hidden bg-brand-dark border-b border-white/10 overflow-hidden"
+            className="md:hidden bg-rack-paper border-b border-rack-rule overflow-hidden"
           >
             <div className="p-4 flex flex-col gap-4">
               {navLinks.map((link) => (
                 <a
                   key={link.name}
                   href={link.href}
-                  className="text-base font-medium text-brand-text hover:text-brand-primary py-2"
+                  className="text-base font-medium text-rack-ink hover:text-rack-brand py-2"
                   onClick={() => setIsOpen(false)}
                 >
                   {link.name}
@@ -202,7 +215,7 @@ export function Navbar() {
                 <Link
                   key={link.name}
                   to={link.href}
-                  className="text-base font-medium text-brand-text hover:text-brand-primary py-2"
+                  className="text-base font-medium text-rack-ink hover:text-rack-brand py-2"
                   onClick={() => setIsOpen(false)}
                 >
                   {link.name}
@@ -228,11 +241,11 @@ export function Navbar() {
               initial={{ scale: 0.95 }}
               animate={{ scale: 1 }}
               exit={{ scale: 0.95 }}
-              className="bg-brand-gray border border-white/10 rounded-2xl w-full max-w-xs overflow-hidden"
+              className="bg-rack-sheet border border-rack-rule rounded-2xl w-full max-w-xs overflow-hidden"
               onClick={(e) => e.stopPropagation()}
             >
-              <div className="p-4 border-b border-white/10">
-                <h3 className="text-lg font-bold text-white">Select Language</h3>
+              <div className="p-4 border-b border-rack-rule">
+                <h3 className="text-lg font-bold text-rack-ink">Select Language</h3>
               </div>
               <div className="max-h-[60vh] overflow-y-auto">
                 {languages.map((lang) => (
@@ -240,8 +253,8 @@ export function Navbar() {
                     key={lang.code}
                     onClick={() => changeLanguage(lang.code)}
                     className={cn(
-                      "w-full px-6 py-4 text-left text-base flex items-center gap-4 hover:bg-white/5 transition-colors border-b border-white/5 last:border-0",
-                      i18n.language === lang.code ? "text-brand-primary bg-brand-primary/5" : "text-brand-text"
+                      "w-full px-6 py-4 text-left text-base flex items-center gap-4 hover:bg-rack-sheet transition-colors border-b border-rack-rule last:border-0",
+                      i18n.language === lang.code ? "text-rack-brand bg-brand-primary/5" : "text-rack-ink"
                     )}
                   >
                     <span className="text-xl">{lang.flag}</span>

@@ -1,5 +1,5 @@
 /* stylelint-disable at-rule-no-unknown */
-@import url('https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&family=Outfit:wght@300;400;500;600;700;800&family=JetBrains+Mono:wght@400;500&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&family=Outfit:wght@300;400;500;600;700;800&family=JetBrains+Mono:wght@400;500&family=Archivo:wdth,wght@75..125,400..800&display=swap');
 
 @tailwind base;
 @tailwind components;
@@ -13,21 +13,79 @@
   }
 
   body {
-    @apply bg-brand-dark text-brand-text font-sans antialiased selection:bg-brand-primary/30;
-    background-color: #030014; /* Más oscuro, casi negro profundo */
-    background-image: 
-      linear-gradient(rgba(139, 92, 246, 0.05) 1px, transparent 1px),
-      linear-gradient(90deg, rgba(139, 92, 246, 0.05) 1px, transparent 1px);
-    background-size: 50px 50px;
-    background-position: center top;
+    @apply bg-rack-paper font-sans text-rack-ink antialiased;
+    /* Seleccion en el verde de LED: el unico acento del sistema */
+    @apply selection:bg-rack-link/20;
   }
 
   h1, h2, h3, h4, h5, h6 {
     @apply font-display font-bold tracking-tight;
   }
+
+  /* Foco visible en teclado en todo el sitio */
+  :focus-visible {
+    outline: 2px solid theme('colors.rack.link');
+    outline-offset: 3px;
+    border-radius: 2px;
+  }
+
+  /* Quien pide menos movimiento ve la pagina completa, quieta.
+     Sin esto, las secciones con whileInView se quedan en opacity 0. */
+  @media (prefers-reduced-motion: reduce) {
+    *,
+    *::before,
+    *::after {
+      animation-duration: 0.01ms !important;
+      animation-iteration-count: 1 !important;
+      transition-duration: 0.01ms !important;
+      scroll-behavior: auto !important;
+    }
+
+    [style*="opacity: 0"] {
+      opacity: 1 !important;
+    }
+  }
 }
 
 @layer utilities {
+  /* ---------------------------------------------------------------
+     Sistema "rack" (home). Vocabulario visual tomado del mundo fisico
+     del cliente: elevaciones de rack, serigrafia y LEDs de switch.
+     --------------------------------------------------------------- */
+
+  /* Etiqueta de plano: la unica tipografia de utilidad del sistema */
+  .rack-label {
+    @apply font-mono text-[11px] uppercase tracking-[0.2em] text-rack-graph;
+  }
+
+  /* Display industrial. El eje de ancho es lo que le da el caracter. */
+  .rack-display {
+    font-family: 'Archivo', sans-serif;
+    font-variation-settings: 'wdth' 112, 'wght' 700;
+    letter-spacing: -0.02em;
+    line-height: 0.95;
+  }
+
+  .rack-display-tight {
+    font-family: 'Archivo', sans-serif;
+    font-variation-settings: 'wdth' 88, 'wght' 600;
+    letter-spacing: 0.01em;
+  }
+
+  /* Reticula de papel milimetrado: la base sobre la que se dibuja un plano.
+     Muy tenue, solo debe leerse como textura. */
+  .rack-grid {
+    background-image:
+      linear-gradient(to right, rgba(16, 30, 43, 0.045) 1px, transparent 1px),
+      linear-gradient(to bottom, rgba(16, 30, 43, 0.045) 1px, transparent 1px);
+    background-size: 28px 28px;
+  }
+
+  /* Superficie de panel montado sobre el plano */
+  .rack-panel {
+    @apply border border-rack-rule bg-rack-sheet;
+  }
+
   .text-gradient {
     @apply bg-clip-text text-transparent bg-gradient-to-r from-brand-primary via-purple-400 to-brand-secondary;
     text-shadow: 0 0 20px rgba(0, 212, 255, 0.3);
@@ -87,6 +145,24 @@
     50% {
       background-position: 100% center;
     }
+  }
+
+  /* Scroll animation para partners marquee */
+  .animate-scroll {
+    animation: scroll 30s linear infinite;
+  }
+
+  @keyframes scroll {
+    0% {
+      transform: translateX(0);
+    }
+    100% {
+      transform: translateX(-33.333%);
+    }
+  }
+
+  .animate-scroll:hover {
+    animation-play-state: paused;
   }
 }
 

@@ -112,19 +112,19 @@ function MemberCard({ member, index }: { member: typeof team[0]; index: number }
               </div>
               {/* Badge */}
               <div className={`absolute -bottom-1.5 -right-1.5 w-7 h-7 rounded-lg bg-gradient-to-br ${member.color} flex items-center justify-center shadow-lg`}>
-                <BadgeIcon className="w-3.5 h-3.5 text-white" />
+                <BadgeIcon className="w-3.5 h-3.5 text-rack-ink" />
               </div>
             </div>
 
             {/* Name + Role */}
             <div className="flex-1 min-w-0 pt-1">
-              <h3 className="text-lg font-bold text-white mb-0.5 group-hover:text-transparent group-hover:bg-clip-text group-hover:bg-gradient-to-r group-hover:from-white group-hover:to-white/80 transition-all">
+              <h3 className="text-lg font-bold text-rack-ink mb-0.5 group-hover:text-transparent group-hover:bg-clip-text group-hover:bg-gradient-to-r group-hover:from-white group-hover:to-white/80 transition-all">
                 {member.name}
               </h3>
               <p className={`text-sm font-medium bg-gradient-to-r ${member.color} bg-clip-text text-transparent mb-2`}>
                 {member.role}
               </p>
-              <span className="inline-flex items-center gap-1 px-2 py-0.5 bg-white/[0.04] border border-white/[0.06] rounded-md text-white/30 text-[10px] uppercase tracking-wider">
+              <span className="inline-flex items-center gap-1 px-2 py-0.5 bg-white/[0.04] border border-white/[0.06] rounded-md text-rack-ink/30 text-[10px] uppercase tracking-wider">
                 <BadgeIcon className="w-2.5 h-2.5" />
                 {member.badge}
               </span>
@@ -132,7 +132,7 @@ function MemberCard({ member, index }: { member: typeof team[0]; index: number }
           </div>
 
           {/* Bio */}
-          <p className="text-white/40 text-sm leading-relaxed mb-5">
+          <p className="text-rack-ink/40 text-sm leading-relaxed mb-5">
             {member.bio}
           </p>
 
@@ -141,7 +141,7 @@ function MemberCard({ member, index }: { member: typeof team[0]; index: number }
             {member.skills.map((skill) => (
               <span
                 key={skill}
-                className="px-2.5 py-1 bg-white/[0.03] border border-white/[0.06] rounded-lg text-white/50 text-xs group-hover:border-white/[0.12] group-hover:text-white/60 transition-all duration-300"
+                className="px-2.5 py-1 bg-white/[0.03] border border-white/[0.06] rounded-lg text-rack-ink/50 text-xs group-hover:border-white/[0.12] group-hover:text-rack-ink/60 transition-all duration-300"
               >
                 {skill}
               </span>
@@ -154,19 +154,19 @@ function MemberCard({ member, index }: { member: typeof team[0]; index: number }
               <div className={`text-lg font-bold bg-gradient-to-r ${member.color} bg-clip-text text-transparent`}>
                 {member.stats.projects}
               </div>
-              <div className="text-white/25 text-[10px] uppercase tracking-wider">Proyectos</div>
+              <div className="text-rack-ink/25 text-[10px] uppercase tracking-wider">Proyectos</div>
             </div>
             <div className="text-center">
               <div className={`text-lg font-bold bg-gradient-to-r ${member.color} bg-clip-text text-transparent`}>
                 {member.stats.experience}
               </div>
-              <div className="text-white/25 text-[10px] uppercase tracking-wider">Años exp.</div>
+              <div className="text-rack-ink/25 text-[10px] uppercase tracking-wider">Años exp.</div>
             </div>
             <div className="text-center">
               <div className={`text-lg font-bold bg-gradient-to-r ${member.color} bg-clip-text text-transparent`}>
                 {member.stats.uptime}
               </div>
-              <div className="text-white/25 text-[10px] uppercase tracking-wider">Uptime</div>
+              <div className="text-rack-ink/25 text-[10px] uppercase tracking-wider">Uptime</div>
             </div>
           </div>
 
@@ -182,7 +182,7 @@ function MemberCard({ member, index }: { member: typeof team[0]; index: number }
                 href={social.href}
                 target="_blank"
                 rel="noopener noreferrer"
-                className="w-9 h-9 rounded-xl bg-white/[0.03] border border-white/[0.06] flex items-center justify-center text-white/30 hover:text-white hover:bg-white/[0.08] hover:border-white/[0.15] transition-all duration-300"
+                className="w-9 h-9 rounded-xl bg-white/[0.03] border border-white/[0.06] flex items-center justify-center text-rack-ink/30 hover:text-rack-ink hover:bg-white/[0.08] hover:border-white/[0.15] transition-all duration-300"
               >
                 <social.icon className="w-4 h-4" />
               </a>
@@ -198,7 +198,7 @@ export function Team() {
   const navigate = useNavigate();
 
   return (
-    <SectionWrapper className="bg-brand-dark py-20 md:py-32 relative overflow-hidden">
+    <SectionWrapper className="bg-rack-paper py-20 md:py-32 relative overflow-hidden">
       {/* Background */}
       <div className="absolute inset-0 bg-[linear-gradient(rgba(139,92,246,0.03)_1px,transparent_1px),linear-gradient(90deg,rgba(139,92,246,0.03)_1px,transparent_1px)] bg-[size:40px_40px] pointer-events-none" />
       <div className="absolute top-0 left-1/2 -translate-x-1/2 w-full max-w-4xl h-full bg-[radial-gradient(circle,rgba(0,212,255,0.04)_0%,transparent_60%)] rounded-full pointer-events-none" />
@@ -217,13 +217,13 @@ export function Team() {
             <span className="text-brand-secondary text-sm font-medium">Nuestro Equipo</span>
           </div>
 
-          <h2 className="text-3xl md:text-5xl font-display font-bold text-white mb-4">
+          <h2 className="text-3xl md:text-5xl font-display font-bold text-rack-ink mb-4">
             Las personas detrás de{" "}
             <span className="text-transparent bg-clip-text bg-gradient-to-r from-brand-primary to-brand-secondary">
               tu éxito
             </span>
           </h2>
-          <p className="text-brand-muted max-w-2xl mx-auto text-lg">
+          <p className="text-rack-graph max-w-2xl mx-auto text-lg">
             Un equipo de expertos apasionados por la tecnología, comprometidos con la excelencia y dedicados a transformar tu negocio
           </p>
         </motion.div>
@@ -246,9 +246,9 @@ export function Team() {
               key={stat.label}
               className="bg-white/[0.02] border border-white/[0.06] rounded-xl p-5 text-center group hover:border-white/[0.12] transition-colors"
             >
-              <stat.icon className="w-5 h-5 text-brand-primary mx-auto mb-2 group-hover:scale-110 transition-transform" />
-              <div className="text-2xl font-bold text-white mb-1">{stat.value}</div>
-              <div className="text-white/30 text-xs">{stat.label}</div>
+              <stat.icon className="w-5 h-5 text-rack-brand mx-auto mb-2 group-hover:scale-110 transition-transform" />
+              <div className="text-2xl font-bold text-rack-ink mb-1">{stat.value}</div>
+              <div className="text-rack-ink/30 text-xs">{stat.label}</div>
             </div>
           ))}
         </motion.div>

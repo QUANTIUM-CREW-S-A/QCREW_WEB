@@ -37,7 +37,7 @@ export function TestimonialsPage() {
     : "5.0";
 
   return (
-    <div className="min-h-screen bg-brand-dark">
+    <div className="min-h-screen bg-rack-paper">
       {/* Hero Section */}
       <SectionWrapper className="pt-32 pb-20 text-center">
         <motion.div
@@ -45,10 +45,10 @@ export function TestimonialsPage() {
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.6 }}
         >
-          <h1 className="text-5xl md:text-7xl font-display font-bold text-white mb-6">
+          <h1 className="text-5xl md:text-7xl font-display font-bold text-rack-ink mb-6">
             Lo que dicen nuestros clientes
           </h1>
-          <p className="text-xl text-brand-muted max-w-3xl mx-auto mb-8">
+          <p className="text-xl text-rack-graph max-w-3xl mx-auto mb-8">
             Descubre cómo Quantium Crew ha transformado la tecnología de empresas como la tuya.
             Lee experiencias reales de clientes satisfechos con nuestros servicios.
           </p>
@@ -64,7 +64,7 @@ export function TestimonialsPage() {
       </SectionWrapper>
 
       {/* Filters and Stats */}
-      <SectionWrapper className="py-12 bg-brand-gray/30">
+      <SectionWrapper className="py-12 bg-rack-sheet">
         <div className="max-w-6xl mx-auto px-4">
           <div className="flex flex-col md:flex-row items-center justify-between gap-6 mb-8">
             <div className="flex flex-wrap gap-2">
@@ -81,11 +81,11 @@ export function TestimonialsPage() {
             </div>
 
             <div className="flex items-center gap-2">
-              <Filter className="w-4 h-4 text-brand-muted" />
+              <Filter className="w-4 h-4 text-rack-graph" />
               <select
                 value={sortBy}
                 onChange={(e) => setSortBy(e.target.value)}
-                className="bg-brand-dark text-white border border-white/20 rounded-lg px-3 py-2 text-sm"
+                className="bg-rack-paper text-rack-ink border border-rack-rule rounded-lg px-3 py-2 text-sm"
               >
                 <option value="date">Más reciente</option>
                 <option value="rating">Mejor calificación</option>
@@ -94,21 +94,21 @@ export function TestimonialsPage() {
           </div>
 
           <div className="grid grid-cols-1 md:grid-cols-4 gap-6">
-            <Card className="text-center p-6 bg-white/5 border-white/10">
-              <div className="text-3xl font-bold text-brand-primary mb-2">{testimonials.length || "0"}</div>
-              <div className="text-brand-muted text-sm">Testimonios</div>
+            <Card className="text-center p-6 bg-rack-sheet border-rack-rule">
+              <div className="text-3xl font-bold text-rack-brand mb-2">{testimonials.length || "0"}</div>
+              <div className="text-rack-graph text-sm">Testimonios</div>
             </Card>
-            <Card className="text-center p-6 bg-white/5 border-white/10">
-              <div className="text-3xl font-bold text-brand-primary mb-2">{avgRating}</div>
-              <div className="text-brand-muted text-sm">Calificación promedio</div>
+            <Card className="text-center p-6 bg-rack-sheet border-rack-rule">
+              <div className="text-3xl font-bold text-rack-brand mb-2">{avgRating}</div>
+              <div className="text-rack-graph text-sm">Calificación promedio</div>
             </Card>
-            <Card className="text-center p-6 bg-white/5 border-white/10">
-              <div className="text-3xl font-bold text-brand-primary mb-2">98%</div>
-              <div className="text-brand-muted text-sm">Clientes satisfechos</div>
+            <Card className="text-center p-6 bg-rack-sheet border-rack-rule">
+              <div className="text-3xl font-bold text-rack-brand mb-2">98%</div>
+              <div className="text-rack-graph text-sm">Clientes satisfechos</div>
             </Card>
-            <Card className="text-center p-6 bg-white/5 border-white/10">
-              <div className="text-3xl font-bold text-brand-primary mb-2">24/7</div>
-              <div className="text-brand-muted text-sm">Soporte activo</div>
+            <Card className="text-center p-6 bg-rack-sheet border-rack-rule">
+              <div className="text-3xl font-bold text-rack-brand mb-2">24/7</div>
+              <div className="text-rack-graph text-sm">Soporte activo</div>
             </Card>
           </div>
         </div>
@@ -120,24 +120,24 @@ export function TestimonialsPage() {
           {loading ? (
             <div className="flex flex-col items-center justify-center py-20">
               <div className="w-12 h-12 border-4 border-brand-primary border-t-transparent rounded-full animate-spin" />
-              <p className="text-white/40 text-sm mt-4">Cargando testimonios...</p>
+              <p className="text-rack-ink/40 text-sm mt-4">Cargando testimonios...</p>
             </div>
           ) : error ? (
             <div className="text-center py-20">
               <AlertCircle className="w-16 h-16 text-red-400/50 mx-auto mb-4" />
               <h3 className="text-red-400 text-lg mb-2">Error al cargar testimonios</h3>
-              <p className="text-white/40 text-sm mb-6">{error}</p>
+              <p className="text-rack-ink/40 text-sm mb-6">{error}</p>
               <Button onClick={() => window.location.reload()}>
                 Intentar de nuevo
               </Button>
             </div>
           ) : sortedTestimonials.length === 0 ? (
             <div className="text-center py-20">
-              <Quote className="w-16 h-16 text-white/10 mx-auto mb-4" />
-              <h3 className="text-white/50 text-lg font-medium mb-2">
+              <Quote className="w-16 h-16 text-rack-ink/10 mx-auto mb-4" />
+              <h3 className="text-rack-ink/50 text-lg font-medium mb-2">
                 {selectedCategory === "Todos" ? "Aún no hay testimonios" : `No hay testimonios en ${selectedCategory}`}
               </h3>
-              <p className="text-white/30 text-sm mb-6">Sé el primero en compartir tu experiencia</p>
+              <p className="text-rack-ink/30 text-sm mb-6">Sé el primero en compartir tu experiencia</p>
               <Button onClick={() => setShowForm(true)}>
                 <Plus className="mr-2 w-4 h-4" />
                 Compartir mi experiencia
@@ -152,22 +152,22 @@ export function TestimonialsPage() {
                   animate={{ opacity: 1, y: 0 }}
                   transition={{ duration: 0.6, delay: index * 0.1 }}
                 >
-                  <Card className="h-full bg-white/5 border-white/10 hover:border-brand-primary/30 transition-all duration-300 group">
+                  <Card className="h-full bg-rack-sheet border-rack-rule hover:border-brand-primary/30 transition-all duration-300 group">
                     <div className="p-6">
                       <div className="flex items-center justify-between mb-4">
-                        <Quote className="w-8 h-8 text-brand-primary/50" />
+                        <Quote className="w-8 h-8 text-rack-brand/50" />
                         <div className="flex gap-1">
                           {[...Array(testimonial.rating)].map((_, i) => (
-                            <Star key={i} className="w-4 h-4 fill-brand-primary text-brand-primary" />
+                            <Star key={i} className="w-4 h-4 fill-brand-primary text-rack-brand" />
                           ))}
                         </div>
                       </div>
 
-                      <p className="text-white mb-6 leading-relaxed">
+                      <p className="text-rack-ink mb-6 leading-relaxed">
                         &ldquo;{testimonial.content}&rdquo;
                       </p>
 
-                      <div className="flex items-center gap-4 pt-4 border-t border-white/10">
+                      <div className="flex items-center gap-4 pt-4 border-t border-rack-rule">
                         {testimonial.imageUrl ? (
                           <img
                             src={testimonial.imageUrl}
@@ -176,23 +176,23 @@ export function TestimonialsPage() {
                           />
                         ) : (
                           <div className="w-12 h-12 rounded-full bg-gradient-to-br from-brand-primary to-brand-secondary flex items-center justify-center border-2 border-brand-primary/30">
-                            <span className="text-white font-bold text-sm">
+                            <span className="text-rack-ink font-bold text-sm">
                               {testimonial.name.charAt(0).toUpperCase()}
                             </span>
                           </div>
                         )}
                         <div>
-                          <div className="font-semibold text-white">{testimonial.name}</div>
-                          <div className="text-sm text-brand-muted">{testimonial.role}</div>
-                          <div className="text-xs text-brand-primary">{testimonial.company}</div>
+                          <div className="font-semibold text-rack-ink">{testimonial.name}</div>
+                          <div className="text-sm text-rack-graph">{testimonial.role}</div>
+                          <div className="text-xs text-rack-brand">{testimonial.company}</div>
                         </div>
                       </div>
 
                       <div className="mt-4 flex items-center justify-between">
-                        <span className="inline-block px-3 py-1 bg-brand-primary/20 text-brand-primary text-xs rounded-full">
+                        <span className="inline-block px-3 py-1 bg-brand-primary/20 text-rack-brand text-xs rounded-full">
                           {testimonial.category}
                         </span>
-                        <span className="text-white/30 text-xs">
+                        <span className="text-rack-ink/30 text-xs">
                           {formatDate(testimonial.createdAt)}
                         </span>
                       </div>
@@ -206,16 +206,16 @@ export function TestimonialsPage() {
       </SectionWrapper>
 
       {/* CTA Section */}
-      <SectionWrapper className="py-20 bg-brand-gray/30 text-center">
+      <SectionWrapper className="py-20 bg-rack-sheet text-center">
         <motion.div
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.6 }}
         >
-          <h2 className="text-4xl font-display font-bold text-white mb-6">
+          <h2 className="text-4xl font-display font-bold text-rack-ink mb-6">
             ¿Listo para tu propia historia de éxito?
           </h2>
-          <p className="text-xl text-brand-muted max-w-2xl mx-auto mb-8">
+          <p className="text-xl text-rack-graph max-w-2xl mx-auto mb-8">
             Únete a nuestros clientes satisfechos y descubre cómo podemos transformar tu tecnología.
           </p>
           <Link to="/contact">
@@ -382,10 +382,10 @@ function TestimonialForm({ onClose }: { onClose: () => void }) {
   };
 
   const getInputClass = (field: keyof FieldError) => {
-    const base = "w-full bg-brand-dark border rounded-lg px-4 py-3 text-white focus:outline-none transition-colors";
+    const base = "w-full bg-rack-paper border rounded-lg px-4 py-3 text-rack-ink focus:outline-none transition-colors";
     if (touched[field] && errors[field]) return `${base} border-red-400/60 focus:border-red-400`;
     if (touched[field] && !errors[field]) return `${base} border-green-400/40 focus:border-green-400`;
-    return `${base} border-white/20 focus:border-brand-primary`;
+    return `${base} border-rack-rule focus:border-brand-primary`;
   };
 
   return (
@@ -394,13 +394,13 @@ function TestimonialForm({ onClose }: { onClose: () => void }) {
         initial={{ opacity: 0, scale: 0.9 }}
         animate={{ opacity: 1, scale: 1 }}
         exit={{ opacity: 0, scale: 0.9 }}
-        className="bg-brand-dark rounded-2xl p-8 max-w-2xl w-full max-h-[90vh] overflow-y-auto border border-white/10"
+        className="bg-rack-paper rounded-2xl p-8 max-w-2xl w-full max-h-[90vh] overflow-y-auto border border-rack-rule"
       >
         <div className="flex items-center justify-between mb-6">
-          <h3 className="text-2xl font-bold text-white">Compartir mi experiencia</h3>
+          <h3 className="text-2xl font-bold text-rack-ink">Compartir mi experiencia</h3>
           <button
             onClick={onClose}
-            className="text-white/60 hover:text-white transition-colors"
+            className="text-rack-ink/60 hover:text-rack-ink transition-colors"
             disabled={isSubmitting}
           >
             <X className="w-5 h-5" />
@@ -410,7 +410,7 @@ function TestimonialForm({ onClose }: { onClose: () => void }) {
         <form onSubmit={handleSubmit} className="space-y-6" noValidate>
           <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
             <div>
-              <label className="block text-white text-sm font-medium mb-2">Nombre completo *</label>
+              <label className="block text-rack-ink text-sm font-medium mb-2">Nombre completo *</label>
               <input
                 type="text"
                 placeholder="Ej: Carlos Rodriguez"
@@ -425,7 +425,7 @@ function TestimonialForm({ onClose }: { onClose: () => void }) {
               )}
             </div>
             <div>
-              <label className="block text-white text-sm font-medium mb-2">Email *</label>
+              <label className="block text-rack-ink text-sm font-medium mb-2">Email *</label>
               <input
                 type="email"
                 placeholder="tu@empresa.com"
@@ -443,7 +443,7 @@ function TestimonialForm({ onClose }: { onClose: () => void }) {
 
           <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
             <div>
-              <label className="block text-white text-sm font-medium mb-2">Empresa *</label>
+              <label className="block text-rack-ink text-sm font-medium mb-2">Empresa *</label>
               <input
                 type="text"
                 placeholder="Ej: TechStart Solutions"
@@ -458,7 +458,7 @@ function TestimonialForm({ onClose }: { onClose: () => void }) {
               )}
             </div>
             <div>
-              <label className="block text-white text-sm font-medium mb-2">Cargo *</label>
+              <label className="block text-rack-ink text-sm font-medium mb-2">Cargo *</label>
               <input
                 type="text"
                 placeholder="Ej: CEO, Director de IT"
@@ -475,9 +475,9 @@ function TestimonialForm({ onClose }: { onClose: () => void }) {
           </div>
 
           <div>
-            <label className="block text-white text-sm font-medium mb-2">Categoría del servicio</label>
+            <label className="block text-rack-ink text-sm font-medium mb-2">Categoría del servicio</label>
             <select
-              className="w-full bg-brand-dark border border-white/20 rounded-lg px-4 py-3 text-white focus:border-brand-primary focus:outline-none"
+              className="w-full bg-rack-paper border border-rack-rule rounded-lg px-4 py-3 text-rack-ink focus:border-brand-primary focus:outline-none"
               value={formData.category}
               onChange={(e) => handleChange('category', e.target.value)}
               disabled={isSubmitting}
@@ -489,7 +489,7 @@ function TestimonialForm({ onClose }: { onClose: () => void }) {
           </div>
 
           <div>
-            <label className="block text-white text-sm font-medium mb-2">Calificación</label>
+            <label className="block text-rack-ink text-sm font-medium mb-2">Calificación</label>
             <div className="flex gap-2">
               {[1, 2, 3, 4, 5].map((star) => (
                 <button
@@ -497,7 +497,7 @@ function TestimonialForm({ onClose }: { onClose: () => void }) {
                   type="button"
                   onClick={() => handleChange('rating', star)}
                   disabled={isSubmitting}
-                  className={`w-8 h-8 ${star <= formData.rating ? 'text-brand-primary' : 'text-white/30'} hover:text-brand-primary transition-colors`}
+                  className={`w-8 h-8 ${star <= formData.rating ? 'text-rack-brand' : 'text-rack-ink/30'} hover:text-rack-brand transition-colors`}
                 >
                   <Star className="w-full h-full fill-current" />
                 </button>
@@ -507,8 +507,8 @@ function TestimonialForm({ onClose }: { onClose: () => void }) {
 
           <div>
             <div className="flex items-center justify-between mb-2">
-              <label className="text-white text-sm font-medium">Tu experiencia *</label>
-              <span className={`text-xs ${formData.content.length > 500 ? 'text-red-400' : formData.content.length >= 20 ? 'text-green-400/70' : 'text-white/30'}`}>
+              <label className="text-rack-ink text-sm font-medium">Tu experiencia *</label>
+              <span className={`text-xs ${formData.content.length > 500 ? 'text-red-400' : formData.content.length >= 20 ? 'text-green-400/70' : 'text-rack-ink/30'}`}>
                 {formData.content.length}/500
               </span>
             </div>
@@ -528,7 +528,7 @@ function TestimonialForm({ onClose }: { onClose: () => void }) {
 
           {/* Photo Upload */}
           <div>
-            <label className="block text-white text-sm font-medium mb-2">Foto (opcional)</label>
+            <label className="block text-rack-ink text-sm font-medium mb-2">Foto (opcional)</label>
             <input
               ref={fileInputRef}
               type="file"
@@ -546,7 +546,7 @@ function TestimonialForm({ onClose }: { onClose: () => void }) {
                 />
                 <div className="flex-1">
                   {imageUpload.uploading && (
-                    <div className="w-full bg-white/10 rounded-full h-1.5 mb-2">
+                    <div className="w-full bg-rack-sheet rounded-full h-1.5 mb-2">
                       <div
                         className="bg-brand-primary h-1.5 rounded-full transition-all duration-300"
                         style={{ width: `${imageUpload.progress}%` }}
@@ -558,7 +558,7 @@ function TestimonialForm({ onClose }: { onClose: () => void }) {
                       type="button"
                       onClick={() => fileInputRef.current?.click()}
                       disabled={isSubmitting || imageUpload.uploading}
-                      className="text-brand-primary text-sm hover:underline"
+                      className="text-rack-brand text-sm hover:underline"
                     >
                       Cambiar
                     </button>
@@ -578,11 +578,11 @@ function TestimonialForm({ onClose }: { onClose: () => void }) {
                 onClick={() => !isSubmitting && fileInputRef.current?.click()}
                 onDragOver={(e) => e.preventDefault()}
                 onDrop={handleFileDrop}
-                className="border-2 border-dashed border-white/20 rounded-xl p-6 text-center cursor-pointer hover:border-brand-primary/40 transition-colors"
+                className="border-2 border-dashed border-rack-rule rounded-xl p-6 text-center cursor-pointer hover:border-brand-primary/40 transition-colors"
               >
-                <Camera className="w-8 h-8 text-white/30 mx-auto mb-2" />
-                <p className="text-white/40 text-sm">Arrastra tu foto o haz clic para seleccionar</p>
-                <p className="text-white/20 text-xs mt-1">JPG, PNG, WebP o GIF. Máximo 5MB</p>
+                <Camera className="w-8 h-8 text-rack-ink/30 mx-auto mb-2" />
+                <p className="text-rack-ink/40 text-sm">Arrastra tu foto o haz clic para seleccionar</p>
+                <p className="text-rack-ink/20 text-xs mt-1">JPG, PNG, WebP o GIF. Máximo 5MB</p>
               </div>
             )}
 

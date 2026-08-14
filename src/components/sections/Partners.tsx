@@ -33,11 +33,11 @@ export function Partners() {
   const { t } = useTranslation();
 
   return (
-    <section className="py-16 bg-black border-y border-white/5 overflow-hidden relative">
+    <section className="py-16 bg-black border-y border-rack-rule overflow-hidden relative">
       <div className="absolute inset-0 bg-gradient-to-r from-transparent via-white/5 to-transparent" />
 
       <div className="container mx-auto px-4 mb-8">
-        <p className="text-center text-brand-muted uppercase tracking-widest text-sm font-medium">
+        <p className="text-center text-rack-graph uppercase tracking-widest text-sm font-medium">
           {t("partners.title", "Strategic Technology Partners")}
         </p>
       </div>
@@ -53,11 +53,11 @@ export function Partners() {
               className="flex items-center justify-center min-w-[120px] group relative"
             >
               <div className="relative transition-transform duration-300 group-hover:scale-110">
-                <partner.icon className="w-12 h-12 md:w-16 md:h-16 text-white/60 group-hover:text-white transition-all duration-300" />
+                <partner.icon className="w-12 h-12 md:w-16 md:h-16 text-rack-ink/60 group-hover:text-rack-ink transition-all duration-300" />
               </div>
 
               <div className="absolute -bottom-8 left-1/2 -translate-x-1/2 opacity-0 group-hover:opacity-100 transition-opacity duration-300 pointer-events-none">
-                <div className="bg-brand-gray/90 px-3 py-1 rounded text-xs text-white whitespace-nowrap border border-white/20">
+                <div className="bg-rack-sheet px-3 py-1 rounded text-xs text-rack-ink whitespace-nowrap border border-rack-rule">
                   {partner.name}
                 </div>
               </div>

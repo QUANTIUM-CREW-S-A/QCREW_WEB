@@ -36,12 +36,12 @@ export function TechStack() {
   const { t } = useTranslation();
 
   return (
-    <SectionWrapper className="py-20 bg-brand-dark border-t border-white/5 relative overflow-hidden">
+    <SectionWrapper className="py-20 bg-rack-paper border-t border-rack-rule relative overflow-hidden">
       <div className="container mx-auto px-4 mb-12 text-center relative z-10">
-        <h2 className="text-3xl md:text-4xl font-display font-bold text-white mb-4">
+        <h2 className="text-3xl md:text-4xl font-display font-bold text-rack-ink mb-4">
           {t("techStack.title", "Technologies We Master")}
         </h2>
-        <p className="text-brand-muted max-w-2xl mx-auto">
+        <p className="text-rack-graph max-w-2xl mx-auto">
           {t("techStack.subtitle", "Our engineering team uses the most modern and robust tools to build your solutions.")}
         </p>
       </div>
@@ -56,10 +56,10 @@ export function TechStack() {
               key={`${tech.name}-${index}`}
               className="flex flex-col items-center justify-center gap-3 min-w-[100px] group relative"
             >
-              <div className="w-16 h-16 rounded-xl bg-white/5 border border-white/10 flex items-center justify-center transition-all duration-300 group-hover:bg-brand-primary/10 group-hover:border-brand-primary/50 group-hover:scale-110 relative z-10">
-                <tech.icon className="w-8 h-8 transition-colors duration-300 text-brand-muted group-hover:text-white" />
+              <div className="w-16 h-16 rounded-xl bg-rack-sheet border border-rack-rule flex items-center justify-center transition-all duration-300 group-hover:bg-brand-primary/10 group-hover:border-brand-primary/50 group-hover:scale-110 relative z-10">
+                <tech.icon className="w-8 h-8 transition-colors duration-300 text-rack-graph group-hover:text-rack-ink" />
               </div>
-              <span className="text-sm font-medium text-brand-muted group-hover:text-white transition-colors relative z-10">
+              <span className="text-sm font-medium text-rack-graph group-hover:text-rack-ink transition-colors relative z-10">
                 {tech.name}
               </span>
             </div>

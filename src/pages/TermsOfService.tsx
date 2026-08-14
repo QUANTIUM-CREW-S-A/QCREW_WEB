@@ -7,12 +7,12 @@ export default function TermsOfService() {
   return (
     <SectionWrapper className="pt-32 pb-20">
       <div className="max-w-4xl mx-auto space-y-8">
-        <h1 className="text-4xl md:text-5xl font-display font-bold text-white mb-8">
+        <h1 className="text-4xl md:text-5xl font-display font-bold text-rack-ink mb-8">
           {t("terms.title")}
         </h1>
         
-        <div className="prose prose-invert prose-lg max-w-none text-brand-muted">
-          <p className="lead text-xl text-white">
+        <div className="prose prose-invert prose-lg max-w-none text-rack-graph">
+          <p className="lead text-xl text-rack-ink">
             {t("terms.lastUpdated")} {new Date().toLocaleDateString()}
           </p>
 
@@ -20,12 +20,12 @@ export default function TermsOfService() {
             {t("terms.intro")}
           </p>
 
-          <h3 className="text-white text-2xl font-bold mt-8 mb-4">{t("terms.section1.title")}</h3>
+          <h3 className="text-rack-ink text-2xl font-bold mt-8 mb-4">{t("terms.section1.title")}</h3>
           <p>
             {t("terms.section1.content")}
           </p>
 
-          <h3 className="text-white text-2xl font-bold mt-8 mb-4">{t("terms.section2.title")}</h3>
+          <h3 className="text-rack-ink text-2xl font-bold mt-8 mb-4">{t("terms.section2.title")}</h3>
           <p>
             {t("terms.section2.content")}
           </p>
@@ -37,32 +37,32 @@ export default function TermsOfService() {
             <li>{t("terms.section2.list5")}</li>
           </ul>
 
-          <h3 className="text-white text-2xl font-bold mt-8 mb-4">{t("terms.section3.title")}</h3>
+          <h3 className="text-rack-ink text-2xl font-bold mt-8 mb-4">{t("terms.section3.title")}</h3>
           <p>
             {t("terms.section3.content")}
           </p>
 
-          <h3 className="text-white text-2xl font-bold mt-8 mb-4">{t("terms.section4.title")}</h3>
+          <h3 className="text-rack-ink text-2xl font-bold mt-8 mb-4">{t("terms.section4.title")}</h3>
           <p>
             {t("terms.section4.content")}
           </p>
 
-          <h3 className="text-white text-2xl font-bold mt-8 mb-4">{t("terms.section5.title")}</h3>
+          <h3 className="text-rack-ink text-2xl font-bold mt-8 mb-4">{t("terms.section5.title")}</h3>
           <p>
             {t("terms.section5.content")}
           </p>
 
-          <h3 className="text-white text-2xl font-bold mt-8 mb-4">{t("terms.section6.title")}</h3>
+          <h3 className="text-rack-ink text-2xl font-bold mt-8 mb-4">{t("terms.section6.title")}</h3>
           <p>
             {t("terms.section6.content")}
           </p>
 
-          <h3 className="text-white text-2xl font-bold mt-8 mb-4">{t("terms.section7.title")}</h3>
+          <h3 className="text-rack-ink text-2xl font-bold mt-8 mb-4">{t("terms.section7.title")}</h3>
           <p>
             {t("terms.section7.content")}
           </p>
 
-          <h3 className="text-white text-2xl font-bold mt-8 mb-4">{t("terms.section8.title")}</h3>
+          <h3 className="text-rack-ink text-2xl font-bold mt-8 mb-4">{t("terms.section8.title")}</h3>
           <p>
             {t("terms.section8.content")}
           </p>

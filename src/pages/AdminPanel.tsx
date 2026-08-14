@@ -10,13 +10,14 @@ import { ConversationList } from '../components/admin/ConversationList';
 import { ChatView } from '../components/admin/ChatView';
 import { ClientInfoPanel } from '../components/admin/ClientInfoPanel';
 import { TestimonialManager } from '../components/admin/TestimonialManager';
+import { StoreManager } from '../components/admin/StoreManager';
 
-type Tab = 'dashboard' | 'chats' | 'testimonials';
+type Tab = 'dashboard' | 'chats' | 'testimonials' | 'store';
 
 export function AdminPanel() {
   const {
     conversations, loading, getStats,
-    markAsRead, deleteConversation, sendResponse,
+    markAsRead, markAllAsRead, deleteConversation, sendResponse,
     setPriority, addTag, removeTag, updateNotes
   } = useConversations();
   const {
@@ -87,190 +88,209 @@ export function AdminPanel() {
   const tabs: { id: Tab; label: string; icon: typeof LayoutDashboard; badge?: number; badgeColor?: string }[] = [
     { id: 'dashboard', label: 'Dashboard', icon: LayoutDashboard },
     { id: 'chats', label: 'Conversaciones', icon: MessageCircle, badge: stats.unread > 0 ? stats.unread : undefined, badgeColor: 'bg-red-500' },
+    { id: 'store', label: 'Tienda', icon: Star },
     { id: 'testimonials', label: 'Testimonios', icon: Star, badge: testimonialStats.pending > 0 ? testimonialStats.pending : undefined, badgeColor: 'bg-yellow-500' },
   ];
 
   return (
-    <div className="min-h-screen bg-brand-dark flex flex-col">
-      {/* Header */}
-      <header className="bg-brand-gray/80 backdrop-blur-xl border-b border-white/[0.06] px-6 py-3 flex-shrink-0">
-        <div className="max-w-[1600px] mx-auto flex items-center justify-between">
-          <div className="flex items-center gap-6">
-            {/* Logo */}
-            <div className="flex items-center gap-2.5">
-              <div className="w-8 h-8 bg-gradient-to-br from-brand-primary to-brand-secondary rounded-lg flex items-center justify-center">
-                <MessageCircle className="w-4 h-4 text-white" />
-              </div>
-              <span className="text-white font-semibold text-sm hidden sm:block">QCREW Admin</span>
-            </div>
-
-            {/* Tabs */}
-            <nav className="flex gap-1">
-              {tabs.map(tab => (
-                <button
-                  key={tab.id}
-                  onClick={() => setActiveTab(tab.id)}
-                  className={`flex items-center gap-2 px-3 py-2 rounded-lg text-sm transition-colors ${
-                    activeTab === tab.id
-                      ? 'bg-white/10 text-white'
-                      : 'text-white/40 hover:text-white/60 hover:bg-white/5'
-                  }`}
-                >
-                  <tab.icon className="w-4 h-4" />
-                  <span className="hidden sm:inline">{tab.label}</span>
-                  {tab.badge && (
-                    <span className={`${tab.badgeColor} text-white text-[10px] font-bold px-1.5 py-0.5 rounded-full min-w-[18px] text-center`}>
-                      {tab.badge}
-                    </span>
-                  )}
-                </button>
-              ))}
-            </nav>
+    <div className="min-h-screen bg-brand-dark flex">
+      <aside className="w-full max-w-[260px] border-r border-white/[0.06] bg-brand-gray/80 backdrop-blur-xl p-4 flex flex-col">
+        <div className="flex items-center gap-3 px-2 pb-5 border-b border-white/[0.06] mb-5">
+          <div className="w-10 h-10 bg-gradient-to-br from-brand-primary to-brand-secondary rounded-xl flex items-center justify-center">
+            <MessageCircle className="w-5 h-5 text-white" />
           </div>
-
-          {/* Right side */}
-          <div className="flex items-center gap-3">
-            {/* Notification toggle */}
-            <button
-              onClick={toggleMute}
-              className="p-2 text-white/30 hover:text-white/60 transition-colors rounded-lg hover:bg-white/5"
-              title={muted ? 'Activar sonido' : 'Silenciar'}
-            >
-              {muted ? <VolumeX className="w-4 h-4" /> : <Volume2 className="w-4 h-4" />}
-            </button>
-
-            {/* Admin profile */}
-            <div className="flex items-center gap-2 px-3 py-1.5 rounded-lg bg-white/[0.03]">
-              <div className="w-6 h-6 bg-gradient-to-br from-brand-primary to-brand-secondary rounded-full flex items-center justify-center">
-                <span className="text-white text-[10px] font-bold">
-                  {user?.email?.[0]?.toUpperCase() || 'A'}
-                </span>
-              </div>
-              <span className="text-white/50 text-xs hidden md:block max-w-[140px] truncate">
-                {user?.email}
-              </span>
-            </div>
-
-            {/* Logout */}
-            <button
-              onClick={logout}
-              className="p-2 text-white/30 hover:text-red-400 transition-colors rounded-lg hover:bg-white/5"
-              title="Cerrar sesión"
-            >
-              <LogOut className="w-4 h-4" />
-            </button>
+          <div>
+            <p className="text-white font-semibold text-sm">QCREW Admin</p>
+            <p className="text-white/40 text-[10px] uppercase tracking-[0.18em]">Control</p>
           </div>
         </div>
-      </header>
 
-      {/* Content */}
-      <div className="flex-1 overflow-hidden">
-        <div className="max-w-[1600px] mx-auto p-4 h-full">
-          <AnimatePresence mode="wait">
-            {activeTab === 'dashboard' && (
-              <motion.div
-                key="dashboard"
-                initial={{ opacity: 0, y: 10 }}
-                animate={{ opacity: 1, y: 0 }}
-                exit={{ opacity: 0, y: -10 }}
-              >
-                <AdminDashboard
-                  stats={stats}
-                  conversations={conversations}
-                  onSelectConversation={handleSelectConversation}
-                  onSwitchToChats={() => setActiveTab('chats')}
-                />
-              </motion.div>
-            )}
+        <nav className="space-y-1.5">
+          {tabs.map(tab => (
+            <button
+              key={tab.id}
+              onClick={() => setActiveTab(tab.id)}
+              className={`w-full flex items-center justify-between gap-3 px-3 py-2.5 rounded-xl text-sm transition-colors ${
+                activeTab === tab.id
+                  ? 'bg-white/10 text-white shadow-inner shadow-brand-primary/10'
+                  : 'text-white/40 hover:text-white/60 hover:bg-white/5'
+              }`}
+            >
+              <span className="flex items-center gap-3">
+                <tab.icon className="w-4 h-4" />
+                <span>{tab.label}</span>
+              </span>
+              {tab.badge && (
+                <span className={`${tab.badgeColor} text-white text-[10px] font-bold px-1.5 py-0.5 rounded-full min-w-[18px] text-center`}>
+                  {tab.badge}
+                </span>
+              )}
+            </button>
+          ))}
+        </nav>
 
-            {activeTab === 'chats' && (
-              <motion.div
-                key="chats"
-                initial={{ opacity: 0, y: 10 }}
-                animate={{ opacity: 1, y: 0 }}
-                exit={{ opacity: 0, y: -10 }}
-                className="h-[calc(100vh-120px)]"
-              >
-                <div className="grid grid-cols-12 gap-4 h-full">
-                  {/* Conversation list */}
-                  <div className="col-span-12 md:col-span-4 lg:col-span-3 h-full overflow-hidden">
-                    <ConversationList
-                      conversations={conversations}
-                      selectedId={selectedConvId}
-                      onSelect={handleSelectConversation}
-                    />
-                  </div>
+        <div className="mt-auto space-y-3 border-t border-white/[0.06] pt-4">
+          <button
+            onClick={() => markAllAsRead()}
+            disabled={stats.unread === 0}
+            className="w-full rounded-xl border border-white/10 bg-white/[0.03] px-3 py-2 text-xs text-white/70 transition hover:border-brand-primary/40 hover:text-white disabled:cursor-not-allowed disabled:opacity-40"
+          >
+            Marcar todo como leído
+          </button>
 
-                  {/* Chat view */}
-                  <div className={`col-span-12 h-full ${
-                    showClientInfo && selectedConversation
-                      ? 'md:col-span-8 lg:col-span-6'
-                      : 'md:col-span-8 lg:col-span-9'
-                  } ${!selectedConvId ? 'hidden md:block' : ''}`}>
-                    {selectedConversation ? (
-                      <ChatView
-                        conversation={selectedConversation}
-                        messages={conversationMessages}
-                        messagesLoading={messagesLoading}
-                        onSendResponse={(text) => sendResponse(selectedConvId!, text)}
-                        onDelete={handleDeleteConversation}
-                        onToggleInfo={() => setShowClientInfo(!showClientInfo)}
-                        showInfo={showClientInfo}
-                      />
-                    ) : (
-                      <div className="bg-brand-gray border border-white/[0.06] rounded-xl h-full flex items-center justify-center">
-                        <div className="text-center">
-                          <div className="w-16 h-16 bg-white/[0.03] rounded-2xl flex items-center justify-center mx-auto mb-4">
-                            <MessageCircle className="w-8 h-8 text-white/10" />
-                          </div>
-                          <h3 className="text-white/50 text-lg font-medium mb-1">Selecciona una conversación</h3>
-                          <p className="text-white/20 text-sm">Elige un chat para comenzar a responder</p>
-                        </div>
-                      </div>
-                    )}
-                  </div>
+          <button
+            onClick={toggleMute}
+            className="w-full flex items-center justify-center gap-2 rounded-xl border border-white/10 bg-white/[0.03] px-3 py-2 text-xs text-white/70 transition hover:border-white/20 hover:text-white"
+            title={muted ? 'Activar sonido' : 'Silenciar'}
+          >
+            {muted ? <VolumeX className="w-3.5 h-3.5" /> : <Volume2 className="w-3.5 h-3.5" />}
+            {muted ? 'Sonido off' : 'Sonido on'}
+          </button>
 
-                  {/* Client info panel */}
-                  <AnimatePresence>
-                    {showClientInfo && selectedConversation && (
-                      <div className="hidden lg:block lg:col-span-3 h-full overflow-y-auto">
-                        <ClientInfoPanel
-                          conversation={selectedConversation}
-                          messageCount={conversationMessages.length}
-                          onSetPriority={(p) => setPriority(selectedConvId!, p)}
-                          onAddTag={(t) => addTag(selectedConvId!, t)}
-                          onRemoveTag={(t) => removeTag(selectedConvId!, t)}
-                          onUpdateNotes={(n) => updateNotes(selectedConvId!, n)}
-                        />
-                      </div>
-                    )}
-                  </AnimatePresence>
+          <button
+            onClick={logout}
+            className="w-full flex items-center justify-center gap-2 rounded-xl border border-red-500/20 bg-red-500/5 px-3 py-2 text-xs text-red-300 transition hover:bg-red-500/10"
+          >
+            <LogOut className="w-3.5 h-3.5" />
+            Cerrar sesión
+          </button>
+        </div>
+      </aside>
+
+      <div className="flex-1 flex flex-col min-w-0">
+        <header className="bg-brand-gray/80 backdrop-blur-xl border-b border-white/[0.06] px-5 py-3 flex-shrink-0">
+          <div className="max-w-[1600px] mx-auto flex items-center justify-end">
+            <div className="flex items-center gap-3">
+              <div className="flex items-center gap-2 px-3 py-1.5 rounded-lg bg-white/[0.03]">
+                <div className="w-6 h-6 bg-gradient-to-br from-brand-primary to-brand-secondary rounded-full flex items-center justify-center">
+                  <span className="text-white text-[10px] font-bold">
+                    {user?.email?.[0]?.toUpperCase() || 'A'}
+                  </span>
                 </div>
-              </motion.div>
-            )}
+                <span className="text-white/50 text-xs hidden md:block max-w-[140px] truncate">
+                  {user?.email}
+                </span>
+              </div>
+            </div>
+          </div>
+        </header>
 
-            {activeTab === 'testimonials' && (
-              <motion.div
-                key="testimonials"
-                initial={{ opacity: 0, y: 10 }}
-                animate={{ opacity: 1, y: 0 }}
-                exit={{ opacity: 0, y: -10 }}
-              >
-                <TestimonialManager
-                  testimonials={adminTestimonials}
-                  loading={testimonialsLoading}
-                  stats={testimonialStats}
-                  adminEmail={user?.email || ''}
-                  onApprove={approveTestimonial}
-                  onReject={rejectTestimonial}
-                  onToggleFeatured={toggleFeatured}
-                  onUpdate={updateTestimonial}
-                  onUpdateNotes={updateAdminNotes}
-                  onDelete={deleteTestimonial}
-                />
-              </motion.div>
-            )}
-          </AnimatePresence>
+        <div className="flex-1 overflow-hidden">
+          <div className="max-w-[1600px] mx-auto p-4 h-full">
+            <AnimatePresence mode="wait">
+              {activeTab === 'dashboard' && (
+                <motion.div
+                  key="dashboard"
+                  initial={{ opacity: 0, y: 10 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  exit={{ opacity: 0, y: -10 }}
+                >
+                  <AdminDashboard
+                    stats={stats}
+                    conversations={conversations}
+                    onSelectConversation={handleSelectConversation}
+                    onSwitchToChats={() => setActiveTab('chats')}
+                  />
+                </motion.div>
+              )}
+
+              {activeTab === 'chats' && (
+                <motion.div
+                  key="chats"
+                  initial={{ opacity: 0, y: 10 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  exit={{ opacity: 0, y: -10 }}
+                  className="h-[calc(100vh-120px)]"
+                >
+                  <div className="grid grid-cols-12 gap-4 h-full">
+                    <div className="col-span-12 md:col-span-4 lg:col-span-3 h-full overflow-hidden">
+                      <ConversationList
+                        conversations={conversations}
+                        selectedId={selectedConvId}
+                        onSelect={handleSelectConversation}
+                      />
+                    </div>
+
+                    <div className={`col-span-12 h-full ${
+                      showClientInfo && selectedConversation
+                        ? 'md:col-span-8 lg:col-span-6'
+                        : 'md:col-span-8 lg:col-span-9'
+                    } ${!selectedConvId ? 'hidden md:block' : ''}`}>
+                      {selectedConversation ? (
+                        <ChatView
+                          conversation={selectedConversation}
+                          messages={conversationMessages}
+                          messagesLoading={messagesLoading}
+                          onSendResponse={(text) => sendResponse(selectedConvId!, text)}
+                          onDelete={handleDeleteConversation}
+                          onToggleInfo={() => setShowClientInfo(!showClientInfo)}
+                          showInfo={showClientInfo}
+                        />
+                      ) : (
+                        <div className="bg-brand-gray border border-white/[0.06] rounded-xl h-full flex items-center justify-center">
+                          <div className="text-center">
+                            <div className="w-16 h-16 bg-white/[0.03] rounded-2xl flex items-center justify-center mx-auto mb-4">
+                              <MessageCircle className="w-8 h-8 text-white/10" />
+                            </div>
+                            <h3 className="text-white/50 text-lg font-medium mb-1">Selecciona una conversación</h3>
+                            <p className="text-white/20 text-sm">Elige un chat para comenzar a responder</p>
+                          </div>
+                        </div>
+                      )}
+                    </div>
+
+                    <AnimatePresence>
+                      {showClientInfo && selectedConversation && (
+                        <div className="hidden lg:block lg:col-span-3 h-full overflow-y-auto">
+                          <ClientInfoPanel
+                            conversation={selectedConversation}
+                            messageCount={conversationMessages.length}
+                            onSetPriority={(p) => setPriority(selectedConvId!, p)}
+                            onAddTag={(t) => addTag(selectedConvId!, t)}
+                            onRemoveTag={(t) => removeTag(selectedConvId!, t)}
+                            onUpdateNotes={(n) => updateNotes(selectedConvId!, n)}
+                          />
+                        </div>
+                      )}
+                    </AnimatePresence>
+                  </div>
+                </motion.div>
+              )}
+
+              {activeTab === 'store' && (
+                <motion.div
+                  key="store"
+                  initial={{ opacity: 0, y: 10 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  exit={{ opacity: 0, y: -10 }}
+                >
+                  <StoreManager />
+                </motion.div>
+              )}
+
+              {activeTab === 'testimonials' && (
+                <motion.div
+                  key="testimonials"
+                  initial={{ opacity: 0, y: 10 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  exit={{ opacity: 0, y: -10 }}
+                >
+                  <TestimonialManager
+                    testimonials={adminTestimonials}
+                    loading={testimonialsLoading}
+                    stats={testimonialStats}
+                    adminEmail={user?.email || ''}
+                    onApprove={approveTestimonial}
+                    onReject={rejectTestimonial}
+                    onToggleFeatured={toggleFeatured}
+                    onUpdate={updateTestimonial}
+                    onUpdateNotes={updateAdminNotes}
+                    onDelete={deleteTestimonial}
+                  />
+                </motion.div>
+              )}
+            </AnimatePresence>
+          </div>
         </div>
       </div>
     </div>

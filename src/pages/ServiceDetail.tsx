@@ -212,7 +212,7 @@ export function ServiceDetail() {
 
   if (!data) {
     return (
-      <div className="min-h-screen flex items-center justify-center bg-brand-dark text-white">
+      <div className="min-h-screen flex items-center justify-center bg-rack-paper text-rack-ink">
         <div className="text-center">
           <h2 className="text-2xl font-bold mb-4">Servicio no encontrado</h2>
           <Button onClick={() => navigate("/")}>Volver al inicio</Button>
@@ -224,7 +224,7 @@ export function ServiceDetail() {
   const Icon = data.icon;
 
   return (
-    <div className="min-h-screen bg-brand-dark">
+    <div className="min-h-screen bg-rack-paper">
       {/* Hero Section con Parallax */}
       <section className="relative h-[80vh] flex items-center overflow-hidden">
         <motion.div 
@@ -243,7 +243,7 @@ export function ServiceDetail() {
         <div className="container mx-auto px-4 relative z-10 pt-20">
           <Button 
             variant="ghost" 
-            className="mb-8 text-white/80 hover:text-white pl-0 hover:bg-white/10 "
+            className="mb-8 text-rack-ink/80 hover:text-rack-ink pl-0 hover:bg-rack-sheet "
             onClick={() => navigate("/")}
           >
             <ArrowLeft className="mr-2 w-4 h-4" />
@@ -256,16 +256,16 @@ export function ServiceDetail() {
             transition={{ duration: 0.8 }}
             className="max-w-4xl"
           >
-            <div className={`inline-flex items-center gap-2 px-4 py-2 rounded-full bg-white/10  border border-white/20 text-white mb-6`}>
+            <div className={`inline-flex items-center gap-2 px-4 py-2 rounded-full bg-rack-sheet  border border-rack-rule text-rack-ink mb-6`}>
               <Icon className="w-5 h-5" />
               <span className="font-medium uppercase tracking-wider text-sm">Servicio Profesional</span>
             </div>
             
-            <h1 className="text-5xl md:text-7xl font-display font-bold text-white mb-6 leading-tight">
+            <h1 className="text-5xl md:text-7xl font-display font-bold text-rack-ink mb-6 leading-tight">
               {t(`services.${serviceKey}.title`)}
             </h1>
             
-            <p className="text-xl md:text-2xl text-white/80 max-w-2xl leading-relaxed mb-8">
+            <p className="text-xl md:text-2xl text-rack-ink/80 max-w-2xl leading-relaxed mb-8">
               {t(`services.${serviceKey}.description`)}
             </p>
 
@@ -280,7 +280,7 @@ export function ServiceDetail() {
               <Button 
                 variant="outline"
                 size="lg"
-                className="border-white/20 hover:bg-white/10 text-white "
+                className="border-rack-rule hover:bg-rack-sheet text-rack-ink "
                 onClick={() => document.getElementById('details')?.scrollIntoView({ behavior: 'smooth' })}
               >
                 Saber más
@@ -292,19 +292,19 @@ export function ServiceDetail() {
 
       {/* Stats Section Floating */}
       <div className="container mx-auto px-4 -mt-20 relative z-20">
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-4 md:gap-8 bg-white/5  border border-white/10 rounded-2xl p-8 shadow-2xl">
+        <div className="grid grid-cols-1 md:grid-cols-3 gap-4 md:gap-8 bg-rack-sheet  border border-rack-rule rounded-2xl p-8 shadow-2xl">
           {data.stats.map((stat, idx) => (
             <motion.div
               key={idx}
               initial={{ opacity: 0, y: 20 }}
               whileInView={{ opacity: 1, y: 0 }}
               transition={{ delay: 0.2 + idx * 0.1 }}
-              className="text-center relative md:border-r md:border-white/10 last:border-0"
+              className="text-center relative md:border-r md:border-rack-rule last:border-0"
             >
               <div className={`text-4xl md:text-5xl font-bold bg-clip-text text-transparent bg-gradient-to-r ${data.color} mb-2`}>
                 {stat.value}
               </div>
-              <div className="text-brand-muted font-medium uppercase tracking-wider text-sm">{stat.label}</div>
+              <div className="text-rack-graph font-medium uppercase tracking-wider text-sm">{stat.label}</div>
             </motion.div>
           ))}
         </div>
@@ -315,10 +315,10 @@ export function ServiceDetail() {
         <div className="grid lg:grid-cols-2 gap-16 items-start">
           <div className="space-y-12">
             <div>
-              <h2 className="text-3xl font-bold text-white mb-6">
+              <h2 className="text-3xl font-bold text-rack-ink mb-6">
                 ¿Por qué elegir nuestro servicio?
               </h2>
-              <p className="text-brand-muted text-lg">
+              <p className="text-rack-graph text-lg">
                 Combinamos experiencia técnica, metodología ágil y un enfoque centrado en el cliente para entregar resultados que superan expectativas.
               </p>
             </div>
@@ -333,12 +333,12 @@ export function ServiceDetail() {
                   className="group"
                 >
                   <div className="flex gap-6">
-                    <div className={`w-14 h-14 rounded-2xl bg-white/5 flex items-center justify-center shrink-0 border border-white/10 group-hover:border-brand-primary/50 group-hover:bg-brand-primary/10 transition-all duration-300`}>
-                      <detail.icon className="w-7 h-7 text-brand-primary" />
+                    <div className={`w-14 h-14 rounded-2xl bg-rack-sheet flex items-center justify-center shrink-0 border border-rack-rule group-hover:border-brand-primary/50 group-hover:bg-brand-primary/10 transition-all duration-300`}>
+                      <detail.icon className="w-7 h-7 text-rack-brand" />
                     </div>
                     <div>
-                      <h3 className="text-xl font-bold text-white mb-2 group-hover:text-brand-primary transition-colors">{detail.title}</h3>
-                      <p className="text-brand-muted leading-relaxed">{detail.description}</p>
+                      <h3 className="text-xl font-bold text-rack-ink mb-2 group-hover:text-rack-brand transition-colors">{detail.title}</h3>
+                      <p className="text-rack-graph leading-relaxed">{detail.description}</p>
                     </div>
                   </div>
                 </motion.div>
@@ -347,31 +347,31 @@ export function ServiceDetail() {
           </div>
 
           <div className="space-y-8">
-            <div className="bg-white/5 border border-white/10 rounded-3xl p-8 ">
-              <h3 className="text-2xl font-bold text-white mb-6">Características Principales</h3>
+            <div className="bg-rack-sheet border border-rack-rule rounded-3xl p-8 ">
+              <h3 className="text-2xl font-bold text-rack-ink mb-6">Características Principales</h3>
               <ul className="space-y-4">
                 {(t(`services.${serviceKey}.features`, { returnObjects: true }) as string[]).map((feature, idx) => (
-                  <li key={idx} className="flex items-start gap-3 text-brand-muted group">
+                  <li key={idx} className="flex items-start gap-3 text-rack-graph group">
                     <CheckCircle2 className="w-5 h-5 text-green-500 shrink-0 mt-0.5 group-hover:scale-110 transition-transform" />
-                    <span className="group-hover:text-white transition-colors">{feature}</span>
+                    <span className="group-hover:text-rack-ink transition-colors">{feature}</span>
                   </li>
                 ))}
               </ul>
             </div>
 
             {/* Testimonial Card */}
-            <div className="bg-gradient-to-br from-brand-primary/20 to-brand-secondary/20 border border-white/10 rounded-3xl p-8 relative overflow-hidden">
-              <div className="absolute top-4 right-4 text-white/10">
+            <div className="bg-gradient-to-br from-brand-primary/20 to-brand-secondary/20 border border-rack-rule rounded-3xl p-8 relative overflow-hidden">
+              <div className="absolute top-4 right-4 text-rack-ink/10">
                 <MessageCircle className="w-24 h-24" />
               </div>
-              <p className="text-xl text-white italic mb-6 relative z-10">"{data.testimonial.text}"</p>
+              <p className="text-xl text-rack-ink italic mb-6 relative z-10">"{data.testimonial.text}"</p>
               <div className="flex items-center gap-4">
-                <div className="w-12 h-12 rounded-full bg-white/20 flex items-center justify-center text-white font-bold">
+                <div className="w-12 h-12 rounded-full bg-rack-sheet flex items-center justify-center text-rack-ink font-bold">
                   {data.testimonial.author.charAt(0)}
                 </div>
                 <div>
-                  <div className="text-white font-bold">{data.testimonial.author}</div>
-                  <div className="text-white/60 text-sm">{data.testimonial.role}</div>
+                  <div className="text-rack-ink font-bold">{data.testimonial.author}</div>
+                  <div className="text-rack-ink/60 text-sm">{data.testimonial.role}</div>
                 </div>
               </div>
             </div>
@@ -380,14 +380,14 @@ export function ServiceDetail() {
       </SectionWrapper>
 
       {/* Process Section */}
-      <SectionWrapper className="py-20 bg-black/30 border-y border-white/5">
+      <SectionWrapper className="py-20 bg-black/30 border-y border-rack-rule">
         <div className="text-center max-w-3xl mx-auto mb-16">
-          <h2 className="text-3xl font-bold text-white mb-4">Nuestro Proceso de Trabajo</h2>
-          <p className="text-brand-muted">Metodología probada para garantizar el éxito de tu proyecto paso a paso.</p>
+          <h2 className="text-3xl font-bold text-rack-ink mb-4">Nuestro Proceso de Trabajo</h2>
+          <p className="text-rack-graph">Metodología probada para garantizar el éxito de tu proyecto paso a paso.</p>
         </div>
 
         <div className="grid grid-cols-1 md:grid-cols-5 gap-4 relative">
-          <div className="hidden md:block absolute top-1/2 left-0 w-full h-0.5 bg-white/10 -translate-y-1/2 z-0" />
+          <div className="hidden md:block absolute top-1/2 left-0 w-full h-0.5 bg-rack-sheet -translate-y-1/2 z-0" />
           
           {data.process.map((step, idx) => (
             <motion.div
@@ -397,11 +397,11 @@ export function ServiceDetail() {
               transition={{ delay: idx * 0.15 }}
               className="relative z-10 text-center group"
             >
-              <div className={`w-12 h-12 mx-auto rounded-full bg-brand-dark border-2 border-brand-primary flex items-center justify-center text-white font-bold mb-4 group-hover:scale-110 group-hover:bg-brand-primary transition-all duration-300 shadow-[0_0_15px_rgba(139,92,246,0.3)]`}>
+              <div className={`w-12 h-12 mx-auto rounded-full bg-rack-paper border-2 border-brand-primary flex items-center justify-center text-rack-ink font-bold mb-4 group-hover:scale-110 group-hover:bg-brand-primary transition-all duration-300 shadow-[0_0_15px_rgba(139,92,246,0.3)]`}>
                 {idx + 1}
               </div>
-              <h3 className="text-white font-bold mb-2">{step.title}</h3>
-              <p className="text-brand-muted text-sm px-2">{step.desc}</p>
+              <h3 className="text-rack-ink font-bold mb-2">{step.title}</h3>
+              <p className="text-rack-graph text-sm px-2">{step.desc}</p>
             </motion.div>
           ))}
         </div>
@@ -410,16 +410,16 @@ export function ServiceDetail() {
       {/* CTA Section */}
       <section id="contact-form" className="py-24 relative overflow-hidden">
         <div className="container mx-auto px-4 text-center relative z-10">
-          <h2 className="text-4xl md:text-5xl font-bold text-white mb-8">
+          <h2 className="text-4xl md:text-5xl font-bold text-rack-ink mb-8">
             ¿Listo para transformar tu negocio?
           </h2>
-          <p className="text-xl text-brand-muted max-w-2xl mx-auto mb-10">
+          <p className="text-xl text-rack-graph max-w-2xl mx-auto mb-10">
             No dejes pasar más tiempo. Contáctanos hoy y recibe una consultoría inicial gratuita para evaluar tus necesidades.
           </p>
           <div className="flex flex-col sm:flex-row items-center justify-center gap-6">
             <Button 
               size="lg"
-              className="w-full sm:w-auto text-lg px-8 py-6 bg-white text-black hover:bg-brand-gray hover:text-white transition-colors"
+              className="w-full sm:w-auto text-lg px-8 py-6 bg-white text-black hover:bg-rack-sheet hover:text-rack-ink transition-colors"
               onClick={() => navigate("/contact")}
             >
               Agendar Consultoría
@@ -427,7 +427,7 @@ export function ServiceDetail() {
             <Button 
               variant="outline"
               size="lg"
-              className="w-full sm:w-auto text-lg px-8 py-6 border-white/20 hover:bg-white/10"
+              className="w-full sm:w-auto text-lg px-8 py-6 border-rack-rule hover:bg-rack-sheet"
               onClick={() => window.open('https://wa.me/50760000000', '_blank')}
             >
               <MessageCircle className="mr-2 w-5 h-5" />

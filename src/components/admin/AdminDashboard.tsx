@@ -53,8 +53,28 @@ export function AdminDashboard({ stats, conversations, onSelectConversation, onS
     }
   };
 
+  const priorityQueue = [...conversations]
+    .sort((a, b) => {
+      const priorityValue = { low: 1, medium: 2, high: 3, urgent: 4 } as const;
+      return priorityValue[b.priority] - priorityValue[a.priority];
+    })
+    .slice(0, 4);
+
   return (
     <div className="space-y-6">
+      <div className="bg-gradient-to-r from-brand-primary/20 via-brand-primary/5 to-brand-secondary/20 border border-brand-primary/20 rounded-xl p-5 flex flex-col gap-3 lg:flex-row lg:items-center lg:justify-between">
+        <div>
+          <p className="text-xs uppercase tracking-[0.24em] text-brand-primary/80 mb-2">Overview</p>
+          <h2 className="text-2xl font-semibold text-white">Operación del equipo en tiempo real</h2>
+        </div>
+        <button
+          onClick={onSwitchToChats}
+          className="inline-flex items-center justify-center rounded-lg bg-white/5 px-4 py-2 text-sm text-white/80 transition hover:bg-white/10"
+        >
+          Revisar chats
+        </button>
+      </div>
+
       {/* Stat Cards */}
       <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
         {statCards.map((card, i) => (
@@ -103,6 +123,51 @@ export function AdminDashboard({ stats, conversations, onSelectConversation, onS
               </div>
             ))}
           </div>
+        </motion.div>
+
+        <motion.div
+          initial={{ opacity: 0, y: 20 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ delay: 0.5 }}
+          className="bg-brand-gray border border-white/10 rounded-xl p-6"
+        >
+          <div className="flex items-center justify-between mb-4">
+            <h3 className="text-white font-semibold">Clientes prioritarios</h3>
+            <span className="text-xs text-white/30">Top 4</span>
+          </div>
+
+          {priorityQueue.length === 0 ? (
+            <div className="text-center py-8">
+              <User className="w-10 h-10 text-white/20 mx-auto mb-2" />
+              <p className="text-white/40 text-sm">Sin clientes en cola</p>
+            </div>
+          ) : (
+            <div className="space-y-3">
+              {priorityQueue.map((conv) => (
+                <button
+                  key={conv.id}
+                  onClick={() => {
+                    onSelectConversation(conv.id);
+                    onSwitchToChats();
+                  }}
+                  className="w-full flex items-center justify-between gap-3 rounded-lg border border-white/5 bg-white/[0.02] p-3 text-left transition hover:bg-white/[0.05]"
+                >
+                  <div className="flex min-w-0 items-center gap-3">
+                    <div className="h-9 w-9 rounded-full bg-gradient-to-r from-brand-primary to-brand-secondary text-xs font-bold text-white flex items-center justify-center">
+                      {conv.clientName.split(' ').map((n) => n[0]).join('').slice(0, 2).toUpperCase()}
+                    </div>
+                    <div className="min-w-0">
+                      <div className="truncate text-sm text-white">{conv.clientName}</div>
+                      <div className="text-[11px] text-white/40">{conv.lastMessage || 'Sin mensajes'}</div>
+                    </div>
+                  </div>
+                  <span className={`rounded-full px-2 py-1 text-[10px] font-medium ${getPriorityColor(conv.priority)} text-white`}>
+                    {conv.priority}
+                  </span>
+                </button>
+              ))}
+            </div>
+          )}
         </motion.div>
 
         {/* Recent Conversations */}

@@ -40,7 +40,7 @@ function App() {
   return (
     <Router>
       <ScrollToTop />
-      <div className="min-h-screen bg-brand-dark text-brand-text font-sans antialiased selection:bg-brand-primary/30">
+      <div className="min-h-screen bg-rack-paper font-sans text-rack-ink antialiased">
         <Routes>
           {/* Admin routes - no Navbar/Footer */}
           <Route path="/admin/login" element={<AdminLogin />} />
