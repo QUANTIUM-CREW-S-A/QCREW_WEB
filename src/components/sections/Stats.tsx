@@ -88,9 +88,17 @@ function SpecCell({ spec, index }: { spec: Spec; index: number }) {
 
 export function Stats() {
   return (
-    <section className="border-t border-rack-rule bg-rack-paper py-20 md:py-24">
-      <div className="container mx-auto px-4">
-        <div className="rack-panel">
+    <section className="relative overflow-hidden border-t border-rack-rule bg-rack-paper py-20 md:py-24">
+      <div aria-hidden="true" className="rack-grid absolute inset-0" />
+
+      <div className="container relative z-10 mx-auto px-4">
+        <div className="rack-panel relative">
+          {/* Marcas de registro, como en una hoja de plano */}
+          <span aria-hidden="true" className="absolute -left-px -top-px h-3 w-3 border-l border-t border-rack-edge" />
+          <span aria-hidden="true" className="absolute -right-px -top-px h-3 w-3 border-r border-t border-rack-edge" />
+          <span aria-hidden="true" className="absolute -bottom-px -left-px h-3 w-3 border-b border-l border-rack-edge" />
+          <span aria-hidden="true" className="absolute -bottom-px -right-px h-3 w-3 border-b border-r border-rack-edge" />
+
           {/* Cabecera de la placa: como el troquelado de una chapa real */}
           <div className="flex items-center justify-between border-b border-rack-rule px-6 py-3.5 sm:px-8">
             <p className="rack-label">Placa de características</p>

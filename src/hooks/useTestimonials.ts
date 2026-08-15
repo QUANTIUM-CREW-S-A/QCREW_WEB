@@ -1,5 +1,5 @@
 import { useState, useEffect } from 'react';
-import { supabase } from '../lib/supabase';
+import { isSupabaseConfigured, supabase } from '../lib/supabase';
 import type { TestimonialRow } from '../types/database';
 
 export interface Testimonial {
@@ -52,6 +52,15 @@ function useApprovedTestimonials(onlyFeatured: boolean, max?: number) {
 
   useEffect(() => {
     let active = true;
+
+    if (!isSupabaseConfigured) {
+      setTestimonials([]);
+      setError(null);
+      setLoading(false);
+      return () => {
+        active = false;
+      };
+    }
 
     const fetchTestimonials = async () => {
       let query = supabase

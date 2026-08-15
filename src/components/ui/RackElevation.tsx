@@ -2,6 +2,7 @@ import { motion, useReducedMotion } from 'framer-motion';
 import { useState } from 'react';
 import { Link } from 'react-router-dom';
 import { cn } from '../../lib/utils';
+import { DivisionIcon } from './DivisionIcon';
 
 /**
  * Elevacion de rack: la pieza de firma de la home.
@@ -13,6 +14,8 @@ import { cn } from '../../lib/utils';
  */
 
 export interface RackUnit {
+  /** Identificador de division, para el glifo de la unidad. */
+  id: 'dev' | 'systems' | 'support' | 'install';
   /**
    * Posicion en la elevacion, de la nube al piso. Va en ingles a proposito:
    * los paneles y switches reales vienen serigrafiados en ingles en todos
@@ -103,29 +106,38 @@ export function RackElevation({
                 </div>
 
                 {/* Nombre y resumen */}
-                <div>
-                  <h3
+                <div className="flex gap-4">
+                  <DivisionIcon
+                    id={unit.id}
                     className={cn(
-                      'rack-display text-2xl transition-colors sm:text-[28px]',
-                      isActive ? 'text-rack-brand' : 'text-rack-ink'
+                      'mt-0.5 hidden h-8 w-8 shrink-0 transition-colors duration-300 sm:block',
+                      isActive ? 'text-rack-brand' : 'text-rack-graph/50'
                     )}
-                  >
-                    {unit.name}
-                  </h3>
-                  <p className="mt-1.5 max-w-md text-[15px] leading-relaxed text-rack-graph">
-                    {unit.summary}
-                  </p>
+                  />
+                  <div>
+                    <h3
+                      className={cn(
+                        'rack-display text-2xl transition-colors sm:text-[28px]',
+                        isActive ? 'text-rack-brand' : 'text-rack-ink'
+                      )}
+                    >
+                      {unit.name}
+                    </h3>
+                    <p className="mt-1.5 max-w-md text-[15px] leading-relaxed text-rack-graph">
+                      {unit.summary}
+                    </p>
 
-                  {/* Lista de puertos, como la serigrafia de un patch panel.
-                      Sin separadores: al envolver dejaban una barra colgando
-                      al inicio de la linea siguiente. El espaciado basta. */}
-                  <ul className="mt-4 flex flex-wrap gap-x-6 gap-y-1.5">
-                    {unit.items.map((item) => (
-                      <li key={item} className="font-mono text-xs text-rack-graph/80">
-                        {item}
-                      </li>
-                    ))}
-                  </ul>
+                    {/* Lista de puertos, como la serigrafia de un patch panel.
+                        Sin separadores: al envolver dejaban una barra colgando
+                        al inicio de la linea siguiente. El espaciado basta. */}
+                    <ul className="mt-4 flex flex-wrap gap-x-6 gap-y-1.5">
+                      {unit.items.map((item) => (
+                        <li key={item} className="font-mono text-xs text-rack-graph/80">
+                          {item}
+                        </li>
+                      ))}
+                    </ul>
+                  </div>
                 </div>
 
                 {/* Indicador de accion, alineado con el titulo y no al centro

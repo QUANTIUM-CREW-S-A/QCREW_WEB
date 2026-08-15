@@ -1,210 +1,238 @@
 import { useParams, useNavigate } from "react-router-dom";
-import { motion, useScroll, useTransform } from "framer-motion";
-import { ArrowLeft, Code2, Server, Headphones, Wrench, CheckCircle2, Zap, BarChart3, Shield } from "lucide-react";
+import { motion, useReducedMotion } from "framer-motion";
+import {
+  ArrowLeft,
+  ArrowRight,
+  Code2,
+  Server,
+  Headphones,
+  Wrench,
+  CheckCircle2,
+  Zap,
+  BarChart3,
+  Shield,
+  Cloud,
+  Eye,
+  Clock,
+  MessageCircle,
+  PenTool as Tool,
+  Network,
+  Lock,
+} from "lucide-react";
 import { Button } from "../components/ui/Button";
 import { SectionWrapper } from "../components/ui/SectionWrapper";
+import { DivisionIcon } from "../components/ui/DivisionIcon";
 import { useTranslation } from "react-i18next";
 import { useEffect } from "react";
-import { ServiceImage } from "../components/ui/ServiceImage";
+import { cn } from "../lib/utils";
+import { whatsappHref } from "../lib/company";
+import { useSeo } from "../hooks/useSeo";
 
-// Datos extendidos de los servicios (en una aplicación real, esto vendría de una API o CMS)
+/**
+ * Datos extendidos por division. Los textos cortos (title, description,
+ * features) vienen de i18n y se reusan en Services.tsx; esto es contenido
+ * exclusivo de la pagina de detalle.
+ */
 const serviceData = {
   dev: {
     icon: Code2,
-    image: "https://images.unsplash.com/photo-1461749280684-dccba630e2f6?q=80&w=1200&auto=format&fit=crop",
-    color: "from-blue-600 to-cyan-600",
+    seo: "Desarrollo de software a medida en Panamá: sistemas internos, APIs, integraciones y automatización de procesos. Arquitectura que escala y seguridad desde el diseño.",
     stats: [
-      { label: "Proyectos Entregados", value: "500+" },
+      { label: "Proyectos entregados", value: "500+" },
       { label: "Satisfacción", value: "99%" },
-      { label: "Expertos", value: "25+" }
+      { label: "Ingenieros", value: "25+" },
     ],
     details: [
       {
-        title: "Desarrollo a Medida",
-        description: "Creamos soluciones de software personalizadas que se adaptan perfectamente a los flujos de trabajo únicos de tu empresa. Desde aplicaciones web complejas hasta sistemas de gestión interna.",
-        icon: Zap
+        title: "Desarrollo a medida",
+        description:
+          "Software y automatizaciones construidas sobre tu flujo de trabajo real, no sobre una plantilla. TypeScript, Python, Go o Rust según lo que el problema pida.",
+        icon: Zap,
       },
       {
-        title: "Arquitectura Escalable",
-        description: "Diseñamos sistemas pensados para crecer. Utilizamos microservicios y arquitecturas cloud-native que garantizan rendimiento y disponibilidad incluso bajo alta demanda.",
-        icon: BarChart3
+        title: "Arquitectura que escala",
+        description:
+          "Microservicios y despliegues cloud-native sobre AWS o Google Cloud, con Docker y Kubernetes cuando la carga lo justifica — no antes.",
+        icon: BarChart3,
       },
       {
-        title: "Seguridad por Diseño",
-        description: "La seguridad no es un añadido, es la base. Implementamos las mejores prácticas de DevSecOps para asegurar que tu software sea robusto contra amenazas.",
-        icon: Shield
-      }
+        title: "Seguridad por diseño",
+        description:
+          "Revisión de dependencias, control de acceso y cifrado desde el primer commit, no como parche posterior al lanzamiento.",
+        icon: Shield,
+      },
     ],
     comparison: [
-      { feature: "Tiempo de Entrega", others: "Retrasos constantes", quantium: "Garantizado por contrato" },
-      { feature: "Calidad de Código", others: "Deuda técnica acumulada", quantium: "Estándares Clean Code" },
-      { feature: "Escalabilidad", others: "Limitada y costosa", quantium: "Cloud-native ilimitada" },
-      { feature: "Propiedad Intelectual", others: "Licencias confusas", quantium: "100% tuya" }
+      { feature: "Tiempo de entrega", others: "Fechas que se corren", quantium: "Cronograma fijado por contrato" },
+      { feature: "Calidad de código", others: "Deuda técnica acumulada", quantium: "Code review en cada PR" },
+      { feature: "Escalabilidad", others: "Reescritura a los 2 años", quantium: "Arquitectura cloud-native desde el día uno" },
+      { feature: "Propiedad del código", others: "Licencias poco claras", quantium: "Repositorio 100% tuyo" },
     ],
     process: [
-      { title: "Descubrimiento", desc: "Analizamos tus necesidades y objetivos de negocio" },
-      { title: "Diseño", desc: "Creamos la arquitectura y prototipo de la solución" },
-      { title: "Desarrollo", desc: "Implementamos con metodología ágil y entregas iterativas" },
-      { title: "Testing", desc: "Pruebas exhaustivas de calidad y seguridad" },
-      { title: "Lanzamiento", desc: "Despliegue, capacitación y soporte continuo" }
+      { title: "Descubrimiento", desc: "Levantamos requerimientos con quienes van a usar el sistema, no solo con quien lo pidió" },
+      { title: "Diseño", desc: "Arquitectura y prototipo navegable antes de escribir una línea de producción" },
+      { title: "Desarrollo", desc: "Sprints cortos con entregas revisables, no un único lanzamiento a ciegas" },
+      { title: "Pruebas", desc: "Tests automatizados y revisión de seguridad antes de cada release" },
+      { title: "Lanzamiento", desc: "Despliegue, capacitación al equipo y ventana de soporte post-entrega" },
     ],
-    testimonial: {
-      text: "El equipo de desarrollo transformó completamente nuestra operativa interna. Lo que antes tomaba días, ahora se hace en minutos.",
-      author: "Carlos Méndez",
-      role: "CTO, FinanzasGlobal"
-    }
   },
   systems: {
     icon: Server,
-    image: "https://images.unsplash.com/photo-1558494949-ef010cbdcc31?q=80&w=1200&auto=format&fit=crop",
-    color: "from-green-600 to-emerald-600",
+    seo: "Servidores, redes e infraestructura híbrida para empresas en Panamá. Virtualización con VMware o Proxmox, monitoreo proactivo y migraciones por etapas sin detener tu operación.",
     stats: [
-      { label: "Uptime Garantizado", value: "99.99%" },
-      { label: "Servidores Gestionados", value: "1k+" },
-      { label: "Incidentes Prevenidos", value: "5k+" }
+      { label: "Uptime garantizado", value: "99.99%" },
+      { label: "Servidores gestionados", value: "1k+" },
+      { label: "Incidentes prevenidos", value: "5k+" },
     ],
     details: [
       {
-        title: "Infraestructura Cloud Híbrida",
-        description: "Integramos lo mejor de la nube pública y privada. Optimizamos costos y rendimiento mediante orquestación inteligente de cargas de trabajo.",
-        icon: Cloud
+        title: "Infraestructura híbrida",
+        description:
+          "Combinamos nube pública (AWS, Google Cloud) con hardware propio cuando el costo o la latencia lo piden — sin dogma de \"todo a la nube\".",
+        icon: Cloud,
       },
       {
-        title: "Virtualización Avanzada",
-        description: "Maximizamos el uso de tu hardware con soluciones de virtualización líderes (VMware, Hyper-V). Reducimos costos de energía y espacio físico.",
-        icon: Server
+        title: "Virtualización con VMware o Proxmox",
+        description:
+          "Consolidamos servidores físicos en clústeres virtualizados. Menos hardware, menos consumo, mismo rendimiento.",
+        icon: Server,
       },
       {
-        title: "Monitoreo Proactivo",
-        description: "Sistemas de alerta temprana que detectan anomalías antes de que afecten a tu negocio. Dashboards en tiempo real de la salud de tu infraestructura.",
-        icon: Eye
-      }
+        title: "Monitoreo proactivo",
+        description:
+          "Alertas antes de que el problema llegue al usuario, no un ticket después de la caída.",
+        icon: Eye,
+      },
     ],
     comparison: [
-      { feature: "Disponibilidad", others: "Caídas frecuentes", quantium: "99.99% SLA" },
-      { feature: "Respuesta", others: "Horas o días", quantium: "< 15 minutos" },
-      { feature: "Seguridad", others: "Reactiva (post-hackeo)", quantium: "Proactiva (prevención)" },
-      { feature: "Costos", others: "Ocultos y variables", quantium: "Transparentes y optimizados" }
+      { feature: "Disponibilidad", others: "Caídas frecuentes sin aviso", quantium: "99.99% con SLA firmado" },
+      { feature: "Tiempo de respuesta", others: "Horas o días", quantium: "Menos de 15 minutos" },
+      { feature: "Seguridad", others: "Reactiva, después del incidente", quantium: "Parcheo y hardening proactivo" },
+      { feature: "Costos", others: "Facturas variables sin explicación", quantium: "Presupuesto fijo y trazable" },
     ],
     process: [
-      { title: "Auditoría", desc: "Evaluamos tu infraestructura actual y puntos críticos" },
-      { title: "Planificación", desc: "Diseñamos la arquitectura objetivo y plan de migración" },
-      { title: "Implementación", desc: "Ejecutamos la migración con mínimo tiempo de inactividad" },
-      { title: "Optimización", desc: "Ajustamos rendimiento, costos y seguridad" },
-      { title: "Monitoreo", desc: "Supervisión continua y mantenimiento proactivo" }
+      { title: "Auditoría", desc: "Relevamos tu infraestructura actual y marcamos los puntos críticos" },
+      { title: "Planificación", desc: "Diseñamos la arquitectura objetivo y el plan de migración" },
+      { title: "Implementación", desc: "Migramos por etapas, con ventanas de mantenimiento acordadas" },
+      { title: "Optimización", desc: "Ajustamos rendimiento y costo una vez estabilizado" },
+      { title: "Monitoreo", desc: "Supervisión continua y mantenimiento preventivo" },
     ],
-    testimonial: {
-      text: "La migración a la nube fue impecable. Nuestro rendimiento mejoró un 300% y redujimos costos operativos significativamente.",
-      author: "Ana Torres",
-      role: "Gerente de Operaciones, RetailCorp"
-    }
   },
   support: {
     icon: Headphones,
-    image: "https://images.unsplash.com/photo-1558494943-c8420f912134?q=80&w=1200&auto=format&fit=crop",
-    color: "from-orange-600 to-red-600",
+    seo: "Soporte TI gestionado en Panamá con guardia 24/7/365, mesa de ayuda multicanal y mantenimiento preventivo. Planes mensuales con SLA y reportes periódicos.",
     stats: [
-      { label: "Tiempo Respuesta", value: "<15min" },
-      { label: "Resolución Primer Contacto", value: "85%" },
-      { label: "Disponibilidad", value: "24/7" }
+      { label: "Tiempo de respuesta", value: "<15 min" },
+      { label: "Resolución en 1er contacto", value: "85%" },
+      { label: "Disponibilidad", value: "24/7" },
     ],
     details: [
       {
-        title: "Soporte 24/7/365",
-        description: "Tu negocio no duerme, nosotros tampoco. Equipo de guardia siempre disponible para resolver incidencias críticas en cualquier momento.",
-        icon: Clock
+        title: "Guardia 24/7/365",
+        description:
+          "Un ingeniero real de guardia, no un buzón de voz. Incidentes críticos atendidos a cualquier hora.",
+        icon: Clock,
       },
       {
-        title: "Mesa de Ayuda Multicanal",
-        description: "Atención vía teléfono, email, chat y portal de tickets. Centralizamos todas las solicitudes para un seguimiento eficiente y transparente.",
-        icon: MessageCircle
+        title: "Mesa de ayuda multicanal",
+        description:
+          "Teléfono, correo, chat y portal de tickets centralizados — un solo lugar para hacer seguimiento, sin repetir el problema tres veces.",
+        icon: MessageCircle,
       },
       {
-        title: "Mantenimiento Preventivo",
-        description: "Revisiones periódicas y actualizaciones programadas para evitar fallos. Mantenemos tus sistemas al día y seguros.",
-        icon: Tool
-      }
+        title: "Mantenimiento preventivo",
+        description:
+          "Revisiones y actualizaciones programadas para que el problema no llegue a ser incidente.",
+        icon: Tool,
+      },
     ],
     comparison: [
-      { feature: "Horario", others: "Lunes a Viernes 9-5", quantium: "24/7/365 Real" },
-      { feature: "Canales", others: "Solo email", quantium: "Teléfono, Chat, Email, Portal" },
-      { feature: "Personal", others: "Call center genérico", quantium: "Ingenieros certificados" },
-      { feature: "Enfoque", others: "Apagar incendios", quantium: "Prevenir incendios" }
+      { feature: "Horario", others: "Lunes a viernes, 9 a 5", quantium: "24/7/365 con guardia real" },
+      { feature: "Canales", others: "Solo correo", quantium: "Teléfono, chat, correo y portal" },
+      { feature: "Personal", others: "Call center genérico", quantium: "Ingenieros certificados por división" },
+      { feature: "Enfoque", others: "Reactivo: apagar incendios", quantium: "Preventivo: evitar el incendio" },
     ],
     process: [
-      { title: "Diagnóstico", desc: "Identificamos los problemas y necesidades de soporte" },
-      { title: "Onboarding", desc: "Configuramos canales, accesos y documentación" },
-      { title: "Activación", desc: "Iniciamos monitoreo y atención de incidencias" },
-      { title: "Mejora", desc: "Reportes periódicos y optimización de procesos" },
-      { title: "Evolución", desc: "Adaptamos el servicio a medida que creces" }
+      { title: "Diagnóstico", desc: "Identificamos los problemas y necesidades reales de soporte" },
+      { title: "Onboarding", desc: "Configuramos canales, accesos y documentación de tu entorno" },
+      { title: "Activación", desc: "Arrancamos monitoreo y atención de incidencias" },
+      { title: "Reportes", desc: "Informes periódicos de incidencias, tendencias y mejoras" },
+      { title: "Evolución", desc: "Ajustamos el plan de soporte a medida que tu operación crece" },
     ],
-    testimonial: {
-      text: "Saber que tenemos a alguien cuidando nuestros sistemas 24/7 nos da una tranquilidad invaluable. Su respuesta es siempre inmediata.",
-      author: "Roberto Gómez",
-      role: "CEO, TechSolutions"
-    }
   },
   install: {
     icon: Wrench,
-    image: "https://images.unsplash.com/photo-1518770660439-4636190af475?q=80&w=1200&auto=format&fit=crop",
-    color: "from-indigo-600 to-purple-600",
+    seo: "Cableado estructurado, salas de servidores y seguridad física en Panamá. Instalación certificada con equipo Fluke, planos técnicos y documentación completa de entrega.",
     stats: [
-      { label: "Instalaciones Exitosas", value: "2k+" },
-      { label: "Certificaciones", value: "50+" },
-      { label: "Garantía", value: "1 Año" }
+      { label: "Instalaciones exitosas", value: "2k+" },
+      { label: "Técnicos certificados", value: "50+" },
+      { label: "Garantía", value: "1 año" },
     ],
     details: [
       {
-        title: "Cableado Estructurado",
-        description: "Diseño e implementación de redes de voz y datos certificadas. Categoría 6, 6A y fibra óptica para máxima velocidad y fiabilidad.",
-        icon: Network
+        title: "Cableado estructurado",
+        description:
+          "Redes de voz y datos certificadas en Categoría 6, 6A y fibra óptica, con etiquetado y planos as-built.",
+        icon: Network,
       },
       {
-        title: "Centros de Datos",
-        description: "Adecuación física de espacios para servidores: climatización de precisión, energía ininterrumpida (UPS) y control de acceso.",
-        icon: Server
+        title: "Salas de servidores",
+        description:
+          "Adecuación física del espacio: climatización, energía ininterrumpida (UPS) y control de acceso.",
+        icon: Server,
       },
       {
-        title: "Sistemas de Seguridad",
-        description: "Instalación de cámaras CCTV, controles de acceso biométricos y alarmas integradas. Protegemos tus activos físicos y digitales.",
-        icon: Lock
-      }
+        title: "Seguridad física",
+        description:
+          "Cámaras CCTV, control de acceso biométrico y alarmas integradas a un mismo panel de monitoreo.",
+        icon: Lock,
+      },
     ],
     comparison: [
-      { feature: "Materiales", others: "Genéricos baratos", quantium: "Certificados Premium" },
-      { feature: "Estética", others: "Cables desordenados", quantium: "Peinado y etiquetado perfecto" },
-      { feature: "Certificación", others: "No incluida", quantium: "Informe completo con Fluke" },
-      { feature: "Garantía", others: "3 meses", quantium: "1 Año extendible" }
+      { feature: "Materiales", others: "Genéricos, sin certificar", quantium: "Certificados de fábrica" },
+      { feature: "Terminación", others: "Cableado sin orden ni etiqueta", quantium: "Peinado, etiquetado y documentado" },
+      { feature: "Certificación", others: "No incluida", quantium: "Informe de pruebas con equipo Fluke" },
+      { feature: "Garantía", others: "3 meses", quantium: "1 año, extendible" },
     ],
     process: [
-      { title: "Levantamiento", desc: "Visitamos el sitio y evaluamos requerimientos físicos" },
+      { title: "Levantamiento", desc: "Visitamos el sitio y relevamos los requerimientos físicos" },
       { title: "Diseño", desc: "Planos técnicos y selección de materiales certificados" },
-      { title: "Instalación", desc: "Ejecución profesional con mínima interrupción" },
-      { title: "Certificación", desc: "Pruebas con equipos Fluke y documentación completa" },
-      { title: "Entrega", desc: "Capacitación, garantía y soporte post-instalación" }
+      { title: "Instalación", desc: "Ejecución profesional con mínima interrupción a tu operación" },
+      { title: "Certificación", desc: "Pruebas con equipo Fluke y entrega de documentación completa" },
+      { title: "Entrega", desc: "Capacitación al equipo, garantía y soporte post-instalación" },
     ],
-    testimonial: {
-      text: "La calidad del cableado es impresionante. No solo funciona perfecto, sino que estéticamente es una obra de arte. Muy profesionales.",
-      author: "Laura Sánchez",
-      role: "Gerente de Infraestructura, EduCampus"
-    }
+  },
+} satisfies Record<
+  string,
+  {
+    icon: typeof Code2;
+    seo: string;
+    stats: { label: string; value: string }[];
+    details: { title: string; description: string; icon: typeof Code2 }[];
+    comparison: { feature: string; others: string; quantium: string }[];
+    process: { title: string; desc: string }[];
   }
-};
-
-// Iconos adicionales necesarios
-import { Cloud, Eye, Clock, MessageCircle, PenTool as Tool, Network, Lock } from "lucide-react";
+>;
 
 export function ServiceDetail() {
   const { id } = useParams<{ id: string }>();
   const navigate = useNavigate();
   const { t } = useTranslation();
-  const { scrollY } = useScroll();
-  const heroOpacity = useTransform(scrollY, [0, 300], [1, 0]);
-  const heroScale = useTransform(scrollY, [0, 300], [1, 1.1]);
+  const reduce = useReducedMotion();
 
-  // Validar si el servicio existe
   const serviceKey = id as keyof typeof serviceData;
   const data = serviceData[serviceKey];
+
+  useSeo({
+    title: data
+      ? `${t(`services.${serviceKey}.title`)} | Quantium Crew Panamá`
+      : "Servicio no encontrado | Quantium Crew",
+    description: data
+      ? data.seo
+      : "El servicio solicitado no está disponible.",
+    path: `/services/${id ?? ""}`,
+    noindex: !data,
+  });
 
   useEffect(() => {
     window.scrollTo(0, 0);
@@ -212,134 +240,127 @@ export function ServiceDetail() {
 
   if (!data) {
     return (
-      <div className="min-h-screen flex items-center justify-center bg-rack-paper text-rack-ink">
+      <div className="flex min-h-screen items-center justify-center bg-rack-paper text-rack-ink">
         <div className="text-center">
-          <h2 className="text-2xl font-bold mb-4">Servicio no encontrado</h2>
+          <h2 className="mb-4 text-2xl font-bold">Servicio no encontrado</h2>
           <Button onClick={() => navigate("/")}>Volver al inicio</Button>
         </div>
       </div>
     );
   }
 
-  const Icon = data.icon;
-
   return (
     <div className="min-h-screen bg-rack-paper">
-      {/* Hero Section con Parallax */}
-      <section className="relative h-[80vh] flex items-center overflow-hidden">
-        <motion.div 
-          style={{ opacity: heroOpacity, scale: heroScale }}
-          className="absolute inset-0 z-0"
-        >
-          <ServiceImage 
-            src={data.image} 
-            alt={t(`services.${serviceKey}.title`)} 
-            className="w-full h-full object-cover"
-            serviceType={serviceKey}
-          />
-          <div className="absolute inset-0 bg-gradient-to-t from-brand-dark via-brand-dark/60 to-brand-dark/30" />
-        </motion.div>
+      {/* Encabezado: el diagrama de la division reemplaza a la foto de stock */}
+      <SectionWrapper className="relative overflow-hidden border-b border-rack-rule pb-16 pt-32 md:pb-20 md:pt-40">
+        <div aria-hidden="true" className="rack-grid absolute inset-0" />
 
-        <div className="container mx-auto px-4 relative z-10 pt-20">
-          <Button 
-            variant="ghost" 
-            className="mb-8 text-rack-ink/80 hover:text-rack-ink pl-0 hover:bg-rack-sheet "
-            onClick={() => navigate("/")}
-          >
-            <ArrowLeft className="mr-2 w-4 h-4" />
-            Volver a Servicios
-          </Button>
+        <div className="container relative z-10 mx-auto grid grid-cols-1 items-center gap-12 px-4 lg:grid-cols-[1.15fr_1fr] lg:gap-16">
+          <div>
+            <Button
+              variant="ghost"
+              className="mb-8 pl-0 text-rack-graph hover:bg-transparent hover:text-rack-ink"
+              onClick={() => navigate("/")}
+            >
+              <ArrowLeft className="mr-2 h-4 w-4" />
+              Volver a servicios
+            </Button>
 
+            <motion.div
+              initial={reduce ? undefined : { opacity: 0, y: 16 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ duration: 0.5 }}
+            >
+              <p className="rack-label mb-5">Divisiones &middot; Quantium Crew</p>
+
+              <h1 className="rack-display text-4xl text-rack-ink sm:text-5xl md:text-6xl">
+                {t(`services.${serviceKey}.title`)}
+              </h1>
+
+              <p className="mt-6 max-w-xl text-lg leading-relaxed text-rack-graph">
+                {t(`services.${serviceKey}.description`)}
+              </p>
+
+              <div className="mt-9 flex flex-wrap gap-3">
+                <Button size="lg" onClick={() => navigate("/contact")}>
+                  Solicitar cotización
+                  <ArrowRight className="ml-2 h-4 w-4" />
+                </Button>
+                <Button
+                  variant="outline"
+                  size="lg"
+                  onClick={() => document.getElementById("details")?.scrollIntoView({ behavior: "smooth" })}
+                >
+                  Ver detalle
+                </Button>
+              </div>
+            </motion.div>
+          </div>
+
+          {/* Glifo de la division, ampliado, como pieza de firma */}
           <motion.div
-            initial={{ opacity: 0, y: 30 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.8 }}
-            className="max-w-4xl"
+            initial={reduce ? undefined : { opacity: 0 }}
+            animate={{ opacity: 1 }}
+            transition={{ duration: 0.6, delay: 0.15 }}
+            className="hidden items-center justify-center lg:flex"
           >
-            <div className={`inline-flex items-center gap-2 px-4 py-2 rounded-full bg-rack-sheet  border border-rack-rule text-rack-ink mb-6`}>
-              <Icon className="w-5 h-5" />
-              <span className="font-medium uppercase tracking-wider text-sm">Servicio Profesional</span>
-            </div>
-            
-            <h1 className="text-5xl md:text-7xl font-display font-bold text-rack-ink mb-6 leading-tight">
-              {t(`services.${serviceKey}.title`)}
-            </h1>
-            
-            <p className="text-xl md:text-2xl text-rack-ink/80 max-w-2xl leading-relaxed mb-8">
-              {t(`services.${serviceKey}.description`)}
-            </p>
-
-            <div className="flex gap-4">
-              <Button 
-                size="lg"
-                className={`bg-gradient-to-r ${data.color} hover:shadow-lg hover:shadow-brand-primary/25 border-none`}
-                onClick={() => document.getElementById('contact-form')?.scrollIntoView({ behavior: 'smooth' })}
-              >
-                Solicitar Cotización
-              </Button>
-              <Button 
-                variant="outline"
-                size="lg"
-                className="border-rack-rule hover:bg-rack-sheet text-rack-ink "
-                onClick={() => document.getElementById('details')?.scrollIntoView({ behavior: 'smooth' })}
-              >
-                Saber más
-              </Button>
+            <div className="rack-panel flex h-72 w-72 items-center justify-center">
+              <DivisionIcon id={serviceKey} className="h-32 w-32 text-rack-ink" />
             </div>
           </motion.div>
         </div>
-      </section>
+      </SectionWrapper>
 
-      {/* Stats Section Floating */}
-      <div className="container mx-auto px-4 -mt-20 relative z-20">
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-4 md:gap-8 bg-rack-sheet  border border-rack-rule rounded-2xl p-8 shadow-2xl">
-          {data.stats.map((stat, idx) => (
-            <motion.div
-              key={idx}
-              initial={{ opacity: 0, y: 20 }}
-              whileInView={{ opacity: 1, y: 0 }}
-              transition={{ delay: 0.2 + idx * 0.1 }}
-              className="text-center relative md:border-r md:border-rack-rule last:border-0"
-            >
-              <div className={`text-4xl md:text-5xl font-bold bg-clip-text text-transparent bg-gradient-to-r ${data.color} mb-2`}>
-                {stat.value}
+      {/* Placa de cifras, mismo lenguaje que Stats.tsx */}
+      <div className="container relative z-10 mx-auto -mt-px px-4">
+        <div className="rack-panel mx-auto max-w-4xl">
+          <div className="flex items-center justify-between border-b border-rack-rule px-6 py-3.5 sm:px-8">
+            <p className="rack-label">Placa de características</p>
+            <p className="rack-label hidden sm:block">{serviceKey.toUpperCase()}</p>
+          </div>
+          <div className="grid grid-cols-1 sm:grid-cols-3">
+            {data.stats.map((stat, idx) => (
+              <div
+                key={stat.label}
+                className={cn(
+                  "border-rack-rule px-6 py-7 sm:px-8",
+                  idx > 0 && "border-t sm:border-l sm:border-t-0"
+                )}
+              >
+                <p className="rack-display text-4xl text-rack-ink">{stat.value}</p>
+                <p className="mt-2 font-sans text-sm font-medium text-rack-ink">{stat.label}</p>
               </div>
-              <div className="text-rack-graph font-medium uppercase tracking-wider text-sm">{stat.label}</div>
-            </motion.div>
-          ))}
+            ))}
+          </div>
         </div>
       </div>
 
-      {/* Details Section */}
+      {/* Detalle + caracteristicas + comparativa */}
       <SectionWrapper id="details" className="py-24">
-        <div className="grid lg:grid-cols-2 gap-16 items-start">
+        <div className="grid gap-16 lg:grid-cols-2 lg:items-start">
           <div className="space-y-12">
             <div>
-              <h2 className="text-3xl font-bold text-rack-ink mb-6">
-                ¿Por qué elegir nuestro servicio?
+              <h2 className="rack-display text-3xl text-rack-ink sm:text-4xl">
+                Cómo trabajamos esta división
               </h2>
-              <p className="text-rack-graph text-lg">
-                Combinamos experiencia técnica, metodología ágil y un enfoque centrado en el cliente para entregar resultados que superan expectativas.
-              </p>
             </div>
 
             <div className="space-y-8">
-              {data.details.map((detail, idx) => (
+              {data.details.map((detail) => (
                 <motion.div
-                  key={idx}
-                  initial={{ opacity: 0, x: -20 }}
+                  key={detail.title}
+                  initial={reduce ? undefined : { opacity: 0, x: -16 }}
                   whileInView={{ opacity: 1, x: 0 }}
-                  transition={{ delay: idx * 0.1 }}
-                  className="group"
+                  viewport={{ once: true, margin: "-80px" }}
+                  transition={{ duration: 0.4 }}
+                  className="group flex gap-5"
                 >
-                  <div className="flex gap-6">
-                    <div className={`w-14 h-14 rounded-2xl bg-rack-sheet flex items-center justify-center shrink-0 border border-rack-rule group-hover:border-brand-primary/50 group-hover:bg-brand-primary/10 transition-all duration-300`}>
-                      <detail.icon className="w-7 h-7 text-rack-brand" />
-                    </div>
-                    <div>
-                      <h3 className="text-xl font-bold text-rack-ink mb-2 group-hover:text-rack-brand transition-colors">{detail.title}</h3>
-                      <p className="text-rack-graph leading-relaxed">{detail.description}</p>
-                    </div>
+                  <div className="flex h-12 w-12 shrink-0 items-center justify-center border border-rack-rule bg-rack-sheet transition-colors group-hover:border-rack-edge">
+                    <detail.icon className="h-5 w-5 text-rack-brand" />
+                  </div>
+                  <div>
+                    <h3 className="text-lg font-bold text-rack-ink">{detail.title}</h3>
+                    <p className="mt-1.5 leading-relaxed text-rack-graph">{detail.description}</p>
                   </div>
                 </motion.div>
               ))}
@@ -347,95 +368,92 @@ export function ServiceDetail() {
           </div>
 
           <div className="space-y-8">
-            <div className="bg-rack-sheet border border-rack-rule rounded-3xl p-8 ">
-              <h3 className="text-2xl font-bold text-rack-ink mb-6">Características Principales</h3>
-              <ul className="space-y-4">
-                {(t(`services.${serviceKey}.features`, { returnObjects: true }) as string[]).map((feature, idx) => (
-                  <li key={idx} className="flex items-start gap-3 text-rack-graph group">
-                    <CheckCircle2 className="w-5 h-5 text-green-500 shrink-0 mt-0.5 group-hover:scale-110 transition-transform" />
-                    <span className="group-hover:text-rack-ink transition-colors">{feature}</span>
+            {/* Caracteristicas: la lista breve ya usada en Services.tsx */}
+            <div className="rack-panel p-8">
+              <h3 className="rack-label mb-5">Incluye</h3>
+              <ul className="space-y-3.5">
+                {(t(`services.${serviceKey}.features`, { returnObjects: true }) as string[]).map((feature) => (
+                  <li key={feature} className="flex items-start gap-3 text-rack-graph">
+                    <CheckCircle2 className="mt-0.5 h-5 w-5 shrink-0 text-rack-link" />
+                    <span>{feature}</span>
                   </li>
                 ))}
               </ul>
             </div>
 
-            {/* Testimonial Card */}
-            <div className="bg-gradient-to-br from-brand-primary/20 to-brand-secondary/20 border border-rack-rule rounded-3xl p-8 relative overflow-hidden">
-              <div className="absolute top-4 right-4 text-rack-ink/10">
-                <MessageCircle className="w-24 h-24" />
-              </div>
-              <p className="text-xl text-rack-ink italic mb-6 relative z-10">"{data.testimonial.text}"</p>
-              <div className="flex items-center gap-4">
-                <div className="w-12 h-12 rounded-full bg-rack-sheet flex items-center justify-center text-rack-ink font-bold">
-                  {data.testimonial.author.charAt(0)}
-                </div>
-                <div>
-                  <div className="text-rack-ink font-bold">{data.testimonial.author}</div>
-                  <div className="text-rack-ink/60 text-sm">{data.testimonial.role}</div>
-                </div>
+            {/* Comparativa: dato real de posicionamiento, no una cita inventada */}
+            <div className="rack-panel overflow-hidden">
+              <h3 className="rack-label border-b border-rack-rule px-6 py-3.5 sm:px-8">
+                Quantium Crew vs. lo genérico
+              </h3>
+              <div className="divide-y divide-rack-rule">
+                {data.comparison.map((row) => (
+                  <div key={row.feature} className="grid grid-cols-1 gap-1 px-6 py-4 sm:grid-cols-[9rem_1fr] sm:gap-4 sm:px-8">
+                    <p className="rack-label sm:pt-0.5">{row.feature}</p>
+                    <div className="space-y-1 text-sm">
+                      <p className="text-rack-graph/70 line-through decoration-rack-rule">{row.others}</p>
+                      <p className="font-medium text-rack-ink">{row.quantium}</p>
+                    </div>
+                  </div>
+                ))}
               </div>
             </div>
           </div>
         </div>
       </SectionWrapper>
 
-      {/* Process Section */}
-      <SectionWrapper className="py-20 bg-black/30 border-y border-rack-rule">
-        <div className="text-center max-w-3xl mx-auto mb-16">
-          <h2 className="text-3xl font-bold text-rack-ink mb-4">Nuestro Proceso de Trabajo</h2>
-          <p className="text-rack-graph">Metodología probada para garantizar el éxito de tu proyecto paso a paso.</p>
+      {/* Proceso: mismo patron numerico que el resto del sitio, sin brillos morados */}
+      <SectionWrapper className="border-y border-rack-rule bg-rack-paper py-20">
+        <div className="mb-14 max-w-2xl">
+          <p className="rack-label mb-4">Cómo arranca el trabajo</p>
+          <h2 className="rack-display text-3xl text-rack-ink sm:text-4xl">Nuestro proceso</h2>
         </div>
 
-        <div className="grid grid-cols-1 md:grid-cols-5 gap-4 relative">
-          <div className="hidden md:block absolute top-1/2 left-0 w-full h-0.5 bg-rack-sheet -translate-y-1/2 z-0" />
-          
+        <div className="grid grid-cols-1 gap-x-6 gap-y-10 sm:grid-cols-2 lg:grid-cols-5">
           {data.process.map((step, idx) => (
             <motion.div
-              key={idx}
-              initial={{ opacity: 0, y: 20 }}
+              key={step.title}
+              initial={reduce ? undefined : { opacity: 0, y: 12 }}
               whileInView={{ opacity: 1, y: 0 }}
-              transition={{ delay: idx * 0.15 }}
-              className="relative z-10 text-center group"
+              viewport={{ once: true, margin: "-60px" }}
+              transition={{ duration: 0.4, delay: idx * 0.06 }}
             >
-              <div className={`w-12 h-12 mx-auto rounded-full bg-rack-paper border-2 border-brand-primary flex items-center justify-center text-rack-ink font-bold mb-4 group-hover:scale-110 group-hover:bg-brand-primary transition-all duration-300 shadow-[0_0_15px_rgba(139,92,246,0.3)]`}>
-                {idx + 1}
-              </div>
-              <h3 className="text-rack-ink font-bold mb-2">{step.title}</h3>
-              <p className="text-rack-graph text-sm px-2">{step.desc}</p>
+              <span className="font-mono text-xs text-rack-brand">{String(idx + 1).padStart(2, "0")}</span>
+              <h3 className="mt-2 font-bold text-rack-ink">{step.title}</h3>
+              <p className="mt-1.5 text-sm leading-relaxed text-rack-graph">{step.desc}</p>
             </motion.div>
           ))}
         </div>
       </SectionWrapper>
 
-      {/* CTA Section */}
-      <section id="contact-form" className="py-24 relative overflow-hidden">
-        <div className="container mx-auto px-4 text-center relative z-10">
-          <h2 className="text-4xl md:text-5xl font-bold text-rack-ink mb-8">
-            ¿Listo para transformar tu negocio?
-          </h2>
-          <p className="text-xl text-rack-graph max-w-2xl mx-auto mb-10">
-            No dejes pasar más tiempo. Contáctanos hoy y recibe una consultoría inicial gratuita para evaluar tus necesidades.
-          </p>
-          <div className="flex flex-col sm:flex-row items-center justify-center gap-6">
-            <Button 
-              size="lg"
-              className="w-full sm:w-auto text-lg px-8 py-6 bg-white text-black hover:bg-rack-sheet hover:text-rack-ink transition-colors"
-              onClick={() => navigate("/contact")}
-            >
-              Agendar Consultoría
-            </Button>
-            <Button 
-              variant="outline"
-              size="lg"
-              className="w-full sm:w-auto text-lg px-8 py-6 border-rack-rule hover:bg-rack-sheet"
-              onClick={() => window.open('https://wa.me/50760000000', '_blank')}
-            >
-              <MessageCircle className="mr-2 w-5 h-5" />
-              Chat Directo
-            </Button>
-          </div>
+      {/* Cierre */}
+      <SectionWrapper className="py-24 text-center">
+        <h2 className="rack-display mx-auto max-w-2xl text-3xl text-rack-ink sm:text-4xl">
+          ¿Arrancamos con {t(`services.${serviceKey}.title`)}?
+        </h2>
+        <p className="mx-auto mt-5 max-w-xl text-lg text-rack-graph">
+          Cuéntanos qué tienes hoy y qué te está costando dinero. Respondemos en menos de 24&nbsp;h hábiles.
+        </p>
+        <div className="mt-9 flex flex-wrap items-center justify-center gap-3">
+          <Button size="lg" onClick={() => navigate("/contact")}>
+            Solicitar el diagnóstico
+            <ArrowRight className="ml-2 h-4 w-4" />
+          </Button>
+          <Button
+            size="lg"
+            variant="outline"
+            onClick={() =>
+              window.open(
+                whatsappHref(`Hola, me interesa ${t(`services.${serviceKey}.title`)}.`),
+                "_blank",
+                "noopener,noreferrer"
+              )
+            }
+          >
+            Escribir por WhatsApp
+          </Button>
         </div>
-      </section>
+      </SectionWrapper>
     </div>
   );
 }

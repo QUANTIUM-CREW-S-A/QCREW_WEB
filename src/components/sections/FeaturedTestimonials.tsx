@@ -13,16 +13,6 @@ function TestimonialCarousel() {
   const [direction, setDirection] = useState(0);
   const [isAutoPlaying, setIsAutoPlaying] = useState(true);
 
-  // Debug info
-  useEffect(() => {
-    console.log('[TestimonialCarousel] Estado:', { 
-      loading, 
-      error, 
-      count: testimonials.length,
-      testimonials: testimonials.map(t => ({ id: t.id, name: t.name, status: t.status }))
-    });
-  }, [testimonials, loading, error]);
-
   // Auto-play cada 6 segundos
   useEffect(() => {
     if (!isAutoPlaying || testimonials.length <= 1) return;
@@ -113,9 +103,9 @@ function TestimonialCarousel() {
   return (
     <div className="relative max-w-4xl mx-auto">
       {/* Debug info - visible solo en desarrollo */}
-      {process.env.NODE_ENV === 'development' && (
+      {import.meta.env.DEV && (
         <div className="text-center mb-4">
-          <span className="text-rack-ink/30 text-xs">
+          <span className="text-rack-graph text-xs">
             Debug: {testimonials.length} testimonios cargados
           </span>
         </div>
@@ -141,14 +131,14 @@ function TestimonialCarousel() {
             }}
             className="absolute inset-0 flex items-center justify-center px-4"
           >
-            <div className="bg-gradient-to-br from-white/[0.08] to-white/[0.02] border border-rack-rule rounded-3xl p-8 md:p-12 w-full backdrop-blur-sm relative overflow-hidden">
+            <div className="bg-rack-sheet border border-rack-rule rounded-3xl p-8 md:p-12 w-full relative overflow-hidden">
               {/* Decorative quote */}
               <Quote className="absolute top-6 right-6 w-16 h-16 text-rack-brand/10" />
               
               {/* Rating */}
               <div className="flex gap-1 mb-6">
                 {[...Array(current.rating)].map((_, i) => (
-                  <Star key={i} className="w-5 h-5 fill-brand-primary text-rack-brand" />
+                  <Star key={i} className="w-5 h-5 fill-rack-act text-rack-act" />
                 ))}
               </div>
 
@@ -225,8 +215,8 @@ function TestimonialCarousel() {
               }}
               className={`h-2 rounded-full transition-all duration-300 ${
                 index === currentIndex 
-                  ? 'w-8 bg-brand-primary' 
-                  : 'w-2 bg-rack-sheet hover:bg-rack-sheet'
+                  ? 'w-8 bg-rack-brand' 
+                  : 'w-2 bg-rack-rule hover:bg-rack-edge'
               }`}
             />
           ))}
@@ -235,7 +225,7 @@ function TestimonialCarousel() {
 
       {/* Counter */}
       <div className="text-center mt-4">
-        <span className="text-rack-ink/40 text-sm">
+        <span className="text-rack-graph text-sm">
           {currentIndex + 1} / {testimonials.length} testimonios
         </span>
       </div>
@@ -275,7 +265,7 @@ export function FeaturedTestimonials() {
 
           <h2 className="text-4xl md:text-5xl font-display font-bold text-rack-ink mb-6">
             Lo que dicen nuestros{" "}
-            <span className="text-transparent bg-clip-text bg-gradient-to-r from-brand-primary to-brand-secondary">
+            <span className="text-transparent bg-clip-text bg-gradient-to-r from-rack-brand to-rack-link">
               clientes reales
             </span>
           </h2>

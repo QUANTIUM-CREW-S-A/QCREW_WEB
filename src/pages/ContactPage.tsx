@@ -17,39 +17,41 @@ import { SectionWrapper } from "../components/ui/SectionWrapper";
 import { useState } from "react";
 import { toast } from "../components/ui/Toast";
 import { TurnstileCaptcha, useCaptchaValidation } from "../components/ui/TurnstileCaptcha";
+import { company, mailHref, telHref, whatsappHref } from "../lib/company";
+import { useSeo } from "../hooks/useSeo";
 
 const contactMethods = [
   {
     icon: MessageCircle,
     title: "WhatsApp",
-    value: "+506 8888-8888",
+    value: company.whatsapp.display,
     description: "Respuesta inmediata",
     color: "from-green-500 to-emerald-500",
-    href: "https://wa.me/50688888888",
+    href: whatsappHref(),
     available: "Siempre disponible"
   },
   {
     icon: Mail,
     title: "Email",
-    value: "hola@quantiumcrew.com",
+    value: company.email,
     description: "Respuesta en 24h",
     color: "from-brand-primary to-cyan-400",
-    href: "mailto:hola@quantiumcrew.com",
+    href: mailHref,
     available: "24/7"
   },
   {
     icon: Phone,
     title: "Teléfono",
-    value: "+506 8888-8888",
-    description: "Lun-Vie 8am-6pm",
+    value: company.phone.display,
+    description: company.hours.weekdays,
     color: "from-brand-secondary to-purple-500",
-    href: "tel:+50688888888",
+    href: telHref,
     available: "Horario laboral"
   },
   {
     icon: MapPin,
     title: "Oficina",
-    value: "San José, Costa Rica",
+    value: `${company.address.locality}, ${company.address.countryName}`,
     description: "Atención con cita previa",
     color: "from-orange-500 to-red-500",
     href: "#",
@@ -179,6 +181,12 @@ function AnimatedSelect({
 }
 
 export default function ContactPage() {
+  useSeo({
+    title: "Contacto | Quantium Crew — Infraestructura TI en Panamá",
+    description:
+      "Cotiza tu proyecto de redes, cableado estructurado, soporte TI o software a medida. Respuesta en menos de 24 h.",
+    path: "/contact",
+  });
   const [isSubmitting, setIsSubmitting] = useState(false);
   const { isVerified, handleVerify, handleError } = useCaptchaValidation();
   const [formData, setFormData] = useState({

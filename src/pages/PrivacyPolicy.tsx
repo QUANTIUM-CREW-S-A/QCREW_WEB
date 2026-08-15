@@ -1,8 +1,15 @@
 import { SectionWrapper } from "../components/ui/SectionWrapper";
 import { useTranslation } from "react-i18next";
+import { addressLines, company } from "../lib/company";
+import { useSeo } from "../hooks/useSeo";
 
 export default function PrivacyPolicy() {
   const { t } = useTranslation();
+  useSeo({
+    title: "Política de privacidad | Quantium Crew",
+    description: "Cómo Quantium Crew recopila, usa y protege los datos personales de sus clientes en Panamá.",
+    path: "/privacy",
+  });
 
   return (
     <SectionWrapper className="pt-32 pb-20">
@@ -59,10 +66,10 @@ export default function PrivacyPolicy() {
             {t("privacy.section5.content")}
           </p>
           <p className="mt-4">
-            <strong>Quantium Crew</strong><br />
-            123 Tech Boulevard, Innovation District<br />
-            CA 94043<br />
-            hello@quantiumcrew.com
+            <strong>{company.legalName}</strong><br />
+            {addressLines[0]}<br />
+            {addressLines[1]}<br />
+            {company.email}
           </p>
         </div>
       </div>

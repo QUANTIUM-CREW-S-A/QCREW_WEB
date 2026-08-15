@@ -3,9 +3,8 @@ import { supabase } from '../lib/supabase';
 
 const MAX_SIZE = 5 * 1024 * 1024; // 5MB
 const ACCEPTED_TYPES = ['image/jpeg', 'image/png', 'image/webp', 'image/gif'];
-const BUCKET = 'testimonials';
 
-export function useImageUpload() {
+export function useImageUpload(bucket: string = 'testimonials') {
   const [preview, setPreview] = useState<string | null>(null);
   const [uploading, setUploading] = useState(false);
   const [progress, setProgress] = useState(0);
@@ -25,8 +24,8 @@ export function useImageUpload() {
       return false;
     }
 
-    // Revoke previous preview
-    if (preview) {
+    // Revoke previous preview (solo si era un blob local, no una URL remota)
+    if (preview?.startsWith('blob:')) {
       URL.revokeObjectURL(preview);
     }
 
@@ -37,7 +36,9 @@ export function useImageUpload() {
 
   const upload = useCallback(async (): Promise<string> => {
     const file = fileRef.current;
-    if (!file) return '';
+    // Sin archivo nuevo: en modo edicion esto es la URL ya existente que se
+    // precargo con setExistingImage, no hay nada que subir.
+    if (!file) return preview ?? '';
 
     setUploading(true);
     setProgress(0);
@@ -52,12 +53,12 @@ export function useImageUpload() {
       setProgress(30);
 
       const { error: uploadError } = await supabase.storage
-        .from(BUCKET)
+        .from(bucket)
         .upload(path, file, { contentType: file.type, upsert: false });
 
       if (uploadError) throw uploadError;
 
-      const { data } = supabase.storage.from(BUCKET).getPublicUrl(path);
+      const { data } = supabase.storage.from(bucket).getPublicUrl(path);
 
       setUploading(false);
       setProgress(100);
@@ -69,10 +70,10 @@ export function useImageUpload() {
       setProgress(0);
       return '';
     }
-  }, []);
+  }, [preview, bucket]);
 
   const clear = useCallback(() => {
-    if (preview) {
+    if (preview?.startsWith('blob:')) {
       URL.revokeObjectURL(preview);
     }
     fileRef.current = null;
@@ -82,5 +83,14 @@ export function useImageUpload() {
     setUploading(false);
   }, [preview]);
 
-  return { preview, uploading, progress, error, selectFile, upload, clear };
+  /** Precarga una imagen ya subida (modo edicion); upload() la devolvera tal cual. */
+  const setExistingImage = useCallback((url: string) => {
+    if (preview?.startsWith('blob:')) {
+      URL.revokeObjectURL(preview);
+    }
+    fileRef.current = null;
+    setPreview(url || null);
+  }, [preview]);
+
+  return { preview, uploading, progress, error, selectFile, upload, clear, setExistingImage };
 }

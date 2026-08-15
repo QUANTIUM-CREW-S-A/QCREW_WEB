@@ -2,14 +2,31 @@ import { createClient } from '@supabase/supabase-js';
 import type { User } from '@supabase/supabase-js';
 import type { Database } from '../types/database';
 
-const supabaseUrl = import.meta.env.VITE_SUPABASE_URL || 'https://placeholder.supabase.co';
-const supabaseKey = import.meta.env.VITE_SUPABASE_PUBLISHABLE_KEY || 'placeholder-key';
+const configuredSupabaseUrl = import.meta.env.VITE_SUPABASE_URL;
+const configuredSupabaseKey = import.meta.env.VITE_SUPABASE_PUBLISHABLE_KEY;
+
+const hasRealSupabaseUrl = Boolean(configuredSupabaseUrl)
+  && !configuredSupabaseUrl.includes('placeholder')
+  && !configuredSupabaseUrl.includes('your-project')
+  && !configuredSupabaseUrl.includes('<');
+
+const hasRealSupabaseKey = Boolean(configuredSupabaseKey)
+  && configuredSupabaseKey !== 'placeholder-key'
+  && configuredSupabaseKey !== 'sb_publishable_...'
+  && !configuredSupabaseKey.includes('XXXXXXXXXXXXXXXX')
+  && !configuredSupabaseKey.includes('your-project');
+
+export const isSupabaseConfigured = hasRealSupabaseUrl && hasRealSupabaseKey;
+const isPlaceholder = !isSupabaseConfigured;
+const supabaseUrl = isPlaceholder
+  ? 'https://abcdefghijklmnopqrst.supabase.co'
+  : configuredSupabaseUrl;
+const supabaseKey = isPlaceholder ? 'placeholder-key' : configuredSupabaseKey;
 
 // Only warn if values are placeholders (development/build time)
-const isPlaceholder = supabaseUrl.includes('placeholder') || supabaseUrl.includes('your-project');
 if (isPlaceholder) {
   console.warn(
-    '⚠️ Supabase configuration missing. Please set VITE_SUPABASE_URL and VITE_SUPABASE_PUBLISHABLE_KEY in .env'
+    '⚠️ Supabase configuration missing or invalid. Please set VITE_SUPABASE_URL and VITE_SUPABASE_PUBLISHABLE_KEY in .env'
   );
 }
 

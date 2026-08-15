@@ -23,6 +23,7 @@ import { SectionWrapper } from "../components/ui/SectionWrapper";
 import { Button } from "../components/ui/Button";
 import { useState } from "react";
 import { Link } from "react-router-dom";
+import { useSeo } from "../hooks/useSeo";
 
 const teamMembers = [
   {
@@ -479,6 +480,12 @@ function MemberProfile({
 }
 
 export function TeamPage() {
+  useSeo({
+    title: "Nuestro equipo | Quantium Crew Panamá",
+    description:
+      "Conoce a los ingenieros y técnicos que diseñan, instalan y mantienen la infraestructura tecnológica de nuestros clientes en Panamá.",
+    path: "/team",
+  });
   return (
     <div className="min-h-screen bg-rack-paper">
       {/* Hero Section */}

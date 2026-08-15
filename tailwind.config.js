@@ -22,7 +22,7 @@ export default {
           rule: "#CBD2D9",  // hairlines, rieles, retícula
           edge: "#9CA9B6",  // bordes en estado activo
           ink: "#101E2B",   // tinta: texto principal
-          graph: "#66737F", // grafito: texto secundario
+          graph: "#5E6B77", // grafito: texto secundario (AA 4.77:1 sobre paper)
           link: "#0E8A6F",  // LED verde: enlace activo
           act: "#B26A08",   // LED ambar: actividad
           brand: "#0A6E96", // cian de marca, profundizado para fondo claro

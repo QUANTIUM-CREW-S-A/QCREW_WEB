@@ -1,6 +1,7 @@
 import { useState, useEffect } from "react";
 import { Menu, X, Globe } from "lucide-react";
 import { Button } from "../ui/Button";
+import { Logo } from "../ui/Logo";
 import { cn } from "../../lib/utils";
 import { motion, AnimatePresence } from "framer-motion";
 import { useTranslation } from "react-i18next";
@@ -47,8 +48,8 @@ export function Navbar() {
   ];
 
   const pageLinks = [
+    { name: "Tienda", href: "/tienda" },
     { name: "Testimonios", href: "/testimonials" },
-    { name: "Equipo", href: "/team" },
   ];
 
   return (
@@ -63,41 +64,22 @@ export function Navbar() {
       )}
     >
       <div className="container mx-auto px-4 md:px-6 flex items-center justify-between">
-        <Link to="/" className="flex items-center gap-3 group">
-          {/* Logo SVG */}
-          <div className="relative w-10 h-10">
-            <div className="absolute inset-0 bg-gradient-to-br from-brand-primary/20 to-brand-secondary/20 rounded-xl scale-110 group-hover:scale-125 transition-transform duration-300"></div>
-            <svg 
-              viewBox="0 0 40 40" 
-              className="w-10 h-10 relative z-10"
-              fill="none"
-            >
-              <defs>
-                <linearGradient id="navLogoGrad" x1="0%" y1="0%" x2="100%" y2="100%">
-                  <stop offset="0%" stopColor="#00D4FF"/>
-                  <stop offset="100%" stopColor="#8B5CF6"/>
-                </linearGradient>
-              </defs>
-              {/* Hexágono */}
-              <path 
-                d="M20 4L34 12V28L20 36L6 28V12L20 4Z" 
-                stroke="url(#navLogoGrad)" 
-                strokeWidth="2.5"
-                fill="none"
-              />
-              {/* Centro */}
-              <circle cx="20" cy="20" r="5" fill="url(#navLogoGrad)"/>
-              {/* Líneas de conexión */}
-              <path 
-                d="M20 8V15M20 25V32M9 14L14 17M26 23L31 26M9 26L14 23M26 17L31 14" 
-                stroke="url(#navLogoGrad)" 
-                strokeWidth="2"
-                strokeLinecap="round"
-              />
-            </svg>
-          </div>
-          <span className="text-xl font-display font-bold tracking-tight text-rack-ink">
-            Quantium<span className="text-rack-brand">Crew</span>
+        <Link
+          to="/"
+          aria-label="Quantium Crew — inicio"
+          className="group flex items-center gap-3 rounded-lg focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-rack-link focus-visible:ring-offset-2 focus-visible:ring-offset-rack-paper"
+        >
+          <Logo className="h-11 w-11" />
+          <span className="flex flex-col leading-none">
+            <span className="text-xl font-display font-bold tracking-tight text-rack-ink">
+              Quantium
+              <span className="text-rack-brand transition-colors duration-300 group-hover:text-rack-ink">
+                Crew
+              </span>
+            </span>
+            <span className="mt-1.5 hidden font-mono text-[10px] uppercase tracking-[0.22em] text-rack-graph sm:block">
+              Infraestructura TI
+            </span>
           </span>
         </Link>
 

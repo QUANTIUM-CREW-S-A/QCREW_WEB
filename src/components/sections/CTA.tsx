@@ -33,8 +33,23 @@ export function CTA() {
           whileInView={{ opacity: 1, y: 0 }}
           viewport={{ once: true, margin: "-80px" }}
           transition={{ duration: 0.5 }}
-          className="rack-panel mx-auto max-w-3xl"
+          className="rack-panel relative mx-auto max-w-3xl"
         >
+          {/* Sello de conformidad, como el que lleva un trabajo terminado */}
+          <svg
+            viewBox="0 0 40 40"
+            aria-hidden="true"
+            className="absolute -right-3 -top-3 hidden h-16 w-16 -rotate-6 text-rack-link sm:block"
+            fill="none"
+            stroke="currentColor"
+            strokeWidth="1"
+            vectorEffect="non-scaling-stroke"
+          >
+            <circle cx="20" cy="20" r="17" strokeDasharray="2 2.4" />
+            <circle cx="20" cy="20" r="12.5" />
+            <path d="M14.5 20.5l3.6 3.6 7.4-8.2" strokeWidth="1.4" strokeLinecap="round" strokeLinejoin="round" />
+          </svg>
+
           {/* Cabecera del formulario */}
           <div className="flex items-center justify-between border-b border-rack-rule px-6 py-3.5 sm:px-8">
             <p className="rack-label">Orden de trabajo</p>

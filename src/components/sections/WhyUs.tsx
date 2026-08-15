@@ -48,7 +48,7 @@ function SpotlightCard({
 function GlowCard({ 
   children, 
   className = "",
-  glowColor = "#00D4FF"
+  glowColor = "#0A6E96"
 }: { 
   children: React.ReactNode; 
   className?: string;
@@ -108,7 +108,7 @@ export function WhyUs() {
           
           <h2 className="text-3xl md:text-5xl font-display font-bold text-rack-ink mb-6">
             Por qué elegir{" "}
-            <span className="text-transparent bg-clip-text bg-gradient-to-r from-brand-primary to-brand-secondary">
+            <span className="text-transparent bg-clip-text bg-gradient-to-r from-rack-brand to-rack-link">
               Quantium Crew
             </span>
           </h2>
@@ -166,10 +166,10 @@ export function WhyUs() {
                 >
                   <Globe className="w-7 h-7 text-rack-ink" />
                 </motion.div>
-                <h3 className="text-3xl font-bold text-rack-ink mb-4 group-hover:text-transparent group-hover:bg-clip-text group-hover:bg-gradient-to-r group-hover:from-white group-hover:to-brand-primary transition-all duration-300">
+                <h3 className="text-3xl font-bold text-rack-ink mb-4 group-hover:text-rack-brand transition-colors duration-300">
                   Ecosistema Tecnológico Total
                 </h3>
-                <p className="text-rack-ink/70 text-lg leading-relaxed">
+                <p className="text-rack-graph text-lg leading-relaxed">
                   No necesitas 5 proveedores diferentes. Integramos desarrollo de software, infraestructura física, servidores y soporte técnico en una solución coherente.
                 </p>
               </div>
@@ -283,10 +283,10 @@ export function WhyUs() {
               whileInView={{ opacity: 1, y: 0 }}
               viewport={{ once: true }}
               transition={{ delay: 0.3 }}
-              className="h-full min-h-[180px] bg-white/[0.03] border border-rack-rule rounded-3xl p-6 relative overflow-hidden group flex flex-col"
+              className="h-full min-h-[180px] bg-rack-sheet border border-rack-rule rounded-3xl p-6 relative overflow-hidden group flex flex-col"
             >
               {/* Grid pattern */}
-              <div className="absolute inset-0 bg-[linear-gradient(rgba(255,255,255,0.02)_1px,transparent_1px),linear-gradient(90deg,rgba(255,255,255,0.02)_1px,transparent_1px)] bg-[size:20px_20px]" />
+              <div className="absolute inset-0 bg-[linear-gradient(rgba(16,30,43,0.04)_1px,transparent_1px),linear-gradient(90deg,rgba(16,30,43,0.04)_1px,transparent_1px)] bg-[size:20px_20px]" />
               
               {/* Animated corner accent */}
               <motion.div 
@@ -317,7 +317,7 @@ export function WhyUs() {
                   {['Cableado Estructurado', 'CCTV', 'Data Centers', 'Control de Acceso', 'Fibra Óptica', 'Redes WiFi'].map((tech, i) => (
                     <motion.span 
                       key={i} 
-                      className="px-3 py-1.5 bg-black/40 border border-rack-rule rounded-lg text-xs font-mono text-rack-brand/80 hover:text-rack-brand hover:border-brand-primary/30 hover:bg-black/60 transition-all cursor-default"
+                      className="px-3 py-1.5 bg-rack-paper border border-rack-rule rounded-lg text-xs font-mono text-rack-graph hover:text-rack-brand hover:border-rack-edge transition-all cursor-default"
                       initial={{ opacity: 0, y: 10 }}
                       whileInView={{ opacity: 1, y: 0 }}
                       viewport={{ once: true }}
@@ -342,11 +342,11 @@ export function WhyUs() {
               whileInView={{ opacity: 1, y: 0 }}
               viewport={{ once: true }}
               transition={{ delay: 0.4 }}
-              className="h-full min-h-[180px] bg-gradient-to-tr from-brand-secondary/20 via-brand-dark to-brand-dark border border-rack-rule rounded-3xl p-6 relative overflow-hidden group flex flex-col"
+              className="h-full min-h-[180px] bg-gradient-to-tr from-rack-brand/10 via-rack-sheet to-rack-sheet border border-rack-rule rounded-3xl p-6 relative overflow-hidden group flex flex-col"
             >
               {/* Animated orb */}
               <motion.div 
-                className="absolute -bottom-20 -right-20 w-60 h-60 bg-brand-secondary/20 rounded-full blur-3xl"
+                className="absolute -bottom-20 -right-20 w-60 h-60 bg-rack-brand/10 rounded-full blur-3xl"
                 animate={{
                   scale: [1, 1.3, 1],
                   x: [0, -20, 0],
@@ -369,10 +369,10 @@ export function WhyUs() {
                     <Cpu className="w-10 h-10 text-rack-ink mb-4" />
                   </motion.div>
                 </div>
-                <h3 className="text-xl font-bold text-rack-ink mb-2 group-hover:text-transparent group-hover:bg-clip-text group-hover:bg-gradient-to-r group-hover:from-white group-hover:to-brand-secondary transition-all duration-300">
+                <h3 className="text-xl font-bold text-rack-ink mb-2 group-hover:text-rack-brand transition-colors duration-300">
                   Hardware + Software
                 </h3>
-                <p className="text-rack-ink/70 text-sm leading-relaxed mb-4">
+                <p className="text-rack-graph text-sm leading-relaxed mb-4">
                   Optimizamos tus servidores y redes para que tu software vuele. La sinergia perfecta entre ambos mundos.
                 </p>
                 
@@ -383,7 +383,7 @@ export function WhyUs() {
                     animate={{ width: [8, 32, 8] }}
                     transition={{ duration: 2, repeat: Infinity }}
                   />
-                  <span className="text-xs text-brand-secondary/60">Sinergia perfecta</span>
+                  <span className="text-xs text-rack-graph">Sinergia perfecta</span>
                 </div>
               </div>
             </motion.div>

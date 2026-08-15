@@ -1,14 +1,16 @@
-import { Mail, Phone, MapPin, Linkedin, Twitter, Github, ArrowUp, ArrowRight, Heart } from "lucide-react";
+import { Mail, Phone, MapPin, Linkedin, Instagram, Facebook, ArrowUp, ArrowRight, Heart } from "lucide-react";
 import { useTranslation } from "react-i18next";
 import { Link } from "react-router-dom";
 import { motion } from "framer-motion";
 import { Button } from "../ui/Button";
+import { Logo } from "../ui/Logo";
+import { addressLines, company, mailHref, telHref } from "../../lib/company";
 import { useState } from "react";
 
 const socialLinks = [
-  { icon: Linkedin, label: "LinkedIn", href: "#" },
-  { icon: Twitter, label: "Twitter", href: "#" },
-  { icon: Github, label: "GitHub", href: "#" },
+  { icon: Linkedin, label: "LinkedIn", href: company.social.linkedin },
+  { icon: Instagram, label: "Instagram", href: company.social.instagram },
+  { icon: Facebook, label: "Facebook", href: company.social.facebook },
 ];
 
 export function Footer() {
@@ -80,38 +82,22 @@ export function Footer() {
             viewport={{ once: true }}
             transition={{ duration: 0.5 }}
           >
-            <Link to="/" className="flex items-center gap-3 group">
-              {/* Logo SVG */}
-              <div className="relative w-10 h-10">
-                <div className="absolute inset-0 bg-gradient-to-br from-brand-primary/20 to-brand-secondary/20 rounded-xl scale-110 group-hover:scale-125 transition-transform duration-300"></div>
-                <svg 
-                  viewBox="0 0 40 40" 
-                  className="w-10 h-10 relative z-10"
-                  fill="none"
-                >
-                  <defs>
-                    <linearGradient id="footerLogoGrad" x1="0%" y1="0%" x2="100%" y2="100%">
-                      <stop offset="0%" stopColor="#00D4FF"/>
-                      <stop offset="100%" stopColor="#8B5CF6"/>
-                    </linearGradient>
-                  </defs>
-                  <path 
-                    d="M20 4L34 12V28L20 36L6 28V12L20 4Z" 
-                    stroke="url(#footerLogoGrad)" 
-                    strokeWidth="2.5"
-                    fill="none"
-                  />
-                  <circle cx="20" cy="20" r="5" fill="url(#footerLogoGrad)"/>
-                  <path 
-                    d="M20 8V15M20 25V32M9 14L14 17M26 23L31 26M9 26L14 23M26 17L31 14" 
-                    stroke="url(#footerLogoGrad)" 
-                    strokeWidth="2"
-                    strokeLinecap="round"
-                  />
-                </svg>
-              </div>
-              <span className="text-xl font-display font-bold tracking-tight text-rack-ink">
-                Quantium<span className="text-transparent bg-clip-text bg-gradient-to-r from-brand-primary to-brand-secondary">Crew</span>
+            <Link
+              to="/"
+              aria-label="Quantium Crew — inicio"
+              className="group flex items-center gap-3 rounded-lg focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-rack-link focus-visible:ring-offset-2"
+            >
+              <Logo className="h-11 w-11" />
+              <span className="flex flex-col leading-none">
+                <span className="text-xl font-display font-bold tracking-tight text-rack-ink">
+                  Quantium
+                  <span className="text-rack-brand transition-colors duration-300 group-hover:text-rack-ink">
+                    Crew
+                  </span>
+                </span>
+                <span className="mt-1.5 font-mono text-[10px] uppercase tracking-[0.22em] text-rack-graph">
+                  Infraestructura TI
+                </span>
               </span>
             </Link>
             <p className="text-rack-ink/50 leading-relaxed text-sm max-w-xs">
@@ -124,8 +110,10 @@ export function Footer() {
                 <a
                   key={social.label}
                   href={social.href}
+                  target="_blank"
+                  rel="noopener noreferrer"
                   aria-label={social.label}
-                  className="w-10 h-10 rounded-xl bg-white/[0.04] border border-white/[0.06] flex items-center justify-center text-rack-ink/40 hover:text-rack-brand hover:bg-brand-primary/10 hover:border-brand-primary/20 transition-all duration-300"
+                  className="w-10 h-10 rounded-xl bg-rack-sheet border border-rack-rule flex items-center justify-center text-rack-graph hover:text-rack-brand hover:border-rack-edge transition-all duration-300"
                 >
                   <social.icon className="w-4 h-4" />
                 </a>
@@ -199,7 +187,6 @@ export function Footer() {
             </h4>
             <ul className="space-y-3.5">
               {[
-                { label: t("footer.links.about"), href: "/team" },
                 { label: "Testimonios", href: "/testimonials" },
                 { label: t("footer.links.contact"), href: "/contact" },
                 { label: t("footer.links.privacy"), href: "/privacy" },
@@ -231,24 +218,24 @@ export function Footer() {
             </h4>
             <ul className="space-y-4">
               <li>
-                <a href={`mailto:${t("contact.info.email")}`} className="flex items-start gap-3 group">
+                <a href={mailHref} className="flex items-start gap-3 group">
                   <div className="w-9 h-9 rounded-lg bg-brand-primary/10 border border-brand-primary/20 flex items-center justify-center flex-shrink-0 group-hover:bg-brand-primary/20 transition-colors">
                     <Mail className="w-4 h-4 text-rack-brand" />
                   </div>
                   <div>
                     <p className="text-rack-ink/30 text-xs mb-0.5">Email</p>
-                    <p className="text-rack-ink/60 text-sm group-hover:text-rack-brand transition-colors">{t("contact.info.email")}</p>
+                    <p className="text-rack-ink/60 text-sm group-hover:text-rack-brand transition-colors">{company.email}</p>
                   </div>
                 </a>
               </li>
               <li>
-                <a href="tel:+15551234567" className="flex items-start gap-3 group">
+                <a href={telHref} className="flex items-start gap-3 group">
                   <div className="w-9 h-9 rounded-lg bg-brand-primary/10 border border-brand-primary/20 flex items-center justify-center flex-shrink-0 group-hover:bg-brand-primary/20 transition-colors">
                     <Phone className="w-4 h-4 text-rack-brand" />
                   </div>
                   <div>
                     <p className="text-rack-ink/30 text-xs mb-0.5">{t("footer.contactLabels.phone", { defaultValue: "Teléfono" })}</p>
-                    <p className="text-rack-ink/60 text-sm group-hover:text-rack-brand transition-colors">+1 (555) 123-4567</p>
+                    <p className="text-rack-ink/60 text-sm group-hover:text-rack-brand transition-colors">{company.phone.display}</p>
                   </div>
                 </a>
               </li>
@@ -259,7 +246,10 @@ export function Footer() {
                   </div>
                   <div>
                     <p className="text-rack-ink/30 text-xs mb-0.5">{t("footer.contactLabels.address", { defaultValue: "Ubicación" })}</p>
-                    <p className="text-rack-ink/60 text-sm">123 Tech Boulevard,<br />Innovation District, CA 94043</p>
+                    <p className="text-rack-ink/60 text-sm">
+                      {addressLines[0]}<br />{addressLines[1]}
+                    </p>
+                    <p className="text-rack-ink/40 text-xs mt-1">{company.hours.weekdays}</p>
                   </div>
                 </div>
               </li>

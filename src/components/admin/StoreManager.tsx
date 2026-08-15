@@ -1,4 +1,4 @@
-import { useMemo, useState } from 'react';
+import { useState } from 'react';
 import { motion } from 'framer-motion';
 import {
   Package,
@@ -7,158 +7,187 @@ import {
   AlertTriangle,
   Plus,
   Pencil,
+  Trash2,
+  Upload,
+  ImagePlus,
+  LayoutGrid,
+  ClipboardList,
 } from 'lucide-react';
+import { toast } from '../ui/Toast';
+import { useAdminProducts, type AdminProduct } from '../../hooks/useAdminProducts';
+import { useAdminQuoteRequests } from '../../hooks/useAdminQuoteRequests';
+import { ProductFormModal } from './ProductFormModal';
+import { CsvImportModal } from './CsvImportModal';
+import { QuoteDetailModal } from './QuoteDetailModal';
+import type { QuoteRequestStatusRow } from '../../types/database';
 
-type ProductStatus = 'active' | 'draft';
-type OrderStatus = 'pending' | 'paid' | 'shipped' | 'delivered' | 'cancelled';
+type StoreSection = 'overview' | 'inventory' | 'quotes';
 
-type Product = {
-  id: string;
-  name: string;
-  category: string;
-  price: number;
-  stock: number;
-  featured: boolean;
-  status: ProductStatus;
-};
-
-type Order = {
-  id: string;
-  customer: string;
-  total: number;
-  status: OrderStatus;
-  items: number;
-  date: string;
-};
-
-const initialProducts: Product[] = [
-  { id: 'p-101', name: 'Kit de Branding', category: 'Marketing', price: 249, stock: 12, featured: true, status: 'active' },
-  { id: 'p-102', name: 'Landing Page Pro', category: 'Web', price: 680, stock: 5, featured: true, status: 'active' },
-  { id: 'p-103', name: 'Soporte Mensual', category: 'Servicios', price: 130, stock: 24, featured: false, status: 'active' },
-  { id: 'p-104', name: 'Auditoría SEO', category: 'SEO', price: 420, stock: 2, featured: false, status: 'draft' },
+const sections: { id: StoreSection; label: string; icon: typeof LayoutGrid }[] = [
+  { id: 'overview', label: 'Resumen', icon: TrendingUp },
+  { id: 'inventory', label: 'Inventario', icon: LayoutGrid },
+  { id: 'quotes', label: 'Cotizaciones', icon: ClipboardList },
 ];
 
-const initialOrders: Order[] = [
-  { id: '#1042', customer: 'Lucía G.', total: 420, status: 'paid', items: 2, date: '2026-08-12' },
-  { id: '#1043', customer: 'Mateo R.', total: 680, status: 'pending', items: 1, date: '2026-08-13' },
-  { id: '#1044', customer: 'Nora T.', total: 249, status: 'shipped', items: 3, date: '2026-08-11' },
-  { id: '#1045', customer: 'Javier S.', total: 180, status: 'delivered', items: 1, date: '2026-08-09' },
-];
-
-const orderColors: Record<OrderStatus, string> = {
+const quoteStatusColors: Record<QuoteRequestStatusRow, string> = {
   pending: 'bg-yellow-500/15 text-yellow-300',
-  paid: 'bg-blue-500/15 text-blue-300',
-  shipped: 'bg-violet-500/15 text-violet-300',
-  delivered: 'bg-green-500/15 text-green-300',
-  cancelled: 'bg-red-500/15 text-red-300',
+  contacted: 'bg-blue-500/15 text-blue-300',
+  closed: 'bg-green-500/15 text-green-300',
 };
+
+const quoteStatusLabels: Record<QuoteRequestStatusRow, string> = {
+  pending: 'Pendiente',
+  contacted: 'Contactado',
+  closed: 'Cerrado',
+};
+
+function MetricCard({ label, value, icon: Icon, iconColor }: { label: string; value: string | number; icon: typeof Package; iconColor: string }) {
+  return (
+    <div className="bg-brand-gray border border-white/10 rounded-xl p-4">
+      <div className="flex items-center justify-between mb-2">
+        <span className="text-white/50 text-xs uppercase tracking-[0.2em]">{label}</span>
+        <Icon className={`w-4 h-4 ${iconColor}`} />
+      </div>
+      <div className="text-2xl font-semibold text-white">{value}</div>
+    </div>
+  );
+}
 
 export function StoreManager() {
-  const [products, setProducts] = useState<Product[]>(initialProducts);
-  const [orders, setOrders] = useState<Order[]>(initialOrders);
-  const [form, setForm] = useState({
-    name: '',
-    category: '',
-    price: '0',
-    stock: '0',
-  });
+  const {
+    products,
+    loading: productsLoading,
+    getStats,
+    addProduct,
+    addProducts,
+    updateProduct,
+    toggleFeatured,
+    toggleStatus,
+    deleteProduct,
+  } = useAdminProducts();
+  const { requests, loading: requestsLoading, updateStatus } = useAdminQuoteRequests();
 
-  const metrics = useMemo(() => {
-    const revenue = products.reduce((sum, p) => sum + p.price * Math.max(p.stock, 0), 0);
-    const lowStock = products.filter((p) => p.stock <= 5).length;
-    const activeProducts = products.filter((p) => p.status === 'active').length;
-    const pendingOrders = orders.filter((o) => o.status === 'pending' || o.status === 'paid').length;
+  const [section, setSection] = useState<StoreSection>('overview');
+  const [productModalOpen, setProductModalOpen] = useState(false);
+  const [editingProduct, setEditingProduct] = useState<AdminProduct | null>(null);
+  const [csvModalOpen, setCsvModalOpen] = useState(false);
+  const [selectedQuoteId, setSelectedQuoteId] = useState<string | null>(null);
 
-    return {
-      revenue,
-      activeProducts,
-      lowStock,
-      pendingOrders,
-    };
-  }, [products, orders]);
+  const metrics = getStats();
+  const pendingQuotesValue = requests
+    .filter((r) => r.status === 'pending')
+    .reduce((sum, r) => sum + r.total, 0);
+  const selectedQuote = requests.find((r) => r.id === selectedQuoteId) ?? null;
 
-  const addProduct = () => {
-    if (!form.name.trim() || !form.category.trim()) return;
-
-    const newProduct: Product = {
-      id: `p-${Date.now()}`,
-      name: form.name.trim(),
-      category: form.category.trim(),
-      price: Number(form.price) || 0,
-      stock: Number(form.stock) || 0,
-      featured: false,
-      status: 'active',
-    };
-
-    setProducts((current) => [newProduct, ...current]);
-    setForm({ name: '', category: '', price: '0', stock: '0' });
+  const openNewProduct = () => {
+    setEditingProduct(null);
+    setProductModalOpen(true);
   };
 
-  const toggleFeatured = (id: string) => {
-    setProducts((current) => current.map((product) =>
-      product.id === id ? { ...product, featured: !product.featured } : product
-    ));
+  const openEditProduct = (product: AdminProduct) => {
+    setEditingProduct(product);
+    setProductModalOpen(true);
   };
 
-  const toggleProductStatus = (id: string) => {
-    setProducts((current) => current.map((product) =>
-      product.id === id ? {
-        ...product,
-        status: product.status === 'active' ? 'draft' : 'active',
-      } : product
-    ));
+  const handleDelete = async (product: AdminProduct) => {
+    try {
+      await deleteProduct(product.id);
+      toast('success', 'Producto eliminado');
+    } catch {
+      toast('error', 'Error al eliminar el producto');
+    }
   };
 
-  const updateOrderStatus = (id: string, nextStatus: OrderStatus) => {
-    setOrders((current) => current.map((order) =>
-      order.id === id ? { ...order, status: nextStatus } : order
-    ));
+  const handleQuoteStatus = async (id: string, status: QuoteRequestStatusRow) => {
+    try {
+      await updateStatus(id, status);
+    } catch {
+      toast('error', 'Error al actualizar la solicitud');
+    }
   };
 
   return (
     <div className="space-y-6">
-      <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-4 gap-4">
-        <div className="bg-brand-gray border border-white/10 rounded-xl p-4">
-          <div className="flex items-center justify-between mb-2">
-            <span className="text-white/50 text-xs uppercase tracking-[0.2em]">Ingresos</span>
-            <TrendingUp className="w-4 h-4 text-brand-primary" />
-          </div>
-          <div className="text-2xl font-semibold text-white">€{metrics.revenue}</div>
-        </div>
-
-        <div className="bg-brand-gray border border-white/10 rounded-xl p-4">
-          <div className="flex items-center justify-between mb-2">
-            <span className="text-white/50 text-xs uppercase tracking-[0.2em]">Productos</span>
-            <Package className="w-4 h-4 text-brand-primary" />
-          </div>
-          <div className="text-2xl font-semibold text-white">{metrics.activeProducts}</div>
-        </div>
-
-        <div className="bg-brand-gray border border-white/10 rounded-xl p-4">
-          <div className="flex items-center justify-between mb-2">
-            <span className="text-white/50 text-xs uppercase tracking-[0.2em]">Stock bajo</span>
-            <AlertTriangle className="w-4 h-4 text-yellow-400" />
-          </div>
-          <div className="text-2xl font-semibold text-white">{metrics.lowStock}</div>
-        </div>
-
-        <div className="bg-brand-gray border border-white/10 rounded-xl p-4">
-          <div className="flex items-center justify-between mb-2">
-            <span className="text-white/50 text-xs uppercase tracking-[0.2em]">Pedidos</span>
-            <ShoppingBag className="w-4 h-4 text-brand-primary" />
-          </div>
-          <div className="text-2xl font-semibold text-white">{metrics.pendingOrders}</div>
-        </div>
+      <div className="flex flex-wrap items-center gap-2 border-b border-white/[0.06] pb-3">
+        {sections.map((tab) => (
+          <button
+            key={tab.id}
+            onClick={() => setSection(tab.id)}
+            className={`flex items-center gap-2 rounded-lg px-3 py-1.5 text-sm transition ${
+              section === tab.id
+                ? 'bg-white/10 text-white'
+                : 'text-white/40 hover:bg-white/5 hover:text-white/70'
+            }`}
+          >
+            <tab.icon className="h-3.5 w-3.5" />
+            {tab.label}
+          </button>
+        ))}
       </div>
 
-      <div className="grid grid-cols-1 xl:grid-cols-[1.2fr_0.8fr] gap-6">
-        <div className="bg-brand-gray border border-white/10 rounded-xl p-5">
-          <div className="flex items-center justify-between mb-4">
-            <h3 className="text-white font-semibold">Inventario</h3>
-            <span className="text-xs text-white/40">{products.length} productos</span>
+      {section === 'overview' && (
+        <motion.div initial={{ opacity: 0, y: 8 }} animate={{ opacity: 1, y: 0 }} className="space-y-6">
+          <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-4 gap-4">
+            <MetricCard label="Cotizaciones abiertas" value={`$${pendingQuotesValue.toFixed(2)}`} icon={TrendingUp} iconColor="text-brand-primary" />
+            <MetricCard label="Productos activos" value={metrics.active} icon={Package} iconColor="text-brand-primary" />
+            <MetricCard label="Stock bajo" value={metrics.lowStock} icon={AlertTriangle} iconColor="text-yellow-400" />
+            <MetricCard label="Solicitudes pendientes" value={requests.filter((r) => r.status === 'pending').length} icon={ShoppingBag} iconColor="text-brand-primary" />
           </div>
 
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+          <div className="bg-brand-gray border border-white/10 rounded-xl p-5">
+            <h3 className="text-white font-semibold mb-4">Últimas solicitudes</h3>
+            <div className="space-y-2">
+              {requests.slice(0, 5).map((request) => (
+                <button
+                  key={request.id}
+                  onClick={() => { setSection('quotes'); setSelectedQuoteId(request.id); }}
+                  className="flex w-full items-center justify-between rounded-lg border border-white/10 bg-white/[0.02] px-3 py-2.5 text-left text-sm hover:border-brand-primary/30"
+                >
+                  <span className="text-white/80">{request.customerName}</span>
+                  <span className="flex items-center gap-3">
+                    <span className="text-white/40">${request.total.toFixed(2)}</span>
+                    <span className={`rounded-full px-2 py-0.5 text-[10px] ${quoteStatusColors[request.status]}`}>
+                      {quoteStatusLabels[request.status]}
+                    </span>
+                  </span>
+                </button>
+              ))}
+              {!requestsLoading && requests.length === 0 && (
+                <p className="text-center text-white/40 text-sm py-6">Todavía no llegaron solicitudes de cotización.</p>
+              )}
+            </div>
+          </div>
+        </motion.div>
+      )}
+
+      {section === 'inventory' && (
+        <motion.div initial={{ opacity: 0, y: 8 }} animate={{ opacity: 1, y: 0 }} className="bg-brand-gray border border-white/10 rounded-xl p-5">
+          <div className="flex flex-wrap items-center justify-between gap-3 mb-4">
+            <div>
+              <h3 className="text-white font-semibold">Inventario</h3>
+              <span className="text-xs text-white/40">
+                {productsLoading ? 'Cargando…' : `${products.length} productos`}
+              </span>
+            </div>
+            <div className="flex gap-2">
+              <button
+                onClick={() => setCsvModalOpen(true)}
+                className="flex items-center gap-2 rounded-lg bg-white/5 px-3 py-2 text-sm text-white/70 hover:bg-white/10 transition"
+              >
+                <Upload className="w-4 h-4" />
+                Importar CSV
+              </button>
+              <button
+                onClick={openNewProduct}
+                className="flex items-center gap-2 rounded-lg bg-gradient-to-r from-brand-primary to-brand-secondary px-3 py-2 text-sm font-medium text-white hover:opacity-95 transition"
+              >
+                <Plus className="w-4 h-4" />
+                Nuevo producto
+              </button>
+            </div>
+          </div>
+
+          <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-4">
             {products.map((product) => (
               <motion.div
                 key={product.id}
@@ -166,9 +195,22 @@ export function StoreManager() {
                 className="rounded-xl border border-white/10 bg-white/[0.02] p-4"
               >
                 <div className="flex items-start justify-between gap-3 mb-3">
-                  <div>
-                    <p className="text-white font-medium">{product.name}</p>
-                    <p className="text-white/40 text-xs">{product.category}</p>
+                  <div className="flex items-start gap-3">
+                    {product.imageUrl ? (
+                      <img
+                        src={product.imageUrl}
+                        alt={product.name}
+                        className="h-10 w-10 shrink-0 rounded-lg object-cover border border-white/10"
+                      />
+                    ) : (
+                      <div className="h-10 w-10 shrink-0 rounded-lg border border-white/10 bg-white/5 flex items-center justify-center">
+                        <ImagePlus className="h-4 w-4 text-white/30" />
+                      </div>
+                    )}
+                    <div>
+                      <p className="text-white font-medium">{product.name}</p>
+                      <p className="text-white/40 text-xs">{product.category}</p>
+                    </div>
                   </div>
                   <span className={`px-2 py-1 text-[10px] rounded-full ${product.status === 'active' ? 'bg-green-500/15 text-green-300' : 'bg-gray-500/15 text-gray-300'}`}>
                     {product.status === 'active' ? 'Activo' : 'Borrador'}
@@ -176,7 +218,7 @@ export function StoreManager() {
                 </div>
 
                 <div className="flex items-center justify-between text-sm text-white/70 mb-3">
-                  <span>€{product.price}</span>
+                  <span>${product.price.toFixed(2)}</span>
                   <span className={product.stock <= 5 ? 'text-yellow-300' : 'text-white/60'}>
                     Stock: {product.stock}
                   </span>
@@ -184,108 +226,109 @@ export function StoreManager() {
 
                 <div className="flex gap-2">
                   <button
-                    onClick={() => toggleFeatured(product.id)}
+                    onClick={() => toggleFeatured(product.id, !product.featured)}
                     className={`flex-1 rounded-lg px-2 py-1.5 text-[11px] transition ${product.featured ? 'bg-brand-primary/20 text-brand-primary' : 'bg-white/5 text-white/60 hover:bg-white/10'}`}
                   >
                     {product.featured ? 'Destacado' : 'Marcar destacado'}
                   </button>
                   <button
-                    onClick={() => toggleProductStatus(product.id)}
+                    onClick={() => openEditProduct(product)}
                     className="rounded-lg bg-white/5 px-2 py-1.5 text-[11px] text-white/70 hover:bg-white/10"
+                    aria-label="Editar producto"
                   >
                     <Pencil className="w-3.5 h-3.5" />
+                  </button>
+                  <button
+                    onClick={() => toggleStatus(product.id)}
+                    className="rounded-lg bg-white/5 px-2 py-1.5 text-[11px] text-white/70 hover:bg-white/10"
+                    aria-label="Cambiar estado"
+                  >
+                    {product.status === 'active' ? 'Ocultar' : 'Publicar'}
+                  </button>
+                  <button
+                    onClick={() => handleDelete(product)}
+                    className="rounded-lg bg-white/5 px-2 py-1.5 text-[11px] text-red-300 hover:bg-red-500/10"
+                    aria-label="Eliminar producto"
+                  >
+                    <Trash2 className="w-3.5 h-3.5" />
                   </button>
                 </div>
               </motion.div>
             ))}
-          </div>
-        </div>
 
-        <div className="bg-brand-gray border border-white/10 rounded-xl p-5">
+            {!productsLoading && products.length === 0 && (
+              <p className="col-span-full text-center text-white/40 text-sm py-8">
+                Todavía no hay productos. Creá uno o importá un CSV.
+              </p>
+            )}
+          </div>
+        </motion.div>
+      )}
+
+      {section === 'quotes' && (
+        <motion.div initial={{ opacity: 0, y: 8 }} animate={{ opacity: 1, y: 0 }} className="bg-brand-gray border border-white/10 rounded-xl p-5">
           <div className="flex items-center justify-between mb-4">
-            <h3 className="text-white font-semibold">Añadir producto</h3>
-            <Plus className="w-4 h-4 text-brand-primary" />
+            <h3 className="text-white font-semibold">Solicitudes de cotización</h3>
+            <span className="text-xs text-white/40">
+              {requestsLoading ? 'Cargando…' : `${requests.length} registros`}
+            </span>
           </div>
 
-          <div className="space-y-3">
-            <input
-              value={form.name}
-              onChange={(e) => setForm((current) => ({ ...current, name: e.target.value }))}
-              className="w-full bg-white/5 border border-white/10 rounded-lg px-3 py-2 text-sm text-white placeholder-white/30 focus:outline-none focus:border-brand-primary"
-              placeholder="Nombre del producto"
-            />
-            <input
-              value={form.category}
-              onChange={(e) => setForm((current) => ({ ...current, category: e.target.value }))}
-              className="w-full bg-white/5 border border-white/10 rounded-lg px-3 py-2 text-sm text-white placeholder-white/30 focus:outline-none focus:border-brand-primary"
-              placeholder="Categoría"
-            />
-            <div className="grid grid-cols-2 gap-3">
-              <input
-                type="number"
-                min="0"
-                value={form.price}
-                onChange={(e) => setForm((current) => ({ ...current, price: e.target.value }))}
-                className="w-full bg-white/5 border border-white/10 rounded-lg px-3 py-2 text-sm text-white placeholder-white/30 focus:outline-none focus:border-brand-primary"
-                placeholder="Precio"
-              />
-              <input
-                type="number"
-                min="0"
-                value={form.stock}
-                onChange={(e) => setForm((current) => ({ ...current, stock: e.target.value }))}
-                className="w-full bg-white/5 border border-white/10 rounded-lg px-3 py-2 text-sm text-white placeholder-white/30 focus:outline-none focus:border-brand-primary"
-                placeholder="Stock"
-              />
-            </div>
+          <div className="space-y-2">
+            {requests.map((request) => (
+              <button
+                key={request.id}
+                onClick={() => setSelectedQuoteId(request.id)}
+                className="flex w-full flex-col gap-2 rounded-xl border border-white/10 bg-white/[0.02] p-3 text-left transition hover:border-brand-primary/30 md:flex-row md:items-center md:justify-between"
+              >
+                <div>
+                  <div className="flex items-center gap-2 mb-1">
+                    <span className="text-white font-medium">{request.customerName}</span>
+                    <span className="text-white/30 text-xs">{request.customerEmail}</span>
+                  </div>
+                  <div className="text-white/50 text-xs">
+                    {request.items.length} artículos · {request.createdAt.toLocaleDateString('es-PA')}
+                  </div>
+                </div>
 
-            <button
-              onClick={addProduct}
-              className="w-full rounded-xl bg-gradient-to-r from-brand-primary to-brand-secondary px-4 py-2.5 text-sm font-medium text-white transition hover:opacity-95"
-            >
-              Guardar producto
-            </button>
+                <div className="flex items-center gap-3">
+                  <span className="text-white font-medium">${request.total.toFixed(2)}</span>
+                  <span className={`rounded-full px-2 py-1 text-[11px] ${quoteStatusColors[request.status]}`}>
+                    {quoteStatusLabels[request.status]}
+                  </span>
+                </div>
+              </button>
+            ))}
+
+            {!requestsLoading && requests.length === 0 && (
+              <p className="text-center text-white/40 text-sm py-8">
+                Todavía no llegaron solicitudes de cotización.
+              </p>
+            )}
           </div>
-        </div>
-      </div>
+        </motion.div>
+      )}
 
-      <div className="bg-brand-gray border border-white/10 rounded-xl p-5">
-        <div className="flex items-center justify-between mb-4">
-          <h3 className="text-white font-semibold">Pedidos recientes</h3>
-          <span className="text-xs text-white/40">{orders.length} registros</span>
-        </div>
+      <ProductFormModal
+        open={productModalOpen}
+        onClose={() => setProductModalOpen(false)}
+        product={editingProduct}
+        onCreate={addProduct}
+        onUpdate={updateProduct}
+      />
 
-        <div className="space-y-3">
-          {orders.map((order) => (
-            <div key={order.id} className="flex flex-col gap-3 rounded-xl border border-white/10 bg-white/[0.02] p-3 md:flex-row md:items-center md:justify-between">
-              <div>
-                <div className="flex items-center gap-2 mb-1">
-                  <span className="text-white font-medium">{order.customer}</span>
-                  <span className="text-white/30 text-xs">{order.id}</span>
-                </div>
-                <div className="text-white/50 text-xs">
-                  {order.items} artículos · {order.date}
-                </div>
-              </div>
+      <CsvImportModal
+        open={csvModalOpen}
+        onClose={() => setCsvModalOpen(false)}
+        onImport={addProducts}
+      />
 
-              <div className="flex items-center gap-3">
-                <span className="text-white font-medium">€{order.total}</span>
-                <select
-                  value={order.status}
-                  onChange={(e) => updateOrderStatus(order.id, e.target.value as OrderStatus)}
-                  className={`rounded-lg border border-white/10 bg-transparent px-2 py-1.5 text-[11px] outline-none ${orderColors[order.status]}`}
-                >
-                  <option value="pending">Pendiente</option>
-                  <option value="paid">Pagado</option>
-                  <option value="shipped">Enviado</option>
-                  <option value="delivered">Entregado</option>
-                  <option value="cancelled">Cancelado</option>
-                </select>
-              </div>
-            </div>
-          ))}
-        </div>
-      </div>
+      <QuoteDetailModal
+        open={selectedQuoteId !== null}
+        onClose={() => setSelectedQuoteId(null)}
+        request={selectedQuote}
+        onStatusChange={handleQuoteStatus}
+      />
     </div>
   );
 }

@@ -9,6 +9,7 @@ import { useTestimonials, submitTestimonial } from "../hooks/useTestimonials";
 import { useImageUpload } from "../hooks/useImageUpload";
 import { toast } from "../components/ui/Toast";
 import { TurnstileCaptcha, useCaptchaValidation } from "../components/ui/TurnstileCaptcha";
+import { useSeo } from "../hooks/useSeo";
 
 const categories = ["Todos", "Infraestructura", "Soporte Técnico", "Desarrollo", "Cloud", "Monitoreo", "Seguridad"];
 
@@ -17,6 +18,12 @@ function formatDate(date: Date): string {
 }
 
 export function TestimonialsPage() {
+  useSeo({
+    title: "Testimonios de clientes | Quantium Crew Panamá",
+    description:
+      "Lo que dicen las empresas panameñas que confiaron su infraestructura TI, soporte y desarrollo a Quantium Crew.",
+    path: "/testimonials",
+  });
   const { testimonials, loading, error } = useTestimonials();
   const [selectedCategory, setSelectedCategory] = useState("Todos");
   const [showForm, setShowForm] = useState(false);

@@ -1,8 +1,14 @@
 import { SectionWrapper } from "../components/ui/SectionWrapper";
 import { useTranslation } from "react-i18next";
+import { useSeo } from "../hooks/useSeo";
 
 export default function TermsOfService() {
   const { t } = useTranslation();
+  useSeo({
+    title: "Términos y condiciones | Quantium Crew",
+    description: "Condiciones de contratación de los servicios de infraestructura y soporte TI de Quantium Crew.",
+    path: "/terms",
+  });
 
   return (
     <SectionWrapper className="pt-32 pb-20">

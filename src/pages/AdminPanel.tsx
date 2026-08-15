@@ -1,6 +1,6 @@
 import { useState, useEffect, useRef } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
-import { LayoutDashboard, MessageCircle, LogOut, Volume2, VolumeX, Star } from 'lucide-react';
+import { LayoutDashboard, MessageCircle, LogOut, Volume2, VolumeX, Star, Settings } from 'lucide-react';
 import { useConversations, useConversationMessages } from '../hooks/useConversations';
 import { useAdminTestimonials } from '../hooks/useAdminTestimonials';
 import { useAuth } from '../hooks/useAuth';
@@ -11,8 +11,9 @@ import { ChatView } from '../components/admin/ChatView';
 import { ClientInfoPanel } from '../components/admin/ClientInfoPanel';
 import { TestimonialManager } from '../components/admin/TestimonialManager';
 import { StoreManager } from '../components/admin/StoreManager';
+import { AdminSettings } from '../components/admin/AdminSettings';
 
-type Tab = 'dashboard' | 'chats' | 'testimonials' | 'store';
+type Tab = 'dashboard' | 'chats' | 'testimonials' | 'store' | 'settings';
 
 export function AdminPanel() {
   const {
@@ -90,6 +91,7 @@ export function AdminPanel() {
     { id: 'chats', label: 'Conversaciones', icon: MessageCircle, badge: stats.unread > 0 ? stats.unread : undefined, badgeColor: 'bg-red-500' },
     { id: 'store', label: 'Tienda', icon: Star },
     { id: 'testimonials', label: 'Testimonios', icon: Star, badge: testimonialStats.pending > 0 ? testimonialStats.pending : undefined, badgeColor: 'bg-yellow-500' },
+    { id: 'settings', label: 'Configuración', icon: Settings },
   ];
 
   return (
@@ -177,7 +179,12 @@ export function AdminPanel() {
 
         <div className="flex-1 overflow-hidden">
           <div className="max-w-[1600px] mx-auto p-4 h-full">
-            <AnimatePresence mode="wait">
+            {/* Sin mode="wait": con "wait" el contenido nuevo no se monta hasta que
+                termine la animacion de salida del anterior, y esa animacion
+                depende de requestAnimationFrame. Si la pestana del navegador
+                pierde visibilidad un instante (cambio de ventana, foco), rAF se
+                pausa y el panel queda congelado en la vista vieja. */}
+            <AnimatePresence>
               {activeTab === 'dashboard' && (
                 <motion.div
                   key="dashboard"
@@ -286,6 +293,22 @@ export function AdminPanel() {
                     onUpdate={updateTestimonial}
                     onUpdateNotes={updateAdminNotes}
                     onDelete={deleteTestimonial}
+                  />
+                </motion.div>
+              )}
+
+              {activeTab === 'settings' && (
+                <motion.div
+                  key="settings"
+                  initial={{ opacity: 0, y: 10 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  exit={{ opacity: 0, y: -10 }}
+                >
+                  <AdminSettings
+                    user={user}
+                    muted={muted}
+                    onToggleMute={toggleMute}
+                    onLogout={logout}
                   />
                 </motion.div>
               )}

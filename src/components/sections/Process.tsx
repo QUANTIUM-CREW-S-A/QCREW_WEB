@@ -83,12 +83,12 @@ export function Process() {
           viewport={{ once: true }}
           className="text-center mb-16 md:mb-20"
         >
-          <span className="inline-block px-4 py-1.5 rounded-full bg-brand-secondary/10 border border-brand-secondary/30 text-brand-secondary text-sm font-medium mb-4">
+          <span className="inline-block px-4 py-1.5 rounded-full bg-rack-brand/10 border border-rack-brand/30 text-rack-brand text-sm font-medium mb-4">
             Metodología
           </span>
           <h2 className="text-3xl md:text-5xl font-display font-bold text-rack-ink mb-4">
             Cómo{' '}
-            <span className="text-transparent bg-clip-text bg-gradient-to-r from-brand-primary to-brand-secondary">
+            <span className="text-transparent bg-clip-text bg-gradient-to-r from-rack-brand to-rack-link">
               Trabajamos
             </span>
           </h2>
@@ -102,7 +102,7 @@ export function Process() {
           {/* Step selector - horizontal */}
           <div className="relative mb-12">
             {/* Progress bar background */}
-            <div className="absolute top-5 left-0 right-0 h-0.5 bg-white/[0.06]" />
+            <div className="absolute top-5 left-0 right-0 h-0.5 bg-rack-rule" />
             {/* Progress bar active */}
             <motion.div
               className="absolute top-5 left-0 h-0.5 bg-gradient-to-r from-brand-primary to-brand-secondary"
@@ -122,7 +122,7 @@ export function Process() {
                   <motion.div
                     animate={{
                       scale: activeStep === index ? 1.15 : 1,
-                      borderColor: index <= activeStep ? 'rgba(0,212,255,0.6)' : 'rgba(255,255,255,0.1)',
+                      borderColor: index <= activeStep ? 'rgba(10,110,150,0.6)' : 'rgba(203,210,217,1)',
                     }}
                     transition={{ duration: 0.3 }}
                     className={`w-10 h-10 rounded-full border-2 flex items-center justify-center mb-3 transition-colors duration-300 ${
@@ -160,7 +160,7 @@ export function Process() {
           >
             {/* Left: Info */}
             <div className="col-span-7">
-              <div className="bg-white/[0.02] border border-white/[0.06] rounded-2xl p-8 h-full">
+              <div className="bg-rack-sheet border border-rack-rule rounded-2xl p-8 h-full">
                 <div className="flex items-center gap-4 mb-6">
                   <div className={`w-14 h-14 rounded-2xl bg-gradient-to-br ${steps[activeStep].color} flex items-center justify-center shadow-lg`}>
                     {(() => {
@@ -170,17 +170,17 @@ export function Process() {
                   </div>
                   <div>
                     <h3 className="text-2xl font-bold text-rack-ink">{steps[activeStep].title}</h3>
-                    <p className="text-rack-ink/40 text-sm">{steps[activeStep].subtitle}</p>
+                    <p className="text-rack-graph text-sm">{steps[activeStep].subtitle}</p>
                   </div>
                 </div>
 
-                <p className="text-rack-ink/60 leading-relaxed text-base mb-8">
+                <p className="text-rack-graph leading-relaxed text-base mb-8">
                   {steps[activeStep].description}
                 </p>
 
-                <div className="flex items-center gap-2 px-4 py-2.5 bg-white/[0.03] rounded-xl border border-white/[0.06] inline-flex">
-                  <div className="w-2 h-2 rounded-full bg-brand-primary animate-pulse" />
-                  <span className="text-rack-ink/40 text-sm">Duración estimada:</span>
+                <div className="inline-flex items-center gap-2 px-4 py-2.5 bg-rack-paper rounded-xl border border-rack-rule">
+                  <div className="w-2 h-2 rounded-full bg-rack-link animate-pulse" />
+                  <span className="text-rack-graph text-sm">Duración estimada:</span>
                   <span className="text-rack-brand text-sm font-medium">{steps[activeStep].duration}</span>
                 </div>
               </div>
@@ -188,7 +188,7 @@ export function Process() {
 
             {/* Right: Deliverables */}
             <div className="col-span-5">
-              <div className="bg-white/[0.02] border border-white/[0.06] rounded-2xl p-8 h-full">
+              <div className="bg-rack-sheet border border-rack-rule rounded-2xl p-8 h-full">
                 <h4 className="text-rack-ink font-semibold mb-6 text-sm uppercase tracking-wider">
                   Entregables de esta fase
                 </h4>
@@ -204,7 +204,7 @@ export function Process() {
                       <div className={`w-8 h-8 rounded-lg bg-gradient-to-br ${steps[activeStep].color} flex items-center justify-center flex-shrink-0 opacity-80`}>
                         <CheckCircle2 className="w-4 h-4 text-rack-ink" />
                       </div>
-                      <span className="text-rack-ink/70 text-sm group-hover:text-rack-ink transition-colors">
+                      <span className="text-rack-graph text-sm group-hover:text-rack-ink transition-colors">
                         {item}
                       </span>
                     </motion.div>
@@ -212,18 +212,18 @@ export function Process() {
                 </div>
 
                 {/* Navigation */}
-                <div className="flex gap-3 mt-8 pt-6 border-t border-white/[0.06]">
+                <div className="flex gap-3 mt-8 pt-6 border-t border-rack-rule">
                   <button
                     onClick={() => setActiveStep(Math.max(0, activeStep - 1))}
                     disabled={activeStep === 0}
-                    className="flex-1 px-4 py-2.5 bg-white/[0.04] border border-white/[0.06] rounded-xl text-rack-ink/40 text-sm hover:bg-white/[0.08] hover:text-rack-ink/60 transition-colors disabled:opacity-30 disabled:cursor-not-allowed"
+                    className="flex-1 px-4 py-2.5 bg-rack-paper border border-rack-rule rounded-xl text-rack-graph text-sm hover:bg-rack-rule/40 hover:text-rack-ink transition-colors disabled:opacity-30 disabled:cursor-not-allowed"
                   >
                     Anterior
                   </button>
                   <button
                     onClick={() => setActiveStep(Math.min(steps.length - 1, activeStep + 1))}
                     disabled={activeStep === steps.length - 1}
-                    className="flex-1 px-4 py-2.5 bg-brand-primary/15 border border-brand-primary/20 rounded-xl text-rack-brand text-sm hover:bg-brand-primary/25 transition-colors disabled:opacity-30 disabled:cursor-not-allowed"
+                    className="flex-1 px-4 py-2.5 bg-rack-brand/10 border border-rack-brand/30 rounded-xl text-rack-brand text-sm font-medium hover:bg-rack-brand/20 transition-colors disabled:opacity-30 disabled:cursor-not-allowed"
                   >
                     Siguiente
                   </button>
@@ -246,10 +246,10 @@ export function Process() {
             >
               {/* Vertical connector */}
               {index < steps.length - 1 && (
-                <div className="absolute top-full left-7 w-0.5 h-6 bg-gradient-to-b from-white/10 to-transparent" />
+                <div className="absolute top-full left-7 w-0.5 h-6 bg-gradient-to-b from-rack-rule to-transparent" />
               )}
 
-              <div className="bg-white/[0.02] border border-white/[0.06] rounded-2xl p-6 hover:border-white/[0.12] transition-colors">
+              <div className="bg-rack-sheet border border-rack-rule rounded-2xl p-6 hover:border-rack-edge transition-colors">
                 <div className="flex items-start gap-4">
                   {/* Step icon */}
                   <div className={`w-14 h-14 rounded-2xl bg-gradient-to-br ${step.color} flex items-center justify-center flex-shrink-0 shadow-lg`}>
@@ -258,18 +258,18 @@ export function Process() {
 
                   <div className="flex-1 min-w-0">
                     <div className="flex items-center gap-2 mb-1">
-                      <span className="text-rack-ink/20 text-xs font-mono">{step.number}</span>
+                      <span className="text-rack-graph text-xs font-mono">{step.number}</span>
                       <h3 className="text-lg font-bold text-rack-ink">{step.title}</h3>
                     </div>
-                    <p className="text-rack-ink/40 text-xs mb-3">{step.subtitle}</p>
-                    <p className="text-rack-ink/50 text-sm leading-relaxed mb-4">{step.description}</p>
+                    <p className="text-rack-graph text-xs mb-3">{step.subtitle}</p>
+                    <p className="text-rack-graph text-sm leading-relaxed mb-4">{step.description}</p>
 
                     {/* Deliverables */}
                     <div className="flex flex-wrap gap-2 mb-3">
                       {step.deliverables.map((item) => (
                         <span
                           key={item}
-                          className="inline-flex items-center gap-1 px-2.5 py-1 bg-white/[0.04] border border-white/[0.06] rounded-lg text-rack-ink/50 text-xs"
+                          className="inline-flex items-center gap-1 px-2.5 py-1 bg-rack-paper border border-rack-rule rounded-lg text-rack-graph text-xs"
                         >
                           <CheckCircle2 className="w-3 h-3 text-rack-brand" />
                           {item}
@@ -279,8 +279,8 @@ export function Process() {
 
                     {/* Duration */}
                     <div className="flex items-center gap-1.5 text-xs">
-                      <div className="w-1.5 h-1.5 rounded-full bg-brand-primary" />
-                      <span className="text-rack-ink/30">Duración:</span>
+                      <div className="w-1.5 h-1.5 rounded-full bg-rack-link" />
+                      <span className="text-rack-graph">Duración:</span>
                       <span className="text-rack-brand font-medium">{step.duration}</span>
                     </div>
                   </div>

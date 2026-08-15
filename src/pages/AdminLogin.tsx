@@ -3,6 +3,26 @@ import { useNavigate } from 'react-router-dom';
 import { motion } from 'framer-motion';
 import { Lock, Mail, AlertCircle, Eye, EyeOff } from 'lucide-react';
 import { useAuth } from '../hooks/useAuth';
+import { isSupabaseConfigured } from '../lib/supabase';
+
+/** Traduce el error de Supabase; antes se comparaba con códigos de Firebase. */
+function describeAuthError(err: unknown): string {
+  const { code, status, message } = err as { code?: string; status?: number; message?: string };
+
+  if (code === 'invalid_credentials' || status === 400) {
+    return 'Email o contraseña incorrectos';
+  }
+  if (code === 'email_not_confirmed') {
+    return 'Debes confirmar tu email antes de entrar';
+  }
+  if (code === 'over_request_rate_limit' || status === 429) {
+    return 'Demasiados intentos. Espera unos minutos';
+  }
+  if (message?.includes('Failed to fetch') || message?.includes('NetworkError')) {
+    return 'No se pudo contactar al servidor de autenticación. Revisa la configuración de Supabase';
+  }
+  return message ?? 'Error al iniciar sesión. Intenta de nuevo';
+}
 
 export function AdminLogin() {
   const [email, setEmail] = useState('');
@@ -16,25 +36,19 @@ export function AdminLogin() {
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setError('');
+
+    if (!isSupabaseConfigured) {
+      setError('Supabase no está configurado o la clave publishable es inválida. Actualiza .env y reconstruye la imagen.');
+      return;
+    }
+
     setIsLoading(true);
 
     try {
       await login(email, password);
       navigate('/admin', { replace: true });
     } catch (err: unknown) {
-      const code = (err as { code?: string }).code;
-      switch (code) {
-        case 'auth/invalid-credential':
-        case 'auth/wrong-password':
-        case 'auth/user-not-found':
-          setError('Email o contraseña incorrectos');
-          break;
-        case 'auth/too-many-requests':
-          setError('Demasiados intentos. Intenta de nuevo más tarde');
-          break;
-        default:
-          setError('Error al iniciar sesión. Intenta de nuevo');
-      }
+      setError(describeAuthError(err));
     } finally {
       setIsLoading(false);
     }
@@ -57,6 +71,16 @@ export function AdminLogin() {
 
         <div className="bg-brand-gray border border-white/10 rounded-2xl p-8">
           <form onSubmit={handleSubmit} className="space-y-5">
+            {!isSupabaseConfigured && (
+              <div className="flex items-start gap-2 bg-amber-500/10 border border-amber-500/30 rounded-lg p-3 text-amber-300 text-sm">
+                <AlertCircle className="w-4 h-4 flex-shrink-0 mt-0.5" />
+                <span>
+                  Supabase no está configurado o la clave es inválida: define <code>VITE_SUPABASE_URL</code> y{' '}
+                  <code>VITE_SUPABASE_PUBLISHABLE_KEY</code> en el archivo <code>.env</code> y
+                  reconstruye la imagen. Ninguna credencial funcionará hasta entonces.
+                </span>
+              </div>
+            )}
             {error && (
               <motion.div
                 initial={{ opacity: 0, y: -10 }}
@@ -107,7 +131,7 @@ export function AdminLogin() {
 
             <button
               type="submit"
-              disabled={isLoading}
+              disabled={isLoading || !isSupabaseConfigured}
               className="w-full bg-gradient-to-r from-brand-primary to-brand-secondary text-white py-3 rounded-lg font-semibold hover:shadow-lg hover:shadow-brand-primary/25 transition-all disabled:opacity-50 disabled:cursor-not-allowed"
             >
               {isLoading ? (

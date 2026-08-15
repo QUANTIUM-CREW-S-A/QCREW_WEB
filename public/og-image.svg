@@ -1,0 +1,48 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1200" height="1200" viewBox="0 0 1200 1200">
+  <defs>
+    <linearGradient id="bg" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#1B3145"/>
+      <stop offset="100%" stop-color="#0B1621"/>
+    </linearGradient>
+    <linearGradient id="mark" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#2FA8D8"/>
+      <stop offset="100%" stop-color="#1FC79A"/>
+    </linearGradient>
+    <pattern id="grid" width="48" height="48" patternUnits="userSpaceOnUse">
+      <path d="M48 0H0V48" fill="none" stroke="#FFFFFF" stroke-opacity="0.05" stroke-width="1"/>
+    </pattern>
+  </defs>
+
+  <rect width="1200" height="1200" fill="url(#bg)"/>
+  <g transform="translate(0,285)">
+  <rect width="1200" height="630" fill="url(#bg)"/>
+  <rect width="1200" height="630" fill="url(#grid)"/>
+
+  <g transform="translate(80,60) scale(1.8)">
+    <path d="M19.5 8.5 28.5 13.75V24.25L19.5 29.5 10.5 24.25V13.75Z" fill="none" stroke="url(#mark)" stroke-width="2.6" stroke-linejoin="round"/>
+    <path d="M22.6 22.1 31 30.5" stroke="url(#mark)" stroke-width="3.2" stroke-linecap="round"/>
+    <circle cx="19.5" cy="19" r="3.3" fill="url(#mark)"/>
+    <circle cx="19.5" cy="8.5" r="2.2" fill="#22D39F"/>
+  </g>
+
+  <text x="176" y="102" font-family="Helvetica Neue, Helvetica, Arial, sans-serif" font-size="34" font-weight="700" fill="#EDEFF2">Quantium<tspan fill="#2FA8D8">Crew</tspan></text>
+  <text x="176" y="130" font-family="Helvetica Neue, Helvetica, Arial, sans-serif" font-size="13" letter-spacing="4" fill="#8FA0AF">INFRAESTRUCTURA TI · PANAMÁ</text>
+
+  <text x="80" y="308" font-family="Helvetica Neue, Helvetica, Arial, sans-serif" font-size="74" font-weight="700" fill="#EDEFF2">Del cableado</text>
+  <text x="80" y="390" font-family="Helvetica Neue, Helvetica, Arial, sans-serif" font-size="74" font-weight="700" fill="#EDEFF2">a la nube.</text>
+
+  <text x="80" y="452" font-family="Helvetica Neue, Helvetica, Arial, sans-serif" font-size="24" fill="#9CA9B6">Diseñamos, construimos y gestionamos tu infraestructura tecnológica.</text>
+  <text x="80" y="486" font-family="Helvetica Neue, Helvetica, Arial, sans-serif" font-size="24" fill="#9CA9B6">Un solo contrato, respuesta en menos de 24 h.</text>
+
+  <g font-family="Helvetica Neue, Helvetica, Arial, sans-serif" font-size="17" fill="#C3CDD6" text-anchor="middle">
+    <rect x="80" y="532" width="202" height="44" rx="22" fill="none" stroke="#FFFFFF" stroke-opacity="0.15"/>
+    <text x="181" y="560">Redes y servidores</text>
+    <rect x="296" y="532" width="229" height="44" rx="22" fill="none" stroke="#FFFFFF" stroke-opacity="0.15"/>
+    <text x="410" y="560">Cableado estructurado</text>
+    <rect x="539" y="532" width="202" height="44" rx="22" fill="none" stroke="#FFFFFF" stroke-opacity="0.15"/>
+    <text x="640" y="560">Soporte gestionado</text>
+    <rect x="755" y="532" width="193" height="44" rx="22" fill="none" stroke="#FFFFFF" stroke-opacity="0.15"/>
+    <text x="851" y="560">Software a medida</text>
+  </g>
+  </g>
+</svg>

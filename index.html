@@ -1,19 +1,77 @@
 <!doctype html>
-<html lang="en">
+<html lang="es">
   <head>
     <meta charset="UTF-8" />
     <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta name="theme-color" content="#101e2b" />
     <title>Quantium Crew | Transformación Digital</title>
-    <script type="module">
-      if (import.meta.hot?.on) {
-        import.meta.hot.on('vite:error', (error) => {
-          if (error.err) {
-            console.error(
-              [error.err.message, error.err.frame].filter(Boolean).join('\n'),
-            )
+    <meta
+      name="description"
+      content="Diseñamos, construimos y gestionamos ecosistemas tecnológicos en Panamá: del cableado estructurado a la nube, con un solo contrato y respuesta en menos de 24 h."
+    />
+    <meta property="og:type" content="website" />
+    <meta property="og:url" content="https://quantiumcrew.com/" />
+    <meta property="og:locale" content="es_PA" />
+    <meta property="og:site_name" content="Quantium Crew" />
+    <meta property="og:title" content="Quantium Crew | Del cableado a la nube" />
+    <meta
+      property="og:description"
+      content="Ecosistemas tecnológicos que ayudan a las empresas a escalar, automatizar y operar de manera más inteligente."
+    />
+    <meta property="og:image" content="https://quantiumcrew.com/og-image.png" />
+    <meta property="og:image:width" content="1200" />
+    <meta property="og:image:height" content="630" />
+    <meta name="twitter:card" content="summary_large_image" />
+    <link rel="canonical" href="https://quantiumcrew.com/" />
+
+    <!-- Datos estructurados: sin esto Google no puede mostrar la ficha local
+         (dirección, teléfono, horario) en resultados ni en Maps.
+         TODO: sincronizar con src/lib/company.ts al cargar los datos reales. -->
+    <script type="application/ld+json">
+      {
+        "@context": "https://schema.org",
+        "@type": "ProfessionalService",
+        "@id": "https://quantiumcrew.com/#organization",
+        "name": "Quantium Crew",
+        "legalName": "Quantium Crew, S.A.",
+        "url": "https://quantiumcrew.com",
+        "logo": "https://quantiumcrew.com/favicon.svg",
+        "image": "https://quantiumcrew.com/og-image.png",
+        "description": "Diseñamos, construimos y gestionamos ecosistemas tecnológicos en Panamá: del cableado estructurado a la nube, con un solo contrato y respuesta en menos de 24 h.",
+        "email": "info@quantiumcrew.com",
+        "telephone": "+50700000000",
+        "priceRange": "$$",
+        "address": {
+          "@type": "PostalAddress",
+          "addressLocality": "Ciudad de Panamá",
+          "addressRegion": "Provincia de Panamá",
+          "addressCountry": "PA"
+        },
+        "areaServed": { "@type": "Country", "name": "Panamá" },
+        "openingHoursSpecification": [
+          {
+            "@type": "OpeningHoursSpecification",
+            "dayOfWeek": ["Monday", "Tuesday", "Wednesday", "Thursday", "Friday"],
+            "opens": "08:00",
+            "closes": "17:00"
           }
-        })
+        ],
+        "sameAs": [
+          "https://www.linkedin.com/company/quantium-crew",
+          "https://www.instagram.com/quantiumcrew",
+          "https://www.facebook.com/quantiumcrew"
+        ],
+        "hasOfferCatalog": {
+          "@type": "OfferCatalog",
+          "name": "Servicios de TI",
+          "itemListElement": [
+            { "@type": "Offer", "itemOffered": { "@type": "Service", "name": "Infraestructura y redes empresariales" } },
+            { "@type": "Offer", "itemOffered": { "@type": "Service", "name": "Cableado estructurado e instalaciones" } },
+            { "@type": "Offer", "itemOffered": { "@type": "Service", "name": "Soporte y gestión TI administrada" } },
+            { "@type": "Offer", "itemOffered": { "@type": "Service", "name": "Desarrollo de software y automatización" } }
+          ]
+        }
       }
     </script>
   </head>

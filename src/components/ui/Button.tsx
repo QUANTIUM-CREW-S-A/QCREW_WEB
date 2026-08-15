@@ -12,10 +12,10 @@ export interface ButtonProps
 const Button = React.forwardRef<HTMLButtonElement, ButtonProps>(
   ({ className, variant = "primary", size = "md", isLoading, children, ...props }, ref) => {
     const variants = {
-      primary: "bg-gradient-to-r from-brand-primary to-brand-secondary text-white hover:opacity-90 shadow-[0_0_20px_rgba(0,212,255,0.3)] hover:shadow-[0_0_30px_rgba(0,212,255,0.5)] border border-transparent",
-      secondary: "bg-brand-secondary text-white hover:bg-brand-secondary/90 shadow-lg shadow-brand-secondary/20",
-      outline: "border-2 border-brand-primary text-brand-primary hover:bg-brand-primary/10 shadow-[0_0_10px_rgba(0,212,255,0.1)]",
-      ghost: "text-brand-text hover:text-white hover:bg-white/5",
+      primary: "bg-rack-ink text-rack-paper hover:bg-rack-brand border border-transparent",
+      secondary: "bg-rack-brand text-rack-paper hover:bg-rack-brand/90 border border-transparent",
+      outline: "border border-rack-rule text-rack-ink hover:border-rack-edge hover:bg-rack-sheet",
+      ghost: "text-rack-graph hover:text-rack-ink hover:bg-rack-sheet",
     };
 
     const sizes = {
@@ -28,7 +28,7 @@ const Button = React.forwardRef<HTMLButtonElement, ButtonProps>(
       <button
         ref={ref}
         className={cn(
-          "inline-flex items-center justify-center rounded-lg font-medium transition-all duration-200 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-brand-primary disabled:pointer-events-none disabled:opacity-50",
+          "inline-flex items-center justify-center rounded-lg font-medium transition-all duration-200 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-rack-link disabled:pointer-events-none disabled:opacity-50",
           variants[variant],
           sizes[size],
           className
