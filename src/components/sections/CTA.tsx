@@ -2,6 +2,7 @@ import { motion, useReducedMotion } from "framer-motion";
 import { ArrowRight } from "lucide-react";
 import { useNavigate } from "react-router-dom";
 import { SectionWrapper } from "../ui/SectionWrapper";
+import { RackGridBackground } from "../ui/RackGridBackground";
 
 /**
  * Cierre como orden de trabajo.
@@ -25,7 +26,7 @@ export function CTA() {
 
   return (
     <SectionWrapper className="border-t border-rack-rule bg-rack-paper py-24 md:py-28">
-      <div aria-hidden="true" className="rack-grid absolute inset-0" />
+      <RackGridBackground />
 
       <div className="container relative z-10 mx-auto px-4">
         <motion.div

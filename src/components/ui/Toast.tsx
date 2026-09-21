@@ -34,6 +34,7 @@ const useToastStore = create<ToastStore>((set) => ({
     })),
 }));
 
+// eslint-disable-next-line react-refresh/only-export-components -- el proyecto solo corre en Docker/build, sin `vite dev`, asi que Fast Refresh nunca aplica.
 export function toast(type: ToastType, message: string, duration = 4000) {
   useToastStore.getState().addToast({ type, message, duration });
 }

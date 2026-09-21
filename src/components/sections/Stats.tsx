@@ -1,6 +1,7 @@
 import { useEffect, useRef, useState } from 'react';
 import { motion, useInView, useReducedMotion } from 'framer-motion';
 import { cn } from '../../lib/utils';
+import { RackGridBackground } from '../ui/RackGridBackground';
 
 /**
  * Placa de caracteristicas.
@@ -89,7 +90,7 @@ function SpecCell({ spec, index }: { spec: Spec; index: number }) {
 export function Stats() {
   return (
     <section className="relative overflow-hidden border-t border-rack-rule bg-rack-paper py-20 md:py-24">
-      <div aria-hidden="true" className="rack-grid absolute inset-0" />
+      <RackGridBackground />
 
       <div className="container relative z-10 mx-auto px-4">
         <div className="rack-panel relative">

@@ -22,19 +22,38 @@ export function StackDrawing({ className }: { className?: string }) {
   const reduce = useReducedMotion();
 
   // El trazo se dibuja en orden: primero el bastidor, luego cada equipo.
+  // Despues de trazarse, el plotter lo sostiene un rato y lo vuelve a
+  // recorrer — sin esto, la pieza de firma de la home se queda quieta como
+  // una foto en cuanto termina la entrada.
   const draw = (delay: number) =>
     reduce
       ? { pathLength: 1, opacity: 1 }
       : {
           pathLength: [0, 1],
           opacity: [0, 1],
-          transition: { duration: 1.1, delay, ease: 'easeInOut' as const },
+          transition: {
+            duration: 1.1,
+            delay,
+            ease: 'easeInOut' as const,
+            repeat: Infinity,
+            repeatType: 'reverse' as const,
+            repeatDelay: 7,
+          },
         };
 
   const fade = (delay: number) =>
     reduce
       ? { opacity: 1 }
-      : { opacity: [0, 1], transition: { duration: 0.5, delay } };
+      : {
+          opacity: [0, 1],
+          transition: {
+            duration: 0.5,
+            delay,
+            repeat: Infinity,
+            repeatType: 'reverse' as const,
+            repeatDelay: 7.6,
+          },
+        };
 
   return (
     <svg

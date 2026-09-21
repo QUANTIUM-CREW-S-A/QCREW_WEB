@@ -73,6 +73,7 @@ export function TurnstileCaptcha({ onVerify, onError, className = '' }: Turnstil
 }
 
 // Hook para manejar la validación del CAPTCHA
+// eslint-disable-next-line react-refresh/only-export-components -- el proyecto solo corre en Docker/build, sin `vite dev`, asi que Fast Refresh nunca aplica.
 export function useCaptchaValidation() {
   const [captchaToken, setCaptchaToken] = useState<string>('');
   const [isVerified, setIsVerified] = useState(false);

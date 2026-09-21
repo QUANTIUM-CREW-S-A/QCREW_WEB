@@ -3,6 +3,7 @@ import { useState } from 'react';
 import { Link } from 'react-router-dom';
 import { cn } from '../../lib/utils';
 import { DivisionIcon } from './DivisionIcon';
+import { PhotoSlot } from './PhotoSlot';
 
 /**
  * Elevacion de rack: la pieza de firma de la home.
@@ -29,9 +30,12 @@ export interface RackUnit {
   href: string;
   /** LED de estado: verde = enlace, ambar = actividad */
   led: 'link' | 'act';
+  /** Foto real de la division. Sin ella, queda el marco reservado. */
+  imageUrl?: string;
 }
 
 /** Orden y metadatos fijos de la pila. El texto lo inyecta i18n. */
+// eslint-disable-next-line react-refresh/only-export-components -- el proyecto solo corre en Docker/build, sin `vite dev`, asi que Fast Refresh nunca aplica.
 export const rackLayers = [
   { id: 'dev', layer: 'Cloud', led: 'act' },
   { id: 'systems', layer: 'Server', led: 'act' },
@@ -73,10 +77,23 @@ export function RackElevation({
                 className={cn(
                   'group grid grid-cols-1 items-start gap-x-6 gap-y-3 border-t border-rack-rule',
                   'py-7 transition-colors duration-300',
-                  'md:grid-cols-[3rem_9rem_1fr_auto] md:gap-x-8',
+                  'md:grid-cols-[4rem_3rem_9rem_1fr_auto] md:gap-x-8',
                   isActive && 'border-rack-edge'
                 )}
               >
+                {/* Foto de la division. Compacta a proposito: la fila es una
+                    hoja de specs, no una tarjeta de catalogo. */}
+                <PhotoSlot
+                  src={unit.imageUrl}
+                  refCode={unit.layer}
+                  caption={unit.name}
+                  compact
+                  className={cn(
+                    'h-14 w-14 shrink-0 transition-colors duration-300',
+                    isActive && 'border-rack-edge'
+                  )}
+                />
+
                 {/* Marca de unidad. Los racks se numeran desde abajo, asi que
                     la capa del piso es 1U y la nube es la mas alta. */}
                 <span

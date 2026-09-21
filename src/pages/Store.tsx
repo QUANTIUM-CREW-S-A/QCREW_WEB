@@ -3,6 +3,7 @@ import { motion, AnimatePresence, useReducedMotion } from "framer-motion";
 import { Search, ShoppingCart, Plus, Minus, X, CheckCircle2 } from "lucide-react";
 import { SectionWrapper } from "../components/ui/SectionWrapper";
 import { PhotoSlot } from "../components/ui/PhotoSlot";
+import { RackGridBackground } from "../components/ui/RackGridBackground";
 import { Button } from "../components/ui/Button";
 import { useProducts, type Product } from "../hooks/useProducts";
 import { useCart } from "../hooks/useCart";
@@ -289,7 +290,7 @@ export default function Store() {
   return (
     <div className="min-h-screen bg-rack-paper">
       <SectionWrapper className="border-b border-rack-rule pb-12 pt-32 md:pt-40">
-        <div aria-hidden="true" className="rack-grid absolute inset-0" />
+        <RackGridBackground />
 
         <motion.div
           initial={reduce ? undefined : { opacity: 0, y: 16 }}

@@ -3,6 +3,7 @@ import { useTranslation } from "react-i18next";
 import { SectionWrapper } from "../ui/SectionWrapper";
 import { RackElevation, rackLayers, type RackUnit } from "../ui/RackElevation";
 import { PhotoSlot } from "../ui/PhotoSlot";
+import { RackGridBackground } from "../ui/RackGridBackground";
 
 /**
  * Servicios como elevacion de rack.
@@ -31,7 +32,7 @@ export function Services() {
       className="relative border-y border-rack-rule bg-rack-paper py-24 md:py-28"
     >
       {/* Papel milimetrado: textura de fondo, nunca protagonista */}
-      <div aria-hidden="true" className="rack-grid absolute inset-0" />
+      <RackGridBackground />
 
       <div className="container relative z-10 mx-auto px-4">
         <div className="grid grid-cols-1 gap-12 lg:grid-cols-[1fr_18rem] lg:gap-16">

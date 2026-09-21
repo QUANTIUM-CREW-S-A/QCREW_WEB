@@ -22,6 +22,7 @@ import {
 import { Button } from "../components/ui/Button";
 import { SectionWrapper } from "../components/ui/SectionWrapper";
 import { DivisionIcon } from "../components/ui/DivisionIcon";
+import { RackGridBackground } from "../components/ui/RackGridBackground";
 import { useTranslation } from "react-i18next";
 import { useEffect } from "react";
 import { cn } from "../lib/utils";
@@ -253,7 +254,7 @@ export function ServiceDetail() {
     <div className="min-h-screen bg-rack-paper">
       {/* Encabezado: el diagrama de la division reemplaza a la foto de stock */}
       <SectionWrapper className="relative overflow-hidden border-b border-rack-rule pb-16 pt-32 md:pb-20 md:pt-40">
-        <div aria-hidden="true" className="rack-grid absolute inset-0" />
+        <RackGridBackground />
 
         <div className="container relative z-10 mx-auto grid grid-cols-1 items-center gap-12 px-4 lg:grid-cols-[1.15fr_1fr] lg:gap-16">
           <div>
